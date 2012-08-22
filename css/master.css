@@ -92,12 +92,23 @@ body {
 
 .master_table_margin {
     background: black;
-    width: 3%;
+    width: 4%;
+}
+
+.dashboard {
+    visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 5, 5, 0.8);
 }
 
 /* top sidebar */
 .top_sidebar_frame {
-    z-index: 1;
+    z-index: 100;
     position: absolute;
     top: 20%;
     left: -90;
@@ -113,7 +124,7 @@ body {
 
 /* bottom sidebar */
 .bottom_sidebar_frame {
-    z-index: 1;
+    z-index: 100;
     position: absolute;
     top: 60%;
     left: -90;
@@ -132,7 +143,7 @@ body {
     display: table-cell;
     background: #0083AA;
     width: 110px;
-    height: 30px;
+    height: 35px;
     text-align: center;
     vertical-align: middle;
     border: 1px solid black;
@@ -182,7 +193,6 @@ footer {
     display: table-cell;
     text-align: center;
     vertical-align: middle;
-    background: #006FEE;
     border: 1px solid black;
     border-radius: 5px;
     height: 28px;
@@ -191,10 +201,19 @@ footer {
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
     -o-transition: all 0.5s;
+    background-image: -webkit-linear-gradient(top,#4D90FE,#006FEE);
+    background-image: -moz-linear-gradient(top,#4D90FE,#006FEE);
+    background-image: -ms-linear-gradient(top,#4D90FE,#006FEE);
+    background-image: -o-linear-gradient(top,#4D90FE,#006FEE);
+    background-image: linear-gradient(top,#4D90FE,#006FEE);
 }
 
 .div_push_button:hover {
-    background: #0050FF;
+    background-image: -webkit-linear-gradient(top,#4D90FE,#0050FF);
+    background-image: -moz-linear-gradient(top,#4D90FE,#0050FF);
+    background-image: -ms-linear-gradient(top,#4D90FE,#0050FF);
+    background-image: -o-linear-gradient(top,#4D90FE,#0050FF);
+    background-image: linear-gradient(top,#4D90FE,#0050FF);
 }
 
 input, button, select, textarea {
@@ -219,7 +238,7 @@ input, button, select, textarea {
 
 /* Let's get this party started */
 ::-webkit-scrollbar {
-    width: 12px;
+    width: 15px;
 }
  
 /* Track */
