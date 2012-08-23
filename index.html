@@ -4,13 +4,47 @@
         <link rel="stylesheet" href="css/master.css" type="text/css" media="screen" charset="utf-8" />
     </style>
     <title></title>
+    <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/jquery.xdomainajax.js"></script>
 </head>
-<body cellpadding="0" cellspacing="0" link="white" vlink="white">
+<body cellpadding="0" cellspacing="0" link="white" vlink="white" onload="initialise()">
+<script type="text/javascript" charset="utf-8">
+    function parseXML(xml) {
+        $(xml).find("Result").each(function() {
+            var msg;
+            msg = $(this).find("latitude").text() + ":" + $(this).find("longtitude").text();
+            alert(msg);
+        }
+        );
+    }
+
+    function testRest() {
+        var req = new XMLHttpRequest();
+        var url = 'http://where.yahooapis.com/geocode?q=Grafton+street+Manchester+UK';
+        req.onload = function() {
+            parseXML(req.responseText);
+        }
+        req.open("GET", url, true);
+        req.send(null);
+
+
+        // $.ajax({
+        //         url: 'http://where.yahooapis.com/geocode?q=Grafton+street+Manchester+UK',
+        //         type: 'GET',
+        //         contentType: 'application/xml',
+        //         dataType: 'xml'
+        //         success: function(res) {
+        //             document.getElementById('big_canvas_output').innerHTML = "<textarea>" + res.responseText + "</textarea>";
+        //         }
+        // });
+    }
+</script>
+
     <!-- head links -->
     <div id="head_links">
         <table border="0" cellpadding="0" cellspacing="0"><tr>
                 <td>
-                    <div class="head_links_button">element</div>
+                    <div class="head_links_button" onclick="testRest()">element</div>
                     <div class="head_links_button">element</div>
                     <div class="head_links_button">element</div>
                 </td>
@@ -34,11 +68,23 @@
     </div>
 
     <!-- dashboard -->
-    <div id="dashboard" class="dashboard"></div>
+    <div id="dashboard" class="dashboard">
+        <table class="frame_table" border="0">
+            <tr><td style="width: 25%;"></td>
+            <td>
+                <table class="frame_table" border="0">
+                    <tr style="height: 20%;"></tr>
+                    <tr><td style="vertical-align: top;"><div id="dashboard_div" class="dashboard_div"><output id="dashboard_output"></output></div></td></tr>
+                    <tr style="height: 20%;"></tr>
+                </table>
+            </td>
+            <td style="width: 25%;"></td></tr>
+        </table>
+    </div>
 
     <!-- top sidebar -->
     <table class="top_sidebar_frame" border="0" cellpadding="2px;" onmouseover="visibleElement('dashboard')" onmouseout="invisibleElement('dashboard')">
-        <tr><td><div class="sidebar_button">element</div></td>
+        <tr><td><div class="sidebar_button" onclick="showFeedsPanel('options_field_output')">Feeds</div></td>
             <tr><td><div class="sidebar_button">element</div></td>
         <tr><td><div class="sidebar_button">element</div></td>
         </tr>
