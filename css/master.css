@@ -25,6 +25,8 @@ body {
     -webkit-transition: all 1s;
     -moz-transition: all 1s;
     -o-transition: all 1s;
+    -ms-transition: all 1s;
+    -ms-transition: all 1s;
 }
 
 .head_links_button:hover {
@@ -45,6 +47,7 @@ body {
     -webkit-transition: all 1s;
     -moz-transition: all 1s;
     -o-transition: all 1s;
+    -ms-transition: all 1s;
 }
 
 #top_bar:hover {
@@ -73,6 +76,7 @@ body {
     -webkit-transition: all 1s;
     -moz-transition: all 1s;
     -o-transition: all 1s;
+    -ms-transition: all 1s;
 }
 
 .top_bar_button:hover {
@@ -127,6 +131,7 @@ body {
     -webkit-transition: all 1s;
     -moz-transition: all 1s;
     -o-transition: all 1s;
+    -ms-transition: all 1s;
 }
 
 .top_sidebar_frame:hover {
@@ -143,6 +148,7 @@ body {
     -webkit-transition: all 1s;
     -moz-transition: all 1s;
     -o-transition: all 1s;
+    -ms-transition: all 1s;
 }
 
 .bottom_sidebar_frame:hover {
@@ -162,12 +168,41 @@ body {
     -webkit-transition: all 1s;
     -moz-transition: all 1s;
     -o-transition: all 1s;
+    -ms-transition: all 1s;
 }
 
 .sidebar_button:hover {
     background: #A6B600;
     width: 110px;
     height:35px;
+}
+
+.top_sidebar_information {
+    z-index:1;
+    position: absolute;
+    left:-5;
+    top: 12%;
+    color: grey;
+
+    transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+}
+
+.bottom_sidebar_information {
+    z-index:1;
+    position: absolute;
+    top: 50%;
+    left: -23;
+    color: grey;
+
+    transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
 }
 
 #options_field {
@@ -183,6 +218,7 @@ body {
     -webkit-transition: all 1s;
     -moz-transition: all 1s;
     -o-transition: all 1s;
+    -ms-transition: all 1s;
 }
 
 #options_field:after {
@@ -221,6 +257,7 @@ footer {
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
     -o-transition: all 0.5s;
+    -ms-transition: all 0.5s;
     background-image: -webkit-linear-gradient(top, #73B8ED, #006FEE);
     background-image: -moz-linear-gradient(top, #73B8ED, #006FEE);
     background-image: -ms-linear-gradient(top, #73B8ED, #006FEE);
@@ -241,6 +278,7 @@ footer {
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
     -o-transition: all 0.5s;
+    -ms-transition: all 0.5s;
     background-image: -webkit-linear-gradient(top, #73B8ED, #006FEE);
     background-image: -moz-linear-gradient(top, #73B8ED, #006FEE);
     background-image: -ms-linear-gradient(top, #73B8ED, #006FEE);
@@ -324,7 +362,7 @@ input, button, select, textarea {
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
     -o-transition: all 0.5s;
-    -ie-transition: all 0.5;
+    -ms-transition: all 0.5s;
 }
 
 .feed_panel_item:hover {
@@ -345,7 +383,7 @@ input, button, select, textarea {
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
     -o-transition: all 0.5s;
-    -ie-transition: all 0.5;
+    -ms-transition: all 0.5s;
 }
 
 .feed_delelte_img:hover {

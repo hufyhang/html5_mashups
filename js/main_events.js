@@ -40,7 +40,7 @@ function showFeedsPanel(containerId) {
 function showAddFeedForm(containerId) {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    document.getElementById(containerId).innerHTML = '<table class="frame_table" cellpadding="5px"><tr><td><label>Feed URL: </label><input type="TEXT" id="add_feed_form_feed_url" class="input_box"/></td></tr><tr><td><label>Name: </label><input type="TEXT" id="add_feed_form_feed_name" class="input_box" required="required"/></td></tr><tr><td><label>Type: </label><br /><input type="RADIO" id="add_feed_form_feed_type_rest" name="type" style="margin-left: 50px;" value="REST/HTTP" checked="true">REST/HTTP</input><br /><input type="RADIO" id="add_feed_form_feed_type_soap" name="type" style="margin-left: 50px;" value="SOAP">SOAP</input></td></tr><tr><td><div class="div_push_button" onclick="addFeedFromFeedForm(\''+ containerId + '\')">OK</div><div class="div_push_button" onclick="closeAddNewFeed(\'' + containerId + '\')">Cancel</div></td></tr></table>';
+    document.getElementById(containerId).innerHTML = '<table class="frame_table" cellpadding="5px"><tr><td><label>Feed URL: </label><br /><input type="TEXT" id="add_feed_form_feed_url" class="input_box"/></td></tr><tr><td><label>Name: </label><br /><input type="TEXT" id="add_feed_form_feed_name" class="input_box" required="required"/></td></tr><tr><td><label>Type: </label><br /><input type="RADIO" id="add_feed_form_feed_type_rest" name="type" style="margin-left: 50px;" value="REST/HTTP" checked="true">REST/HTTP</input><br /><input type="RADIO" id="add_feed_form_feed_type_soap" name="type" style="margin-left: 50px;" value="SOAP">SOAP</input></td></tr><tr><td><div class="div_push_button" onclick="addFeedFromFeedForm(\''+ containerId + '\')">OK</div><div class="div_push_button" onclick="closeAddNewFeed(\'' + containerId + '\')">Cancel</div></td></tr></table>';
 }
 
 function addFeedFromFeedForm(containerId) {
@@ -86,12 +86,17 @@ function closeAddNewFeed(containerId) {
     showFeedsPanel(_current_container_id);
 }
 
+function clearFeedsNameList() {
+    feeds_name_list = "";
+}
+
 function appendFeedsNameList(name) {
     feeds_name_list += name + '\n';
 }
 
 function updateFeedsHTML() {
     _database.transaction(function(tx) {
+        clearFeedsNameList();
         feeds_html = '<table class="panel_table">';
         tx.executeSql('SELECT name, url, feed_type FROM feeds', [], function(tx, results) {
             for(var index = 0; index != results.rows.length; ++index) {
@@ -100,7 +105,6 @@ function updateFeedsHTML() {
                 test_name = name;
                 var type = row['feed_type'];
                 feeds_html += '<tr><td><div class="feed_panel_item"><img class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" src="img/remove_normal.png" width="15px" height="15px" /><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
-
                 appendFeedsNameList(name);
             }
         }, null);
