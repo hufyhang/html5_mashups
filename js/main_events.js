@@ -102,9 +102,9 @@ function updateFeedsHTML() {
             for(var index = 0; index != results.rows.length; ++index) {
                 var row = results.rows.item(index);
                 var name = row['name'];
-                test_name = name;
+                var url = row['url'];
                 var type = row['feed_type'];
-                feeds_html += '<tr><td><div class="feed_panel_item"><img class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" src="img/remove_normal.png" width="15px" height="15px" /><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
+                feeds_html += '<tr><td><div class="feed_panel_item" onclick="drawAFeed(\'' + name + '\', \'' + url + '\')"><img class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" src="img/remove_normal.png" width="15px" height="15px" /><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
                 appendFeedsNameList(name);
             }
         }, null);
