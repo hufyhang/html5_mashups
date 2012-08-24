@@ -234,6 +234,18 @@ body {
     padding-left: 10px;
 }
 
+#big_canvas_output {
+    width: 100%;
+    height: 100%;
+}
+
+#big_canvas_canvas {
+    background: rgb(60, 80, 94);
+    width: 99.3%;
+    height: 98%;
+    border: 2px solid #9C9898;
+}
+
 footer {
     float: right;
     position: absolute;

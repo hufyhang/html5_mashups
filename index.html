@@ -6,6 +6,9 @@
     <title></title>
     <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/jquery.xdomainajax.js"></script>
+
+    <script type="text/javascript" charset="utf-8" src="js/kinetic.js"></script>
+
 </head>
 <body cellpadding="0" cellspacing="0" link="white" vlink="white" onload="initialise()">
 <script type="text/javascript" charset="utf-8">
@@ -45,7 +48,7 @@
         <table border="0" cellpadding="0" cellspacing="0"><tr>
                 <td>
                     <div class="head_links_button" onclick="testRest()">element</div>
-                    <div class="head_links_button">element</div>
+                    <div class="head_links_button" onclick="initialiseCanvas()">canvas</div>
                     <div class="head_links_button">element</div>
                 </td>
             </tr></table>
@@ -139,12 +142,17 @@
 
                 </output></div></td>
 
-            <td id="big_canvas"><output id="big_canvas_output">
-                    <!-- big canvas output -->
-
-                </output></td>
+            <td id="big_canvas">
+                <!-- <output id="big_canvas_output"> -->
+                <!-- big canvas output -->
+                <div id="big_canvas_canvas"></div>
+            <!-- </output> -->
+            </td>
             <!-- <td id="right_sidebar" class="master_table_margin"></td> -->
+
+            <td style="width: 1.5%; background: #555555;"></td>
         </tr>
+
     </table>
 
     <!-- footer & copyright information -->
@@ -152,7 +160,7 @@
 
 
     <!-- scripts here -->
-    <script type="text/javascript" charset="utf-8" src="js/main_events.js">
-    </script>
+    <script type="text/javascript" charset="utf-8" src="js/main_events.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/big_canvas_events.js"></script>
 </body>
 </html>
