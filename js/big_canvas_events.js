@@ -1,10 +1,5 @@
 var _big_canvas_stage, _big_canvas_layer;
 
-function initialiseCanvas() {
-    initialiseBigCanvas();
-    drawARect();
-};
- 
 function initialiseBigCanvas() {
     var canvas = document.getElementById('big_canvas_canvas');
     _big_canvas_stage = new Kinetic.Stage({

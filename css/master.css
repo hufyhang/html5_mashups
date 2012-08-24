@@ -206,14 +206,10 @@ body {
 }
 
 #options_field {
-    clear: both;
-    white-space: nowrap;
-    overflow: hidden;
-    float: left;
-    text-overflow: ellipsis;
     padding-left: 10px;
     width: 30%;
     background: #2F2F2F;
+    /* resize: horizontal; */
     transition: all 1s;
     -webkit-transition: all 1s;
     -moz-transition: all 1s;
@@ -221,13 +217,9 @@ body {
     -ms-transition: all 1s;
 }
 
-#options_field:after {
-    content: "...";
-}
-
-#options_field:hover {
-    width: 40%;
-}
+/* #options_field:hover { */
+/*     width: 40%; */
+/* } */
 
 #big_canvas {
     background: #555555;
@@ -311,6 +303,7 @@ input, button, select, textarea {
 }
 
 .input_box {
+    resize: none;
     padding-left: 8px;
     padding-right: 8px;
     width: 90%;
@@ -323,6 +316,12 @@ input, button, select, textarea {
     overflow: auto;
     width: 100%;
     height: 100%;
+}
+
+.scrollable_div_canvas {
+    overflow: auto;
+    height: 100%;
+    width: 100%;
 }
 
 
@@ -369,6 +368,7 @@ input, button, select, textarea {
     padding: 10px;
     width: 80%;
     background: #0083AA;
+    resize: none;
 
     transition: all 0.5s;
     -webkit-transition: all 0.5s;
