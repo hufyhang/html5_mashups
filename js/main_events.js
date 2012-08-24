@@ -100,12 +100,34 @@ function updateFeedsHTML() {
                 var name = row['name'];
                 test_name = name;
                 var type = row['feed_type'];
-                feeds_html += '<tr><td><div class="feed_panel_item"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
+                feeds_html += '<tr><td><div class="feed_panel_item"><img class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" src="img/remove_normal.png" width="15px" height="15px" /><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
 
                 appendFeedsNameList(name);
             }
         }, null);
         feeds_html += '</table>'; 
+    });
+}
+
+function showNotificationInDashboard(msg) {
+    // show message
+    visibleElement('dashboard');
+    visibleElement('dashboard_div');
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onmouseover="updateFeedsHTML()" onclick="showFeedsPanel(_current_container_id);invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>'
+    ;
+}
+
+function removeFeedFromFeedList(name) {
+    removeFeedFromDatabase(name);
+    showNotificationInDashboard('Feed "' + name + '" has been removed.');
+
+//     updateFeedsHTML();
+//     showFeedsPanel(_current_container_id);
+}
+
+function removeFeedFromDatabase(name) {
+    _database.transaction(function(tx) {
+        tx.executeSql('DELETE FROM feeds WHERE name="' + name + '"');
     });
 }
 

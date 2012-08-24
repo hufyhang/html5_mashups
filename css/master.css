@@ -171,8 +171,13 @@ body {
 }
 
 #options_field {
+    clear: both;
+    white-space: nowrap;
+    overflow: hidden;
+    float: left;
+    text-overflow: ellipsis;
     padding-left: 10px;
-    width: 25%;
+    width: 30%;
     background: #2F2F2F;
     transition: all 1s;
     -webkit-transition: all 1s;
@@ -180,8 +185,12 @@ body {
     -o-transition: all 1s;
 }
 
+#options_field:after {
+    content: "...";
+}
+
 #options_field:hover {
-    width: 30%;
+    width: 40%;
 }
 
 #big_canvas {
@@ -260,6 +269,7 @@ input, button, select, textarea {
 }
 
 .scrollable_div {
+    margin-top: 20px;
     overflow: auto;
     width: 100%;
     height: 100%;
@@ -325,5 +335,22 @@ input, button, select, textarea {
     text-transform: uppercase;
     color: black;
     margin-right: 10px;
+}
+
+.feed_delelte_img {
+    color: rgba(255, 255, 255, 0.6);
+    margin-right: 5px;
+
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    -ie-transition: all 0.5;
+}
+
+.feed_delelte_img:hover {
+    cursor: pointer;
+    background: #A6B600;
+    color: rgba(255, 0, 0, 0.8);
 }
 
