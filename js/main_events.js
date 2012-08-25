@@ -40,7 +40,7 @@ function showFeedsPanel(containerId) {
 function showAddFeedForm(containerId) {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    document.getElementById(containerId).innerHTML = '<table class="frame_table" cellpadding="5px"><tr><td><label>Feed URL: </label><br /><input type="TEXT" id="add_feed_form_feed_url" class="input_box"/></td></tr><tr><td><label>Name: </label><br /><input type="TEXT" id="add_feed_form_feed_name" class="input_box" required="required"/></td></tr><tr><td><label>Type: </label><br /><input type="RADIO" id="add_feed_form_feed_type_rest" name="type" style="margin-left: 50px;" value="REST/HTTP" checked="true">REST/HTTP</input><br /><input type="RADIO" id="add_feed_form_feed_type_soap" name="type" style="margin-left: 50px;" value="SOAP">SOAP</input></td></tr><tr><td><div class="div_push_button" onclick="addFeedFromFeedForm(\''+ containerId + '\')">OK</div><div class="div_push_button" onclick="closeAddNewFeed(\'' + containerId + '\')">Cancel</div></td></tr></table>';
+    document.getElementById(containerId).innerHTML = '<table class="frame_table" cellpadding="5px"><tr><td><label>Feed URL: </label><br /><input type="TEXT" id="add_feed_form_feed_url" class="input_box"/></td></tr><tr><td><label>Name: </label><br /><input type="TEXT" id="add_feed_form_feed_name" class="input_box" required="required"/></td></tr><tr><td><label>Type: </label><br /><input type="RADIO" id="add_feed_form_feed_type_rest" name="type" style="margin-left: 50px;" value="REST/HTTP" checked="true"/><label for="add_feed_form_feed_type_rest">REST/HTTP</label><br /><input type="RADIO" id="add_feed_form_feed_type_soap" name="type" style="margin-left: 50px;" value="SOAP" /><label for="add_feed_form_feed_type_soap">SOAP</label></td></tr><tr><td><div class="div_push_button" onclick="addFeedFromFeedForm(\''+ containerId + '\')">OK</div><div class="div_push_button" onclick="closeAddNewFeed(\'' + containerId + '\')">Cancel</div></td></tr></table>';
 }
 
 function addFeedFromFeedForm(containerId) {
@@ -104,7 +104,7 @@ function updateFeedsHTML() {
                 var name = row['name'];
                 var url = row['url'];
                 var type = row['feed_type'];
-                feeds_html += '<tr><td><div class="feed_panel_item" onclick="drawAFeed(\'' + name + '\', \'' + url + '\')"><img class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" src="img/remove_normal.png" width="15px" height="15px" /><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
+                feeds_html += '<tr><td><div class="feed_panel_item" onclick="drawARestFeed(\'' + name + '\', \'' + url + '\')"><img class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" src="img/remove_normal.png" width="15px" height="15px" /><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
                 appendFeedsNameList(name);
             }
         }, null);
@@ -143,3 +143,20 @@ function readyDatabase() {
     );
 }
 
+function propertiesPanelShowRestFeed(name, url, method) {
+    var feed_method_html = '';
+    if(method == 'get' || method == 'GET') {
+        feed_method_html = '<input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_get" checked="true" /><label for="properties_panel_rest_feed_method_get">GET</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_post" /><label for="properties_panel_rest_feed_method_post">POST</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_put"/><label for="properties_panel_rest_feed_method_put">PUT</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_delete"/><label for="properties_panel_rest_feed_method_delete">DELETE</label>';
+    }
+    else if(method == 'post' || method == 'POST') {
+        feed_method_html = '<input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_get" /><label for="properties_panel_rest_feed_method_get">GET</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_post" checked="true" /><label for="properties_panel_rest_feed_method_post">POST</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_put"/><label for="properties_panel_rest_feed_method_put">PUT</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_delete"/><label for="properties_panel_rest_feed_method_delete">DELETE</label>';
+    }
+    else if(method == 'put' || method == 'PUT') {
+        feed_method_html = '<input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_get" /><label for="properties_panel_rest_feed_method_get">GET</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_post" /><label for="properties_panel_rest_feed_method_post">POST</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_put" checked="true"/><label for="properties_panel_rest_feed_method_put">PUT</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_delete"/><label for="properties_panel_rest_feed_method_delete">DELETE</label>';
+    }  
+    else if(method == 'delete' || method == 'DELETE') {
+        feed_method_html = '<input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_get" /><label for="properties_panel_rest_feed_method_get">GET</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_post" /><label for="properties_panel_rest_feed_method_post">POST</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_put" /><label for="properties_panel_rest_feed_method_put">PUT</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_delete" checked="true"/><label for="properties_panel_rest_feed_method_delete">DELETE</label>';
+    }  
+
+    document.getElementById('properties_panel_output').innerHTML = '<table class="properties_panel_table"><tr><td>Name:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + name + '"/></td></tr><tr><td>URL:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + url + '"></td></tr><tr><td><form>Method:<br/><div style="margin-left: 30px;">' + feed_method_html + '</div></form></td></tr><tr><td style="vertical-align: top;"><div class="div_push_button">Apply</div></td></tr></table>';
+}

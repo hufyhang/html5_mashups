@@ -10,7 +10,7 @@
     <script type="text/javascript" charset="utf-8" src="js/kinetic.js"></script>
 
 </head>
-<body cellpadding="0" cellspacing="0" link="white" vlink="white" onload="initialise(); initialiseBigCanvas();">
+<body cellpadding="0" cellspacing="0" link="white" vlink="white" onload="initialise(); initialiseBigCanvas();" onresize="resizeBigCanvas();">    
 <script type="text/javascript" charset="utf-8">
     function parseXML(xml) {
         $(xml).find("Result").each(function() {
@@ -109,7 +109,7 @@
     <table id="master_table" class="frame_table" border="0" cellpadding="0" cellspacing="0">
         <tr>
             <td id="left_sidebar" class="master_table_margin"></td>
-            <td id="options_field"><div class="scrollable_div"><output id="options_field_output">
+            <td id="options_field"><div class="scrollable_div" style="height: 60%;"><output id="options_field_output">
                     <!-- options field output -->
 <table style="width: 100%;">
     <tr><td>                    <input type="TEXT" class="input_box"/></td></tr>
@@ -140,7 +140,12 @@
 <tr><td>                    <div class="div_push_button">Push button</div></td></tr>
 </table>
 
-                </output></div></td>
+                </output></div><div id="properties_panel_div" class="scrollable_div">
+                    <output id="properties_panel_output">
+                    <!--properties panel-->
+<center><img src="img/html5_logo.png" alt="HTML5 logo" style="margin-top: 10%;" width="50%" height="30%"/></center>
+                    </output>
+                </div></td>
 
         <td id="big_canvas">
                 <!-- <output id="big_canvas_output"> -->

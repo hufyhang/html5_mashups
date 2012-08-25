@@ -1,3 +1,4 @@
+var _LOCAL_STORAGE = 'html5_mashup_kineticjs_stage';
 var _big_canvas_stage, _big_canvas_layer;
 var _feeds_nodes = [];
 
@@ -11,10 +12,29 @@ function initialiseBigCanvas() {
 
     _big_canvas_layer = new Kinetic.Layer();
     _big_canvas_stage.add(_big_canvas_layer);
-
 }
 
-function drawAFeed(name, url) {
+function resizeBigCanvas() {
+    // var canvas = document.getElementById('big_canvas_canvas');
+    // var width = canvas.offsetWidth;
+    // var height = canvas.offsetHeight;
+    // _big_canvas_stage.setSize(width, height);
+    // _big_canvas_stage.draw();
+}
+
+function updateLocalStogate() {
+    if(typeof(Storage) !== 'undefined') {
+        localStorage[_LOCAL_STORAGE] = _big_canvas_stage.toJSON();
+    }
+}
+
+function loadLocalStorage() {
+    if(typeof(Storage) !== 'undefined') {
+        _big_canvas_stage.load(localStorage[_LOCAL_STORAGE]);
+    }
+}
+
+function drawARestFeed(name, url) {
     var feed = new Kinetic.Text({
             draggable: true,
             x: 0,
@@ -37,6 +57,19 @@ function drawAFeed(name, url) {
                 opacity: 0.2
             },
             cornerRadius: 5
+    });
+
+    feed.on('mouseover', function() {
+        this.setStroke('red');
+        _big_canvas_layer.draw();
+    });
+    feed.on('mouseout', function() {
+        this.setStroke('#ddd');
+        _big_canvas_layer.draw();
+    });
+
+    feed.on('click', function() {
+        propertiesPanelShowRestFeed(name, url, 'get');
     });
 
     feed.on("dragstart", function() {
