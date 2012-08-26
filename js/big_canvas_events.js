@@ -75,9 +75,12 @@ function Connector(parent_node) {
         var mouseY = _big_canvas_stage.getMousePosition().y;
         var result = false;
         for(var index = 0; index != _feeds_nodes.length; ++index) {
-            var node = _feeds_nodes[index];
-            if(ifContains(mouseX, mouseY, node)) {
-                connectingLine.setPoints([org_x, org_y, node.getX() + node.getBoxWidth()/2, node.getY() + node.getBoxHeight()/2]);
+            var nodeObj = _feeds_nodes[index];
+            if(ifContains(mouseX, mouseY, nodeObj.getNode())) {
+                connectingLine.setPoints([org_x, org_y, 
+                                    nodeObj.getNode().getX() + nodeObj.getNode().getBoxWidth()/2, 
+                                    nodeObj.getNode().getY() + nodeObj.getNode().getBoxHeight()/2]);
+                nodeObj.setBeConnectedLine(connectingLine);
                 result = true;
                 break;
             }
@@ -214,7 +217,6 @@ function drawStartAndEndNodes() {
     //     moveConnector(endConnector, end);
     // });
 
-
     _big_canvas_layer.add(start);
     _big_canvas_layer.add(end);
 
@@ -237,8 +239,21 @@ function loadLocalStorage() {
 }
 
 function drawARestFeed(name, url) {
-    var org_connecting_line_points;
+    var org_connecting_line_points, beConnectedLine = 'undefined';
     var feedConnector;
+
+    this.getBeConnectedLine = function() {
+        return beConnectedLine;
+    };
+
+    this.setBeConnectedLine = function(line) {
+        beConnectedLine = line;
+    };
+
+    this.getNode = function() {
+        return feed;
+    }
+
     var feed = new Kinetic.Text({
             draggable: true,
             x: 0,
@@ -294,10 +309,15 @@ function drawARestFeed(name, url) {
                         feedConnector.getConnector().getY(), org_point.x, org_point.y]);
         }
 
+        if(beConnectedLine !== 'undefined') {
+            beConnectedLine.setPoints(beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y,
+                                        this.getX() + this.getBoxWidth()/2, this.getY() + this.getBoxHeight()/2); 
+        }
+
         _big_canvas_layer.draw();
     });
 
-    _feeds_nodes.push(feed);
+    _feeds_nodes.push(this);
 
     _big_canvas_layer.add(feed);
     _big_canvas_layer.add(feedConnector.getConnector());
