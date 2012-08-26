@@ -13,11 +13,13 @@
 <body cellpadding="0" cellspacing="0" link="white" vlink="white" onload="initialise(); initialiseBigCanvas();" onresize="resizeBigCanvas();">    
 <script type="text/javascript" charset="utf-8">
     function parseXML(xml) {
-        $(xml).find("Result").each(function() {
-            var msg = $(this).find("latitude").text() + ":" + $(this).find("longitude").text();
-            alert(msg);
-        }
-        );
+        var data = $(xml).find("Result");
+        alert($(data).find("latitude").text());
+        // $(xml).find("Result").each(function() {
+        //     var msg = $(this).find("latitude").text() + ":" + $(this).find("longitude").text();
+        //     alert(msg);
+        // }
+        // );
     }
 
     function testRest() {

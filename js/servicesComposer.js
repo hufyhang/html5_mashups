@@ -72,3 +72,14 @@ function updateRestMethodById(id, method) {
     }
 }
 
+// TODO: going to be worked out
+function createRestCode(service) {
+        var req = new XMLHttpRequest();
+        var url = service.getRestUrl();
+        var method = service.getRestMethod().toUpperCase();
+        req.onload = function() {
+        }
+        req.open(method, url, true);
+        req.send(null);
+}
+
