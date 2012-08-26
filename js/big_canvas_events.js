@@ -30,11 +30,16 @@ function moveConnector(connector, parent_node) {
     _big_canvas_stage.draw();
 }
 
-function createConnector(parent_node) {
-    var connectingLine;
+function Connector(parent_node) {
     var org_x, org_y;
     var node_x = parent_node.getX() + parent_node.getWidth() - parent_node.getWidth()/2;
     var node_y = parent_node.getY() + parent_node.getBoxHeight(); 
+    var connectingLine;
+
+    this.getConnectingLine = function() {
+        return connectingLine;
+    };
+
     var connector = new Kinetic.Circle({
             x: node_x,
             y: node_y,
@@ -66,6 +71,20 @@ function createConnector(parent_node) {
         this.moveToTop();
     });
     connector.on("dragend", function() {
+        var mouseX = _big_canvas_stage.getMousePosition().x;
+        var mouseY = _big_canvas_stage.getMousePosition().y;
+        var result = false;
+        for(var index = 0; index != _feeds_nodes.length; ++index) {
+            var node = _feeds_nodes[index];
+            if(ifContains(mouseX, mouseY, node)) {
+                connectingLine.setPoints([org_x, org_y, node.getX() + node.getBoxWidth()/2, node.getY() + node.getBoxHeight()/2]);
+                result = true;
+                break;
+            }
+        }
+        if(result == false) {
+            connectingLine.hide();
+        }
         this.setPosition(org_x, org_y);
         this.moveToTop();
     });
@@ -73,15 +92,30 @@ function createConnector(parent_node) {
     // construct connecting line
     connectingLine = new Kinetic.Line({
         points: [node_x, node_y],
-        stroke: ('#00A8E6'),
+        stroke: '#00A8E6',
         strokeWidth: 6,
         lineCap: 'round',
         lineJoin: 'round'
     });
+    connectingLine.on("mouseover", function() {
+        this.setStroke('red');
+        _big_canvas_layer.draw();
+    });
+    connectingLine.on("mouseout", function() {
+        this.setStroke('#00A8E6');
+        _big_canvas_layer.draw();
+    });
 
     _big_canvas_layer.add(connectingLine);
-    return connector;
+
+    this.getConnector = function() {
+        return connector;
+    }
 }
+
+// function getConnectingLine(connector) {
+//     return connector.connectingLine;
+// }
 
 function drawStartAndEndNodes() {
     var start = new Kinetic.Text({
@@ -107,7 +141,8 @@ function drawStartAndEndNodes() {
             },
             cornerRadius: 15
     });
-    var startConnector = createConnector(start);
+    var startConnector = new Connector(start);
+    var org_connecting_line_points;
 
     start.on('mouseover', function() {
         this.setStroke('red');
@@ -119,13 +154,20 @@ function drawStartAndEndNodes() {
     });
 
     start.on("dragstart", function() {
+        org_connecting_line_points = startConnector.getConnectingLine().getPoints();
         start.moveToTop();
-        startConnector.moveToTop();
+        startConnector.getConnector().moveToTop();
         _big_canvas_layer.draw();
     });
 
     start.on("dragmove", function(){
-        moveConnector(startConnector, start);
+        moveConnector(startConnector.getConnector(), start);
+        if(org_connecting_line_points.length > 1) {
+            var org_point = org_connecting_line_points[1];
+            startConnector.getConnectingLine().setPoints([startConnector.getConnector().getX(), 
+                        startConnector.getConnector().getY(), org_point.x, org_point.y]);
+        }
+        _big_canvas_layer.draw();
     });
 
     var end = new Kinetic.Text({
@@ -152,7 +194,7 @@ function drawStartAndEndNodes() {
             cornerRadius: 15
     });
 
-    // var endConnector = createConnector(end);
+    // var endConnector = new Connector(end);
 
     end.on('mouseover', function() {
         this.setStroke('red');
@@ -176,7 +218,7 @@ function drawStartAndEndNodes() {
     _big_canvas_layer.add(start);
     _big_canvas_layer.add(end);
 
-    _big_canvas_layer.add(startConnector);
+    _big_canvas_layer.add(startConnector.getConnector());
     // _big_canvas_layer.add(endConnector);
 
     _big_canvas_stage.draw();
@@ -195,6 +237,8 @@ function loadLocalStorage() {
 }
 
 function drawARestFeed(name, url) {
+    var org_connecting_line_points;
+    var feedConnector;
     var feed = new Kinetic.Text({
             draggable: true,
             x: 0,
@@ -219,7 +263,7 @@ function drawARestFeed(name, url) {
             cornerRadius: 5
     });
 
-    var feedConnector = createConnector(feed);
+    feedConnector = new Connector(feed);
 
     feed.on('mouseover', function() {
         this.setStroke('red');
@@ -235,19 +279,28 @@ function drawARestFeed(name, url) {
     });
 
     feed.on("dragstart", function() {
+        org_connecting_line_points = feedConnector.getConnectingLine().getPoints();
         feed.moveToTop();
-        feedConnector.moveToTop();
+        feedConnector.getConnector().moveToTop();
         _big_canvas_layer.draw();
     });
 
     feed.on("dragmove", function() {
-        moveConnector(feedConnector, feed);
+        moveConnector(feedConnector.getConnector(), feed);
+
+        if(org_connecting_line_points.length > 1) {
+            var org_point = org_connecting_line_points[1];
+            feedConnector.getConnectingLine().setPoints([feedConnector.getConnector().getX(), 
+                        feedConnector.getConnector().getY(), org_point.x, org_point.y]);
+        }
+
+        _big_canvas_layer.draw();
     });
 
     _feeds_nodes.push(feed);
 
     _big_canvas_layer.add(feed);
-    _big_canvas_layer.add(feedConnector);
+    _big_canvas_layer.add(feedConnector.getConnector());
     _big_canvas_stage.draw();
 } 
 
