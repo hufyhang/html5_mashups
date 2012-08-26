@@ -143,7 +143,12 @@ function readyDatabase() {
     );
 }
 
-function propertiesPanelShowRestFeed(name, url, method) {
+function propertiesPanelShowRestFeed(service) {
+    var name = service.getName();
+    var url = service.getRestUrl();
+    var method = service.getRestMethod();
+    var id = service.getId();
+
     var feed_method_html = '';
     if(method == 'get' || method == 'GET') {
         feed_method_html = '<input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_get" checked="true" /><label for="properties_panel_rest_feed_method_get">GET</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_post" /><label for="properties_panel_rest_feed_method_post">POST</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_put"/><label for="properties_panel_rest_feed_method_put">PUT</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_delete"/><label for="properties_panel_rest_feed_method_delete">DELETE</label>';
@@ -158,5 +163,22 @@ function propertiesPanelShowRestFeed(name, url, method) {
         feed_method_html = '<input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_get" /><label for="properties_panel_rest_feed_method_get">GET</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_post" /><label for="properties_panel_rest_feed_method_post">POST</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_put" /><label for="properties_panel_rest_feed_method_put">PUT</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_delete" checked="true"/><label for="properties_panel_rest_feed_method_delete">DELETE</label>';
     }  
 
-    document.getElementById('properties_panel_output').innerHTML = '<table class="properties_panel_table"><tr><td>Name:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + name + '"/></td></tr><tr><td>URL:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + url + '"></td></tr><tr><td><form>Method:<br/><div style="margin-left: 30px;">' + feed_method_html + '</div></form></td></tr><tr><td style="vertical-align: top;"><div class="div_push_button">Apply</div></td></tr></table>';
+    document.getElementById('properties_panel_output').innerHTML = '<table class="properties_panel_table"><tr><td>Name:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + name + '"/></td></tr><tr><td>URL:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + url + '"></td></tr><tr><td><form>Method:<br/><div style="margin-left: 30px;">' + feed_method_html + '</div></form></td></tr><tr><td style="vertical-align: top;"><div class="div_push_button" onclick="applyRestMethodUpdate(' + id + ')">Apply</div></td></tr></table>';
+}
+
+function applyRestMethodUpdate(id) {
+    var method;
+    if(document.getElementById('properties_panel_rest_feed_method_get').checked) {
+        method = REST_METHOD_GET;
+    }
+    else if(document.getElementById('properties_panel_rest_feed_method_post').checked) {
+        method = REST_METHOD_POST;
+    }
+    else if(document.getElementById('properties_panel_rest_feed_method_put').checked) {
+        method = REST_METHOD_PUT;
+    }
+    else if(document.getElementById('properties_panel_rest_feed_method_delete').checked) {
+        method = REST_METHOD_DELETE;
+    }
+    updateRestMethodById(id, method);
 }

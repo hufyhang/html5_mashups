@@ -239,8 +239,18 @@ function loadLocalStorage() {
 }
 
 function drawARestFeed(name, url) {
+    var feed = new RestFeed(name, url);
+    _feeds_nodes.push(feed);
+}
+
+function RestFeed(name, url) {
     var org_connecting_line_points, beConnectedLine = 'undefined';
     var feedConnector;
+
+    var service = new Service(name, TYPE_REST);
+    service.setRestUrl(url);
+    service.setRestMethod(REST_METHOD_GET);
+    // appendServivesList(service);
 
     this.getBeConnectedLine = function() {
         return beConnectedLine;
@@ -290,7 +300,7 @@ function drawARestFeed(name, url) {
     });
 
     feed.on('click', function() {
-        propertiesPanelShowRestFeed(name, url, 'get');
+        propertiesPanelShowRestFeed(service);
     });
 
     feed.on("dragstart", function() {
@@ -317,7 +327,6 @@ function drawARestFeed(name, url) {
         _big_canvas_layer.draw();
     });
 
-    _feeds_nodes.push(this);
 
     _big_canvas_layer.add(feed);
     _big_canvas_layer.add(feedConnector.getConnector());
