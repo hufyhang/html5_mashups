@@ -1,5 +1,7 @@
 var _services_list = [];
 var id_counter = 0;
+var NAME_SYS_START = '_sys_start_';
+var TYPE_SYS_START = '_sys_start_';
 var TYPE_REST = 'rest';
 var TYPE_SOAP = 'soap';
 
@@ -10,6 +12,19 @@ var REST_METHOD_DELETE = 'delete';
 
 function Service(name, type) {
     var id = id_counter++, name, type, rest_url, rest_method;
+    var nextService = 'undefined';
+
+    this.getNextService = function() {
+        return nextService;
+    };
+
+    this.setNextService = function(service) {
+        nextService = service;
+    };
+
+    this.clearNextService = function() {
+        nextService = 'undefined';
+    };
 
     this.getId = function() {
         return id;
