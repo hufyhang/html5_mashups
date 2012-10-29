@@ -1,10 +1,18 @@
 {
+    "app" : {
+        "launch" : {
+            "web_url" : "http://feifeihang.github.com/project/index.html"
+        },
+        "urls" : ["http://feifeihang.github.com/project/index.html"]
+    },
     "name" : "HTML5 Mashup Platform",
     "version" : "1.0",
     "description" : "HTML5 Mashup Platform",
-    "browser_action" : {
-            "default_icon" : "icon.png"
-    },
-    "background_page" : "bg.html",
-    "permissions" : ["tabs"]
+     "permissions": [
+        "http://*/",
+        "https://*/"
+      ],
+    "icons" : {
+        "128" : "big_icon.png"
+    }
 }
