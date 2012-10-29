@@ -2,6 +2,9 @@ var _LOCAL_STORAGE = 'html5_mashup_kineticjs_stage';
 var _big_canvas_stage, _big_canvas_layer;
 var _feeds_nodes = [];
 
+var _big_counter = 0;
+var _big_buffer = '';
+
 function initialiseBigCanvas() {
     var canvas = document.getElementById('big_canvas_canvas');
     _big_canvas_stage = new Kinetic.Stage({
@@ -17,12 +20,25 @@ function initialiseBigCanvas() {
 }
 
 function testIterate() {
+    // reset function counter
+    _big_counter = 0;
+    // initiate _big_buffer
+    _big_buffer = '\n<script>\n' +
+                  'var __ressult_buffer__ = \'\'\n';
+
     iterateFeedsFrom(_feeds_nodes[0]);
+
+    // finalise _big_buffer
+    _big_buffer += '\n</script>\n';
 }
 
 function iterateFeedsFrom(feed) {
     var service = feed.getService();
     alert('CHECK: ' + service.getName());
+    if(service.getType == TYPE_REST) {
+        _big_buffer += 'performRestService(' + service.getRestUrl() + ', \'\', ' + service.getRestMethod() + ', __ressult_buffer__);' '\n';
+    }
+
     var next = feed.getNextFeed();
     if(next !== 'undefined') {
         iterateFeedsFrom(next);

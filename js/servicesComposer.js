@@ -87,6 +87,18 @@ function updateRestMethodById(id, method) {
     }
 }
 
+function performRestService(uri, data, method, resultBuffer) {
+    var url = uri + data;
+    $.ajax({
+        url: url,
+        type: method,
+        async: false,
+        success: function(result) {
+            resultBuffer = result;
+        }
+    });
+}
+
 // TODO: going to be worked out
 function createRestCode(service) {
         var req = new XMLHttpRequest();

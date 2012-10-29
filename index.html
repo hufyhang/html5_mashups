@@ -2,14 +2,15 @@
 <html>
 <head>
     <meta charset="utf-8" />
-        <link rel="stylesheet" href="css/master.css" />
-    </style>
-    <title></title>
+    <!-- <link rel="stylesheet" href="css/reset.css" /> -->
+    <link rel="stylesheet" href="css/master.css" />
+    <!-- <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Shadows+Into+Light" /> -->
+    <title>HyperMash - The Service Composition Platform for Us</title>
     <script src="js/jquery.js"></script>
-    <script src="js/jquery.xdomainajax.js"></script>
+    <!-- <script src="js/jquery.xdomainajax.js"></script> -->
 
     <script src="js/kinetic.js"></script>
-
+    <script id="ajax_cross_domain_script" src="http://www.ajax-cross-domain.com/cgi-bin/ACD/ACD.js?"></script>
 </head>
 <body cellpadding="0" cellspacing="0" link="white" vlink="white" onload="initialise(); initialiseBigCanvas();">    
 <script>
@@ -23,25 +24,82 @@
         // );
     }
 
+    function testWebPy() {
+        // var url = 'https://www.googleapis.com/books/v1/volumes?key=AIzaSyDY-vLXhwOduPlgHD2tqbtmBVboxsOns6g&q=HTML5%20for%20Web%20Designer';
+        // var url = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants%20LE2%207GF&sensor=true&key=AIzaSyDY-vLXhwOduPlgHD2tqbtmBVboxsOns6g';
+        var url = 'http://127.0.0.1:8080/Feifei Hang';
+
+
+        // $.put(url, function(data) {
+        //     data = (eval('(' + data + ')'));
+        //             alert(data.message);
+            // data = (eval('(' + data.responseText + ')'));
+                // for(var item in data.results) {
+                //     alert(item['name']);
+                //}
+        // });
+
+        var result = '';
+        $.ajax({
+                url: url,
+                type: 'DELETE',
+                async: false,
+                success: function(data) {
+                    data = (eval('(' + data + ')'));
+                    result = data.message;
+                    // alert(result);
+                }
+        });
+
+        alert('CHECK: ' + result);
+
+        // var req = new XMLHttpRequest();
+        // req.onload = function() {
+        //     var data = (eval('(' + req.responseText + ')'));
+        //     for (var key in data) {
+        //         alert(key);
+        //     }
+        // }
+        // req.open('GET', url, true);
+        // req.send();
+
+        // var iframeforAjax = document.querySelector('#iframeforAjax').contentWindow;
+        // iframeforAjax.postMessage(url, '*');
+
+//         $.ajax({
+//                 url: url,
+//                 type: 'GET',
+//                 dataType: 'json',
+//                 success: function(data) {
+//                     for (var key in data) {
+//                         alert(key);
+//                     }
+//                 }
+//         });
+    }
+
     function testRest() {
-        var req = new XMLHttpRequest();
         var url = 'http://where.yahooapis.com/geocode?q=Grafton+street+Manchester+UK';
+
+        var req = new XMLHttpRequest();
         req.onload = function() {
             parseXML(req.responseText);
         }
         req.open("GET", url, true);
         req.send(null);
 
-
-        // $.ajax({
-        //         url: 'http://where.yahooapis.com/geocode?q=Grafton+street+Manchester+UK',
-        //         type: 'GET',
-        //         contentType: 'application/xml',
-        //         dataType: 'xml'
-        //         success: function(res) {
-        //             document.getElementById('big_canvas_output').innerHTML = "<textarea>" + res.responseText + "</textarea>";
-        //         }
+        // $.getJSON(url, function(data) {
+        //     alert(data.responseText);
         // });
+
+        $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    alert(res.responseText);
+                }
+        });
     }
 </script>
 
@@ -51,7 +109,7 @@
                 <td>
                     <div class="head_links_button" onclick="testRest()">element</div>
                     <div class="head_links_button" onclick="testIterate()">iterate</div>
-                    <div class="head_links_button">element</div>
+                    <div class="head_links_button" onclick="testWebPy()">element</div>
                 </td>
             </tr></table>
     </div>
@@ -111,7 +169,7 @@
     <table id="master_table" class="frame_table" border="0" cellpadding="0" cellspacing="0">
         <tr>
             <td id="left_sidebar" class="master_table_margin"></td>
-            <td id="options_field"><div class="scrollable_div" style="height: 60%;"><output id="options_field_output">
+            <td id="options_field"><div id="options_field_scrollable_div" class="scrollable_div" ><output id="options_field_output">
                     <!-- options field output -->
 <table style="width: 100%;">
     <tr><td>                    <input type="TEXT" class="input_box"/></td></tr>
@@ -145,7 +203,12 @@
                 </output></div><div id="properties_panel_div" class="scrollable_div">
                     <output id="properties_panel_output">
                     <!--properties panel-->
-<center><img src="img/html5_logo.png" alt="HTML5 logo" style="margin-top: 10%;" width="50%" height="30%"/></center>
+<center>
+<!-- <a href="http://www.w3.org/html/logo/"> -->
+<!-- <img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-graphics-performance-storage.png" width="229" height="64" alt="HTML5 Powered with CSS3 / Styling, Graphics, 3D &amp; Effects, Performance &amp; Integration, and Offline &amp; Storage" title="HTML5 Powered with CSS3 / Styling, Graphics, 3D &amp; Effects, Performance &amp; Integration, and Offline &amp; Storage"> -->
+<!-- </a> -->
+    <img src="img/html5_logo.png" alt="HTML5 logo" style="margin-top: 10%;" width="50%" height="30%"/>
+</center>
                     </output>
                 </div></td>
 

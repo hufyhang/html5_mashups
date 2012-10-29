@@ -1,9 +1,13 @@
+::selection { background: rgb(239, 72, 50); color: #ffffff; } /* Safari 3.1+, Opera 9.5+, Chrome 2+ */
+::-moz-selection { background: rgb(239, 72, 50); color: #ffffff; } /* Mozilla Firefox */
+
 html {
     height: 100%;
 }
 
 body {
     background: black;
+    /* font-family: 'Shadows Into Light', cursive; */
     font-family: sans-serif;
     color: white;
     margin: 0;
@@ -211,6 +215,14 @@ body {
     -ms-transform: rotate(-90deg);
 }
 
+#options_field_output {
+    height: 100%;
+}
+
+#options_field_scrollable_div {
+    height: 60%;
+}
+
 #options_field {
     vertical-align: top;
     padding-left: 10px;
@@ -262,7 +274,7 @@ footer {
     text-align: center;
     vertical-align: middle;
     border: 1px solid black;
-    border-radius: 5px;
+    /* border-radius: 3px; */
     height: 28px;
     width: 180px;
     transition: all 0.5s;
@@ -283,7 +295,7 @@ footer {
     text-align: center;
     vertical-align: middle;
     border: 1px solid black;
-    border-radius: 5px;
+    /* border-radius: 3px; */
     height: 28px;
     min-width: 100px;
     transition: all 0.5s;
