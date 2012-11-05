@@ -37,6 +37,17 @@ function showFeedsPanel(containerId) {
     '</tr></table><hr class="seperator_hr"/>' + feeds_html;
 }
 
+function showExecuteInputForm() {
+    visibleElement('serviceBoard');
+    visibleElement('serviceBoard_div');
+    $('#serviceBoard_output').html('<form id="execute_form"><table class="frame_table" cellpadding="5px"><tr><td><label>Data set:</label><br/><input type="TEXT" id="execute_data_input" class="input_box" placeholder="Parameters..." form="execute_form"></td></tr><tr><td><div class="div_push_button" onclick="var executeData=$(\'#execute_data_input\').val(); startIterate(executeData);">Execute</div><div class="div_push_button" onclick="closeServiceBoard()">Cancel</div></td></tr></table></form>');
+}
+
+function closeServiceBoard() {
+    invisibleElement('serviceBoard');
+    invisibleElement('serviceBoard_div');
+}
+
 function showAddFeedForm(containerId) {
     visibleElement('dashboard');
     visibleElement('dashboard_div');

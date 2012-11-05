@@ -13,6 +13,7 @@
     <script id="ajax_cross_domain_script" src="http://www.ajax-cross-domain.com/cgi-bin/ACD/ACD.js?"></script>
 </head>
 <body cellpadding="0" cellspacing="0" link="white" vlink="white" onload="initialise(); initialiseBigCanvas();">    
+<output id="temp_script_output"></output>
 <script>
     function parseXML(xml) {
         var data = $(xml).find("Result");
@@ -27,7 +28,8 @@
     function testWebPy() {
         // var url = 'https://www.googleapis.com/books/v1/volumes?key=AIzaSyDY-vLXhwOduPlgHD2tqbtmBVboxsOns6g&q=HTML5%20for%20Web%20Designer';
         // var url = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants%20LE2%207GF&sensor=true&key=AIzaSyDY-vLXhwOduPlgHD2tqbtmBVboxsOns6g';
-        var url = 'http://127.0.0.1:8080/Feifei Hang';
+        // var url = 'http://127.0.0.1:8080/Feifei Hang';
+        var url = 'http://maps.googleapis.com/maps/api/staticmap?center=M139NT&zoom=15&size=600x300&maptype=roadmap&sensor=true';
 
 
         // $.put(url, function(data) {
@@ -42,16 +44,19 @@
         var result = '';
         $.ajax({
                 url: url,
-                type: 'DELETE',
+                type: 'GET',
                 async: false,
                 success: function(data) {
-                    data = (eval('(' + data + ')'));
-                    result = data.message;
+                    // data = (eval('(' + data + ')'));
+                    result = data;
                     // alert(result);
                 }
         });
 
-        alert('CHECK: ' + result);
+        visibleElement('serviceBoard');
+        visibleElement('serviceBoard_div');
+        $('#serviceBoard_output').html(result);
+        // alert('CHECK: ' + result);
 
         // var req = new XMLHttpRequest();
         // req.onload = function() {
@@ -102,13 +107,12 @@
         });
     }
 </script>
-
     <!-- head links -->
     <div id="head_links">
         <table border="0" cellpadding="0" cellspacing="0"><tr>
                 <td>
                     <div class="head_links_button" onclick="testRest()">element</div>
-                    <div class="head_links_button" onclick="testIterate()">iterate</div>
+                    <div class="head_links_button" onclick="startIterate('')">iterate</div>
                     <div class="head_links_button" onclick="testWebPy()">element</div>
                 </td>
             </tr></table>
@@ -128,6 +132,21 @@
                     <div class="top_bar_button">element</div>
             </td></tr>
         </table>
+    </div>
+
+    <!-- service board -->
+    <div id="serviceBoard" class="serviceBoard">
+        <table class="frame_table" border="0">
+            <tr><td style="width: 25%;"></td>
+            <td>
+                <table class="frame_table" border="0">
+                    <tr style="height: 20%;"></tr>
+                    <tr><td style="vertical-align: top;"><div id="serviceBoard_div" class="serviceBoard_div"><output id="serviceBoard_output"></output></div></td></tr>
+                    <tr style="height: 20%;"></tr>
+                </table>
+            </td>
+            <td style="width: 25%;"></td></tr>
+        </table>        
     </div>
 
     <!-- dashboard -->
@@ -155,7 +174,7 @@
 
     <!-- bottom sidebar -->
     <table class="bottom_sidebar_frame" border="0" cellpadding="2px;" onmouseover="visibleElement('dashboard')" onmouseout="invisibleElement('dashboard')">
-        <tr><td><div class="sidebar_button">element</div></td>
+        <tr><td><div class="sidebar_button" onclick="showExecuteInputForm()">Execute</div></td>
         <tr><td><div class="sidebar_button">element</div></td>
         </tr>
     </table>

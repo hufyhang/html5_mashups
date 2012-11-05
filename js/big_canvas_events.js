@@ -19,29 +19,31 @@ function initialiseBigCanvas() {
     drawStartNode();
 }
 
-function testIterate() {
+function startIterate(dataset) {
     // reset function counter
     _big_counter = 0;
     // initiate _big_buffer
     _big_buffer = '\n<script>\n' +
-                  'var __ressult_buffer__ = \'\'\n';
+                'var __ressult_buffer__ = \'' + dataset + '\';\n';
 
     iterateFeedsFrom(_feeds_nodes[0]);
 
     // finalise _big_buffer
     _big_buffer += '\n</script>\n';
+
+    alert(_big_buffer);
 }
 
 function iterateFeedsFrom(feed) {
     var service = feed.getService();
-    alert('CHECK: ' + service.getName());
-    if(service.getType == TYPE_REST) {
-        _big_buffer += 'performRestService(' + service.getRestUrl() + ', \'\', ' + service.getRestMethod() + ', __ressult_buffer__);' '\n';
+    alert('CHECK: ' + service.getName() + '==' + service.getType());
+    if(service.getType() == TYPE_REST) {
+        _big_buffer += 'performRestService(' + service.getRestUrl() + ', __ressult_buffer__ , \'' + service.getRestMethod() + '\', __ressult_buffer__);'+ '\n\n';
     }
 
     var next = feed.getNextFeed();
     if(next !== 'undefined') {
-        iterateFeedsFrom(next);
+        iterateFeedsFrom(next, '__ressult_buffer__');
     }
 }
 
