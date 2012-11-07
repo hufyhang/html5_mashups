@@ -87,16 +87,21 @@ function updateRestMethodById(id, method) {
     }
 }
 
-function performRestService(uri, data, method, resultBuffer) {
-    var url = uri + data;
-    $.ajax({
-        url: url,
-        type: method,
-        async: false,
-        success: function(result) {
-            resultBuffer = result;
-        }
-    });
+function performRestService(uri, resultBuffer, method) {
+    var url = uri + resultBuffer;
+    return $.ajax({
+            url: uri,
+            type: method,
+            async: false}).responseText;
+    // $.ajax({
+    //     url: url,
+    //     type: method,
+    //     async: false,
+    //     success: function(result) {
+    //         resultBuffer = result.toString();
+    //         alert('CHECK: ' + resultBuffer);
+    //     }
+    // });
 }
 
 // TODO: going to be worked out

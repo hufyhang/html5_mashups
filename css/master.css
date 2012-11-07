@@ -120,6 +120,10 @@ body {
     background: rgba(5, 5, 5, 0.8);
 }
 
+.serviceBoard_output {
+    color: white;
+}
+
 .dashboard_div, .serviceBoard_div {
     /* display: table-cell; */
     box-shadow: 5px 5px 2px grey;

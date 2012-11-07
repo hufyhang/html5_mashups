@@ -23,27 +23,41 @@ function startIterate(dataset) {
     // reset function counter
     _big_counter = 0;
     // initiate _big_buffer
-    _big_buffer = '\n<script>\n' +
-                'var __ressult_buffer__ = \'' + dataset + '\';\n';
+    _big_buffer = '\n<script>\nfunction executeMashup() {\n' +
+                'var __result_buffer__ = \'' + dataset + '\';\n';
 
     iterateFeedsFrom(_feeds_nodes[0]);
 
     // finalise _big_buffer
-    _big_buffer += '\n</script>\n';
+    _big_buffer += '\n}\n</script>\n';
 
-    alert(_big_buffer);
+    $("#temp_script_output").html(_big_buffer);
+
+    // execute the mashup
+    executeMashup();
 }
 
 function iterateFeedsFrom(feed) {
     var service = feed.getService();
-    alert('CHECK: ' + service.getName() + '==' + service.getType());
-    if(service.getType() == TYPE_REST) {
-        _big_buffer += 'performRestService(' + service.getRestUrl() + ', __ressult_buffer__ , \'' + service.getRestMethod() + '\', __ressult_buffer__);'+ '\n\n';
+    var next = feed.getNextFeed();
+    if(service.getType() != TYPE_SYS_START) {
+        if(service.getType() == TYPE_REST && next != 'undefined') {
+            _big_buffer += '__result_buffer__ = performRestService(\'' + service.getRestUrl() + '\' + __result_buffer__, __result_buffer__ , \'' + service.getRestMethod() + '\');' + '\n\n';
+            _big_buffer += 'if(__result_buffer__ === undefined) {\n' +
+                'alert(\'Oops! Service \"' + service.getName() + '\" is down. Please try later or use an alternative service feed.\');'+ 
+                'return;' + 
+                '}' + '\n\n';
+        }
     }
 
-    var next = feed.getNextFeed();
     if(next !== 'undefined') {
-        iterateFeedsFrom(next, '__ressult_buffer__');
+        iterateFeedsFrom(next);
+    }
+    else {
+        if(service.getType() == TYPE_REST) {
+            _big_buffer += 'var url = \'' + service.getRestUrl() + '\' + __result_buffer__;' + '\n\n';
+            _big_buffer += '$(\"#execute_output\").html(\'<iframe frameborder="0" width="100%" height="400px" src=\"\' + url + \'\" seamless=\"seamless\"><p>Surprisingly, your browser does not support iframes.</p></iframe>\');' + '\n\n';
+        }
     }
 }
 
