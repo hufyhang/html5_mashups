@@ -124,6 +124,10 @@ body {
     color: white;
 }
 
+#execute_data_input {
+    width: 98%;
+}
+
 .dashboard_div, .serviceBoard_div {
     /* display: table-cell; */
     box-shadow: 5px 5px 2px grey;
