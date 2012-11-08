@@ -85,10 +85,89 @@ function iterateFeedsFrom(feed) {
     }
 }
 
+function moveRemoveDot(removeDot, parent_node) {
+    removeDot.setPosition(parent_node.getX(), parent_node.getY());
+    _big_canvas_stage.draw();
+}
+
 function moveConnector(connector, parent_node) {
     connector.setPosition(parent_node.getX() + parent_node.getWidth() - parent_node.getWidth()/2, 
                             parent_node.getY() + parent_node.getBoxHeight());
     _big_canvas_stage.draw();
+}
+
+function RemoveDot(parent_feed) {
+    var parent_node = parent_feed.getNode();
+    var org_x, org_y;
+    var node_x = parent_node.getX() - 5;
+    var node_y = parent_node.getY() - 5; 
+    var parentFeed = parent_feed;
+
+    var removeDot = new Kinetic.Text({
+        x: node_x,
+        y: node_y,
+        radius: 8,
+        width: 55,
+        height: 17,
+        padding: 2,
+        fill: '#883737',
+        stroke: 'black',
+        strokeWidth: 1,
+        text: 'REMOVE',
+        fontSize: 10,
+        align: 'center',
+        valign: 'center',
+        // fontFamily: 'Calibri',
+        // fontStyle: 'bold',
+        textFill: 'white',
+        draggable: false
+    });
+    removeDot.on('mouseover', function() {
+        removeDot.setFontStyle('italic');
+        removeDot.setFill('red');
+        _big_canvas_layer.draw();
+    });
+    removeDot.on('mouseout', function() {
+        removeDot.setFontStyle('normal');
+        removeDot.setFill('#883737');
+        _big_canvas_layer.draw();
+    });
+    removeDot.on('click', function() {
+        removeFeedFromCanvas(parent_feed);
+    });
+
+    this.getRemoveDot = function() {
+        return removeDot;
+    }
+}
+
+function removeFeedFromCanvas(feed) {
+    var id = feed.getId();
+    _feeds_nodes.splice(id, 1);
+    // tidy up
+    for(var i = 1; i != _feeds_nodes.length; ++i) {
+        _feeds_nodes[i].setId(i - 1);
+    }
+
+    alert('To be continued...');
+    // drawFromFeedList(_feeds_nodes);
+}
+
+function drawFromFeedList(list) {
+    // clear the big layer first
+    _big_canvas_layer.clear();
+    alert('CHECK: ' + list.length);
+
+    for(var index = 1; index != list.length - 1; ++index) {
+        var ser = list[index].getService();
+        alert(ser.getName());
+        if(ser.getType() == TYPE_SYS_START) {
+            drawStartNode();
+        }
+        else if(ser.getType() == TYPE_REST) {
+            drawARestFeed(ser.getName(), ser.getRestUrl());
+        }
+    }
 }
 
 function Connector(parent_feed) {
@@ -339,6 +418,7 @@ function RestFeed(name, url) {
     var org_connecting_line_points, beConnectedLine = 'undefined';
     var id = _feeds_nodes.length;
     var feedConnector;
+    var removeDot;
 
     var nextFeed = 'undefined';
     this.setNextFeed = function(feed) {
@@ -405,6 +485,7 @@ function RestFeed(name, url) {
     });
 
     feedConnector = new Connector(this);
+    removeDot = new RemoveDot(this);
 
     feed.on('mouseover', function() {
         this.setStroke('red');
@@ -423,11 +504,13 @@ function RestFeed(name, url) {
         org_connecting_line_points = feedConnector.getConnectingLine().getPoints();
         feed.moveToTop();
         feedConnector.getConnector().moveToTop();
+        removeDot.getRemoveDot().moveToTop();
         _big_canvas_layer.draw();
     });
 
     feed.on("dragmove", function() {
         moveConnector(feedConnector.getConnector(), feed);
+        moveRemoveDot(removeDot.getRemoveDot(), feed);
 
         if(org_connecting_line_points.length > 1) {
             var org_point = org_connecting_line_points[1];
@@ -446,6 +529,7 @@ function RestFeed(name, url) {
 
     _big_canvas_layer.add(feed);
     _big_canvas_layer.add(feedConnector.getConnector());
+    _big_canvas_layer.add(removeDot.getRemoveDot());
     _big_canvas_stage.draw();
 } 
 
