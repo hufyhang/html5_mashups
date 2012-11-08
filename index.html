@@ -101,9 +101,7 @@
     }
 
     function testLoad() {
-        // var data = '{\"feeds\":[ {\"feed\":[{\"next\":\"-1\"}]}]}';
-        // var data = '{\"feeds\":[ {\"feed\":[{\"next\":\"1\", \"id\":\"1\", \"name\":\"Yahoo! PlaceFinder\", \"type\":\"rest\", \"restUrl\":\"http://where.yahooapis.com/geocode?\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"-1\"}]}]}';
-        var data = '{\"feeds\":[ {\"feed\":[{\"next\":\"1\", \"id\":\"1\", \"name\":\"Yahoo! PlaceFinder\", \"type\":\"rest\", \"restUrl\":\"http://where.yahooapis.com/geocode?\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"2\", \"id\":\"2\", \"name\":\"Google Map\", \"type\":\"rest\", \"restUrl\":\"http://maps.google.co.uk/maps?f=q&source=s_q&hl=en&geocode=&output=embed&t=h&ie=UTF8&aq=0\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"3\", \"id\":\"3\", \"name\":\"Yahoo! PlaceFinder\", \"type\":\"rest\", \"restUrl\":\"http://where.yahooapis.com/geocode?\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"-1\"}]}]}';
+        var data = '{\"feeds\":[ {\"feed\":[{\"next\":\"1\", \"id\":\"1\", \"name\":\"UoM Events\", \"type\":\"rest\", \"restUrl\":\"http://localhost:8080/event/\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"2\", \"id\":\"2\", \"name\":\"UoM Address List\", \"type\":\"rest\", \"restUrl\":\"http://localhost:8080/geocode/\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"3\", \"id\":\"3\", \"name\":\"Google Map\", \"type\":\"rest\", \"restUrl\":\"http://maps.google.co.uk/maps?f=q&source=s_q&hl=en&geocode=&output=embed&t=h&ie=UTF8&aq=0\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"-1\"}]}]}';
         loadFromJSON(data);
     }
 

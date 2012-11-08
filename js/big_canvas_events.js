@@ -84,6 +84,11 @@ function loadFromJSON(jsonInput) {
         var node = _feeds_nodes[id];
         var nxtId = parseInt(list[index][0]);
         _feeds_nodes[index].getConnector().connectTo(_feeds_nodes[nxtId]);
+        var type = list[index][3];
+        if(type == TYPE_REST) {
+            var method = list[index][5];
+            _feeds_nodes[nxtId].getService().setRestMethod(method);
+        }
     }
 
 }
