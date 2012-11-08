@@ -19,6 +19,21 @@ function initialiseBigCanvas() {
     drawStartNode();
 }
 
+function getServicesJSON() {
+    var buffer = '{\"services\":[ ';
+    for(var index = 0; index != _feeds_nodes.length; ++index) {
+        var n = _feeds_nodes[index];
+        if(n.getService().getType() != TYPE_SYS_START) {
+            buffer += n.getService().getJSON();
+            if(index != _feeds_nodes.length - 1) {
+                buffer += ', ';
+            }
+        }
+    }
+    buffer += ']}';
+    return buffer;
+}
+
 function startIterate(dataset) {
     // reset function counter
     _big_counter = 0;

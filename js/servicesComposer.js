@@ -62,6 +62,17 @@ function Service(name, type) {
         return rest_method;
     };
 
+    this.getJSON = function() {
+        var json = '{ ';
+        json += '\"id\":\"' + id + '\", ';
+        json += '\"name\":\"' + name + '\", ';
+        json += '\"type\":\"' + type + '\", ';
+        json += '\"restUrl\":\"' + rest_url + '\", ';
+        json += '\"restMethod\":\"' +  rest_method + '\" ';
+        json += '}';
+        return json;
+    }
+
     appendServicesList(this);
 }
 
