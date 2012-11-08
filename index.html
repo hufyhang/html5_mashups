@@ -100,6 +100,13 @@
 //         });
     }
 
+    function testLoad() {
+        // var data = '{\"feeds\":[ {\"feed\":[{\"next\":\"-1\"}]}]}';
+        // var data = '{\"feeds\":[ {\"feed\":[{\"next\":\"1\", \"id\":\"1\", \"name\":\"Yahoo! PlaceFinder\", \"type\":\"rest\", \"restUrl\":\"http://where.yahooapis.com/geocode?\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"-1\"}]}]}';
+        var data = '{\"feeds\":[ {\"feed\":[{\"next\":\"1\", \"id\":\"1\", \"name\":\"Yahoo! PlaceFinder\", \"type\":\"rest\", \"restUrl\":\"http://where.yahooapis.com/geocode?\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"2\", \"id\":\"2\", \"name\":\"Google Map\", \"type\":\"rest\", \"restUrl\":\"http://maps.google.co.uk/maps?f=q&source=s_q&hl=en&geocode=&output=embed&t=h&ie=UTF8&aq=0\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"3\", \"id\":\"3\", \"name\":\"Yahoo! PlaceFinder\", \"type\":\"rest\", \"restUrl\":\"http://where.yahooapis.com/geocode?\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"-1\"}]}]}';
+        loadFromJSON(data);
+    }
+
     function testRest() {
         var url = 'http://where.yahooapis.com/geocode?q=Grafton+street+Manchester+UK';
 
@@ -130,7 +137,7 @@
                 <td>
                     <!-- <div class="head_links_button" onclick="testRest()">element</div> -->
                     <div class="head_links_button" onclick="alert(getFeedsJSON());">JSON</div>
-                    <div class="head_links_button" onclick="startIterate('')">iterate</div>
+                    <div class="head_links_button" onclick="testLoad()">Load</div>
                     <!-- <div class="head_links_button" onclick="testWebPy()">element</div> -->
                     <div class="head_links_button" onclick="test()">element</div>
                 </td>

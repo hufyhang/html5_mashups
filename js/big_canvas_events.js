@@ -43,6 +43,51 @@ function getFeedsJSON() {
     return buffer;
 }
 
+function loadFromJSON(jsonInput) {
+    var json = eval('(' + jsonInput + ')');
+    var key, count = 0;
+    for(key in json.feeds) {
+        //get size of the JSON
+        count++;
+    }
+
+    // if there is only a start node existing, do nothing.
+    if(count == 1) {
+        return;
+    }
+
+    // read all data into an array and draw all the nodes
+    var list = new Array();
+    for(var index = 0; index != count; ++ index) {
+        var item = json.feeds[index].feed[0];
+        var next, id, name, type, restUrl, restMethod
+        next = parseInt(item.next);
+        if(next != -1) {
+            id = parseInt(item.id);
+            name = item.name;
+            type = item.type;
+            if(type == TYPE_REST) {
+                restUrl = item.restUrl;
+                restMethod = item.restMethod;
+                drawARestFeed(name, restUrl);
+            }
+        }
+        else {
+            continue;
+        }
+        list[index] = new Array(next, id, name, type, restUrl, restMethod);
+    }
+
+    // create connecting lines
+    for(var index = 0; index != list.length; ++index) {
+        var id = parseInt(list[index][1]);
+        var node = _feeds_nodes[id];
+        var nxtId = parseInt(list[index][0]);
+        _feeds_nodes[index].getConnector().connectTo(_feeds_nodes[nxtId]);
+    }
+
+}
+
 function startIterate(dataset) {
     // reset function counter
     _big_counter = 0;
