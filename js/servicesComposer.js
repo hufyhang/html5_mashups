@@ -63,13 +63,12 @@ function Service(name, type) {
     };
 
     this.getJSON = function() {
-        var json = '{ ';
+        var json = '';
         json += '\"id\":\"' + id + '\", ';
         json += '\"name\":\"' + name + '\", ';
         json += '\"type\":\"' + type + '\", ';
         json += '\"restUrl\":\"' + rest_url + '\", ';
         json += '\"restMethod\":\"' +  rest_method + '\" ';
-        json += '}';
         return json;
     }
 

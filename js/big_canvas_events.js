@@ -19,16 +19,25 @@ function initialiseBigCanvas() {
     drawStartNode();
 }
 
-function getServicesJSON() {
-    var buffer = '{\"services\":[ ';
+function getFeedsJSON() {
+    var buffer = '{\"feeds\":[ ';
     for(var index = 0; index != _feeds_nodes.length; ++index) {
         var n = _feeds_nodes[index];
-        if(n.getService().getType() != TYPE_SYS_START) {
-            buffer += n.getService().getJSON();
-            if(index != _feeds_nodes.length - 1) {
+        var nxt = n.getNextFeed();
+        var nxtId;
+        if(nxt !== undefined && nxt !== 'undefined') {
+            nxtId = nxt.getId();
+            buffer += '{\"feed\":[{\"next\":\"' + nxtId + '\", ';
+            buffer += nxt.getService().getJSON();
+            buffer += '}]}';
+            if(index != _feeds_nodes.length - 2) {
                 buffer += ', ';
             }
         }
+        else {
+            nxtId = 'null';
+        }
+
     }
     buffer += ']}';
     return buffer;
@@ -328,6 +337,7 @@ function drawARestFeed(name, url) {
 
 function RestFeed(name, url) {
     var org_connecting_line_points, beConnectedLine = 'undefined';
+    var id = _feeds_nodes.length;
     var feedConnector;
 
     var nextFeed = 'undefined';
@@ -360,6 +370,14 @@ function RestFeed(name, url) {
 
     this.getNode = function() {
         return feed;
+    }
+
+    this.setId = function(id) {
+        id = id;
+    }
+
+    this.getId = function() {
+        return id;
     }
 
     var feed = new Kinetic.Text({
