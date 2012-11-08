@@ -25,17 +25,17 @@ function getFeedsJSON() {
         var n = _feeds_nodes[index];
         var nxt = n.getNextFeed();
         var nxtId;
-        if(nxt !== undefined && nxt !== 'undefined') {
+        if(nxt !== undefined && nxt !== 'undefined' && index != _feeds_nodes.length - 1) {
             nxtId = nxt.getId();
             buffer += '{\"feed\":[{\"next\":\"' + nxtId + '\", ';
             buffer += nxt.getService().getJSON();
             buffer += '}]}';
-            if(index != _feeds_nodes.length - 2) {
+            if(index != _feeds_nodes.length - 1) {
                 buffer += ', ';
             }
         }
-        else {
-            nxtId = 'null';
+        else if(index == _feeds_nodes.length - 1) {
+            buffer += '{\"feed\":[{\"next\":\"-1\"}]}';
         }
 
     }
