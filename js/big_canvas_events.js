@@ -260,6 +260,20 @@ function Connector(parent_feed) {
     this.getConnector = function() {
         return connector;
     }
+
+    this.connectTo = function(nextFeed) {
+        connectingLine.setPoints([connector.getX(), connector.getY(),
+                nextFeed.getNode().getX() + nextFeed.getNode().getBoxWidth()/2,
+                nextFeed.getNode().getY() + nextFeed.getNode().getBoxHeight()/2]);
+        nextFeed.setBeConnectedLine(connectingLine);
+        parentFeed.setNextFeed(nextFeed);
+        _big_canvas_layer.draw();
+        _big_canvas_stage.draw();
+    }
+}
+
+function test() {
+    _feeds_nodes[0].getConnector().connectTo(_feeds_nodes[2]);
 }
 
 function drawStartNode() {
@@ -311,6 +325,10 @@ function drawStartNode() {
     });
     var startConnector = new Connector(this);
     var org_connecting_line_points;
+
+    this.getConnector = function() {
+        return startConnector;
+    }
 
     start.on('mouseover', function() {
         this.setStroke('red');
@@ -486,6 +504,10 @@ function RestFeed(name, url) {
 
     feedConnector = new Connector(this);
     removeDot = new RemoveDot(this);
+
+    this.getConnector = function() {
+        return feedConnector;
+    }
 
     feed.on('mouseover', function() {
         this.setStroke('red');
