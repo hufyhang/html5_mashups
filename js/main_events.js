@@ -115,7 +115,7 @@ function updateFeedsHTML() {
                 var name = row['name'];
                 var url = row['url'];
                 var type = row['feed_type'];
-                feeds_html += '<tr><td><div class="feed_panel_item" onclick="drawARestFeed(\'' + name + '\', \'' + url + '\')"><img class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" src="img/remove_normal.png" width="15px" height="15px" /><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
+                feeds_html += '<tr><td><table cellpadding="0px" cellsapcing="0px"><tr><td><center><div id="feed_panel_item_table" class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" width="15px" height="15px">&nbsp;&nbsp;&nbsp;&nbsp;</div></center></td><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="drawARestFeed(\'' + name + '\', \'' + url + '\')"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr></table></td></tr>';
                 appendFeedsNameList(name);
             }
         }, null);

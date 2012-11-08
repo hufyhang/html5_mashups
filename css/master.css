@@ -395,6 +395,9 @@ input, button, select, textarea {
 }
 
 .panel_table {
+    border: 0px;
+    border-collapse: collapse;
+    border-spacing: 0px;
     width: 100%;
 }
 
@@ -402,12 +405,19 @@ input, button, select, textarea {
     width: 90%;
 }
 
+#feed_panel_item_table {
+    border-spacing: 0px;
+    -webkit-border-spacing: 0px;
+
+    border-collapse: collapse;
+    border: 0;
+}
+
 .feed_panel_item {
     cursor: default;
     overflow: auto;
-    margin-left: 20px;
     padding: 10px;
-    width: 80%;
+    width: 90%;
     background: #0083AA;
     resize: none;
 
@@ -429,7 +439,9 @@ input, button, select, textarea {
 }
 
 .feed_delelte_img {
-    color: rgba(255, 255, 255, 0.6);
+    /* color: rgba(255, 255, 255, 0.6); */
+    background-image: url('../img/remove_normal.png');
+    background-repeat: no-repeat;
     margin-right: 5px;
 
     transition: all 0.5s;
@@ -441,7 +453,9 @@ input, button, select, textarea {
 
 .feed_delelte_img:hover {
     cursor: pointer;
-    background: #A6B600;
-    color: rgba(255, 0, 0, 0.8);
+    background-image: url('../img/remove_hover.png');
+    background-repeat: no-repeat;
+    /* background: #A6B600; */
+    /* color: rgba(255, 0, 0, 0.8); */
 }
 
