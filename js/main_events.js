@@ -152,7 +152,7 @@ function showNotificationInDashboard(msg) {
     // show message
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onmouseover="updateFeedsHTML()" onclick="showFeedsPanel(_current_container_id);invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>'
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onmouseover="if(_currentPlace != SHOW_PROJECTS) {updateFeedsHTML();}" onclick="if(_currentPlace == SHOW_PROJECTS){readProjects(\'options_field_output\');} else{showFeedsPanel(_current_container_id);}invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>'
     ;
 }
 
