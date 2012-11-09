@@ -71,6 +71,9 @@ function loadFromJSON(jsonInput) {
                 restMethod = item.restMethod;
                 drawARestFeed(name, restUrl);
             }
+            else if(type == TYPE_WIDGET) {
+                drawAWidget(name);
+            }
         }
         else {
             continue;
@@ -119,7 +122,7 @@ function iterateFeedsFrom(feed) {
             _big_buffer += '__result_buffer__ = performRestService(\'' + service.getRestUrl() + '\' + __result_buffer__, __result_buffer__ , \'' + service.getRestMethod() + '\');' + '\n\n';
             _big_buffer += 'if(__result_buffer__ === undefined) {\n' +
                 'alert(\'Oops! Service \"' + service.getName() + '\" is down. Please try later or use an alternative service feed.\');'+ 
-                'return;' + 
+                '\nreturn;' + 
                 '}' + '\n\n';
         }
     }
@@ -131,6 +134,14 @@ function iterateFeedsFrom(feed) {
         if(service.getType() == TYPE_REST) {
             _big_buffer += 'var url = \'' + service.getRestUrl() + '\' + __result_buffer__;' + '\n\n';
             _big_buffer += '$(\"#execute_output\").html(\'<iframe frameborder="0" width="100%" height="400px" src=\"\' + url + \'\" seamless=\"seamless\"><p>Surprisingly, your browser does not support iframes.</p></iframe>\');' + '\n\n';
+        }
+        else if(service.getType() == TYPE_WIDGET) {
+            if(service.getName() == WIDGET_AUDIO) {
+                _big_buffer += '$(\"#execute_output\").html(\'<audio width="100%" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the audio element.</audio>\');' + '\n\n';
+            }
+            else if(service.getName() == WIDGET_VIDEO){
+                _big_buffer += '$(\"#execute_output\").html(\'<video width="100%" height="400px" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the video tag.</video>\');' + '\n\n' ;
+            }
         }
     }
 }

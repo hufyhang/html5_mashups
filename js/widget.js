@@ -1,5 +1,5 @@
-WIDGET_AUDIO = 'WIDGET_AUDIO';
-WIDGET_VIDEO = 'WIDGET_VIDEO';
+WIDGET_AUDIO = 'HTML5 Audio';
+WIDGET_VIDEO = 'HTML5 Video';
 
 function drawAWidget(type) {
     var feed = new Widget(type);
