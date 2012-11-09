@@ -37,6 +37,12 @@ function showFeedsPanel(containerId) {
     '</tr></table><hr class="seperator_hr"/>' + feeds_html;
 }
 
+function showWidgetsPanel(containerId) {
+    _current_container_id = containerId;
+    $('#'+ containerId).html('<div>Widgets</div><hr class="seperator_hr" /><table class="panel_table" style="padding-left:15px;"><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'HTML5 Audio\');">HTML5 Audio</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'HTML5 Video\');">HTML5 Video</div></td></tr></table>');
+}
+
+
 function showExecuteInputForm() {
     visibleElement('serviceBoard');
     visibleElement('serviceBoard_div');

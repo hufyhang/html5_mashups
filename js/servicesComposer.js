@@ -4,6 +4,8 @@ var NAME_SYS_START = '_sys_start_';
 var TYPE_SYS_START = '_sys_start_';
 var TYPE_REST = 'rest';
 var TYPE_SOAP = 'soap';
+var TYPE_WIDGET = 'widget';
+var TYPE_WORKER = 'worker';
 
 var REST_METHOD_GET = 'get';
 var REST_METHOD_POST = 'post';
