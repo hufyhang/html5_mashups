@@ -21,24 +21,36 @@ function initialiseBigCanvas() {
 
 function getFeedsJSON() {
     var buffer = '{\"feeds\":[ ';
-    for(var index = 0; index != _feeds_nodes.length; ++index) {
-        var n = _feeds_nodes[index];
-        var nxt = n.getNextFeed();
-        var nxtId;
-        if(nxt !== undefined && nxt !== 'undefined' && index != _feeds_nodes.length - 1) {
-            nxtId = nxt.getId();
-            buffer += '{\"feed\":[{\"next\":\"' + nxtId + '\", ';
-            buffer += nxt.getService().getJSON();
-            buffer += '}]}';
-            if(index != _feeds_nodes.length - 1) {
-                buffer += ', ';
-            }
-        }
-        else if(index == _feeds_nodes.length - 1) {
-            buffer += '{\"feed\":[{\"next\":\"-1\"}]}';
-        }
+    var next = _feeds_nodes[0].getNextFeed();
+    while(next != undefined && next != 'undefined') {
+        buffer += '{\"feed\":[{\"next\":\"' + next.getId() + '\", ';
+        buffer += next.getService().getJSON();
+        buffer += '}]}';
 
+        next = next.getNextFeed();
+        if(next != undefined && next != 'undefined' ) {
+            buffer += ', ';
+        }
     }
+
+    // for(var index = 0; index != _feeds_nodes.length; ++index) {
+    //     var n = _feeds_nodes[index];
+    //     var nxt = n.getNextFeed();
+    //     var nxtId;
+    //     if(nxt !== undefined && nxt !== 'undefined' && index != _feeds_nodes.length - 1) {
+    //         nxtId = nxt.getId();
+    //         buffer += '{\"feed\":[{\"next\":\"' + nxtId + '\", ';
+    //         buffer += nxt.getService().getJSON();
+    //         buffer += '}]}';
+    //         if(index != _feeds_nodes.length - 1) {
+    //             buffer += ', ';
+    //         }
+    //     }
+    //     else if(index == _feeds_nodes.length - 1) {
+    //         buffer += '{\"feed\":[{\"next\":\"-1\"}]}';
+    //     }
+
+    // }
     buffer += ']}';
     return buffer;
 }
@@ -53,8 +65,8 @@ function loadFromJSON(jsonInput) {
         count++;
     }
 
-    // if there is only a start node existing, do nothing.
-    if(count == 1) {
+    // if there is nothing existing, do nothing.
+    if(count == 0) {
         return;
     }
 
@@ -85,16 +97,25 @@ function loadFromJSON(jsonInput) {
 
     // create connecting lines
     for(var index = 0; index != list.length; ++index) {
-        var id = parseInt(list[index][1]);
-        var node = _feeds_nodes[id];
-        var nxtId = parseInt(list[index][0]);
-        _feeds_nodes[index].getConnector().connectTo(_feeds_nodes[nxtId]);
+        _feeds_nodes[index].getConnector().connectTo(_feeds_nodes[index + 1]);
         var type = list[index][3];
         if(type == TYPE_REST) {
             var method = list[index][5];
-            _feeds_nodes[nxtId].getService().setRestMethod(method);
+            _feeds_nodes[index + 1].getService().setRestMethod(method);
         }
     }
+
+    // for(var index = 0; index != list.length; ++index) {
+    //     var id = parseInt(list[index][1]);
+    //     var node = _feeds_nodes[id];
+    //     var nxtId = parseInt(list[index][0]);
+    //     _feeds_nodes[index].getConnector().connectTo(_feeds_nodes[nxtId]);
+    //     var type = list[index][3];
+    //     if(type == TYPE_REST) {
+    //         var method = list[index][5];
+    //         _feeds_nodes[nxtId].getService().setRestMethod(method);
+    //     }
+    // }
 
 }
 

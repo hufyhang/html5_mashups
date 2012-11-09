@@ -4,7 +4,7 @@ const DB_TITLE = 'SQL database';
 const DB_BYTES = 2 * 1024 * 1024;
 
 const INDEXEDDB_DATABASE = 'html5_mashup_platform_web_database';
-const INDEXEDDB_VERSION = 1;
+const INDEXEDDB_VERSION = '1.0';
 const INDEXEDDB_STORE = 'projects';
 
 const SHOW_PROJECTS = 'showProject';
@@ -23,6 +23,7 @@ var _currentPlace = undefined;
 function initialise() {
     readyDatabase();
     updateFeedsHTML();
+    readProjects('options_field_output');
 }
 
 function visibleElement(elementId) {
@@ -141,10 +142,10 @@ function showSaveProjectDialog() {
     $('#dashboard_output').html('<table class="frame_table"><tr><td>Save as:</td></tr><tr><td><input width="100%" type="TEXT" id="save_project_name_input" class="input_box" placeholder="Please give a name to your project..."/></td></tr><tr><td><div class="div_push_button" onclick="saveAProjectFromDialog();invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Save</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Cancel</div></td></tr></table>');
 }
 
-function showRemoveProjectDialog(id, name) {
+function showRemoveProjectDialog(md5, name) {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    $('#dashboard_output').html('<table class="frame_table"><tr><td><div>Are you sure you want to remove \"' + name + '\"?</div></td></tr><tr><td><div class="div_push_button" onclick="removeAProject(' + id + ');invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Yes</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">No</div></td></tr></table>');
+    $('#dashboard_output').html('<table class="frame_table"><tr><td><div>Are you sure you want to remove \"' + name + '\"?</div></td></tr><tr><td><div class="div_push_button" onclick="removeAProject(\'' + md5 + '\');invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Yes</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">No</div></td></tr></table>');
 }
 
 function showNotificationInDashboard(msg) {
@@ -174,76 +175,113 @@ function readyDatabase() {
     // check & create table
     _database.transaction(function(tx) {
         tx.executeSql('CREATE TABLE IF NOT EXISTS feeds (name, url, feed_type)');
+        tx.executeSql('CREATE TABLE IF NOT EXISTS projects (md5 NOT NULL PRIMARY KEY, name, json)');
+        // tx.executeSql('DROP TABLE projects');
     }
     );
-
-    // now, initialise Indexed DB
-    // In the following line, you should include the prefixes of implementations you want to test.
-    window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-    // DON'T use "var indexedDB = ..." if you're not in a function.
-    // Moreover, you may need references to some window.IDB* objects:
-    window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
-    window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
-    // (Mozilla has never prefixed these objects, so we don't need window.mozIDB*)
-    if (!window.indexedDB) {
-       window.alert("Your browser doesn't support a stable version of IndexedDB. Load and Save features will not be available.");
-       return;
-    }
-
-    var request = indexedDB.open(INDEXEDDB_DATABASE, INDEXEDDB_VERSION);
-    request.onsuccess = function(evt) {
-        idb = request.result;
-        readProjects('options_field_output');
-    };
-
-    request.onerror = function(evt) {
-        console.log("IndexedDB error: " + evt.target.errorCode);
-    };
-
-    request.onupgradeneeded = function(evt) {
-        var objectStore = evt.currentTarget.result.createObjectStore(INDEXEDDB_STORE, {keyPath: "id", autoIncrement:true});
-        objectStore.createIndex("name", "name", {unique: false});
-        objectStore.createIndex("json", "json", {unique: false});
-    };
+// 
+//     // now, initialise Indexed DB
+//     // In the following line, you should include the prefixes of implementations you want to test.
+//     window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+//     // DON'T use "var indexedDB = ..." if you're not in a function.
+//     // Moreover, you may need references to some window.IDB* objects:
+//     window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+//     window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
+//     // (Mozilla has never prefixed these objects, so we don't need window.mozIDB*)
+//     if (!window.indexedDB) {
+//        window.alert("Your browser doesn't support a stable version of IndexedDB. Load and Save features will not be available.");
+//        return;
+//     }
+// 
+//     var request = indexedDB.open(INDEXEDDB_DATABASE, INDEXEDDB_VERSION);
+//     request.onsuccess = function(evt) {
+//         idb = request.result;
+//         readProjects('options_field_output');
+//     };
+// 
+//     request.onerror = function(evt) {
+//         console.log("IndexedDB error: " + evt.target.errorCode);
+//     };
+// 
+//     request.onupgradeneeded = function(evt) {
+//         var objectStore = evt.currentTarget.result.createObjectStore(INDEXEDDB_STORE, {keyPath: "id", autoIncrement:true});
+//         objectStore.createIndex("name", "name", {unique: false});
+//         objectStore.createIndex("json", "json", {unique: false});
+//     };
 }
 
 function readProjects(containerId) {
     _currentPlace = SHOW_PROJECTS;
+    _database.transaction(function(tx) {
     var html = '<div>Existing projects</div><hr class="seperator_hr" /><table class="panel_table">';
-    var objectStore = idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_ONLY).objectStore(INDEXEDDB_STORE);
-    objectStore.openCursor().onsuccess = function(evt) {
-        var cursor = evt.target.result;
-        if(cursor) {
-            var id = cursor.key;
-            var name = cursor.value.name;
-            html += '<tr><td><table cellpadding="0px" cellsapcing="0px" style="width:100%;"><tr><td><center><div id="feed_panel_item_table" class="feed_delelte_img" onclick="showRemoveProjectDialog(' + id + ', \'' + name + '\');" width="15px" height="15px">&nbsp;&nbsp;&nbsp;&nbsp;</div></center></td><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="readAProject(' + id + ')">' + name + '</div></td></tr></table></td></tr>';
-            cursor.continue();
-        }
-        html += '</table>';
-        $('#' + containerId).html(html);
-    };
+        tx.executeSql('SELECT md5, name, json FROM projects', [], function(tx, results) {
+            for(var index = 0; index != results.rows.length; ++index) {
+                var row = results.rows.item(index);
+                var md5 = row['md5'];
+                var name = row['name'];
+                html += '<tr><td><table cellpadding="0px" cellsapcing="0px" style="width:100%;"><tr><td><center><div id="feed_panel_item_table" class="feed_delelte_img" onclick="showRemoveProjectDialog(\'' + md5 + '\', \'' + name + '\');" width="15px" height="15px">&nbsp;&nbsp;&nbsp;&nbsp;</div></center></td><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="readAProject(\'' + md5 + '\')">' + name + '</div></td></tr></table></td></tr>';
+            }
+            html += '</table>';
+            $('#' + containerId).html(html);
+        }, null);
+    });
+
+// 
+//     var objectStore = idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_ONLY).objectStore(INDEXEDDB_STORE);
+//     objectStore.openCursor().onsuccess = function(evt) {
+//         var cursor = evt.target.result;
+//         if(cursor) {
+//             var id = cursor.key;
+//             var name = cursor.value.name;
+//             cursor.continue();
+//         }
+//     };
 }
 
-function readAProject(id) {
-    var getRequest = idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_ONLY).objectStore(INDEXEDDB_STORE).get(id);
-    getRequest.onsuccess = function(evt) {
-        loadFromJSON(getRequest.result.json);
-    };
+function readAProject(md5) {
+    _database.transaction(function(tx) {
+        tx.executeSql('SELECT json FROM projects WHERE md5="' + md5 + '"', [], function(tx, results) {
+            var json = '';
+            for(var index = 0; index != results.rows.length; ++index) {
+                var row = results.rows.item(index);
+                json = row['json'];
+            }
+            loadFromJSON(json);            
+        }, null);
+    });
+
+    // var getRequest = idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_ONLY).objectStore(INDEXEDDB_STORE).get(id);
+    // getRequest.onsuccess = function(evt) {
+    //     loadFromJSON(getRequest.result.json);
+    // };
 }
 
-function removeAProject(id) {
-    idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_WRITE).objectStore(INDEXEDDB_STORE).delete(id).onsuccess = function(evt) {
+function removeAProject(md5) {
+    _database.transaction(function(tx) {
+        tx.executeSql('DELETE FROM projects WHERE md5="' + md5 + '"');
         if(_currentPlace == SHOW_PROJECTS) {
             readProjects('options_field_output');
         }
-    };
+    });
+
+    // idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_WRITE).objectStore(INDEXEDDB_STORE).delete(id).onsuccess = function(evt) {
+    //     if(_currentPlace == SHOW_PROJECTS) {
+    //         readProjects('options_field_output');
+    //     }
+    // };
 }
 
 function saveAProject(inputName, inputJson) {
     var json = inputJson;
-    idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_WRITE).objectStore(INDEXEDDB_STORE).add({name: inputName, json: json}).onsuccess = function(evt) {
+    _database.transaction(function(tx) {
+        var md5 = MD5(new Date() + inputName);
+        tx.executeSql('INSERT INTO projects (md5, name, json) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\')');
         showNotificationInDashboard(inputName + " has been saved.");
-    };
+    });
+
+    // idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_WRITE).objectStore(INDEXEDDB_STORE).add({name: inputName, json: json}).onsuccess = function(evt) {
+    //     showNotificationInDashboard(inputName + " has been saved.");
+    // };
 }
 
 function saveAProjectFromDialog() {
