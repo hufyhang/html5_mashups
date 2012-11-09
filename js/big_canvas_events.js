@@ -44,6 +44,8 @@ function getFeedsJSON() {
 }
 
 function loadFromJSON(jsonInput) {
+    // clear canvas
+
     var json = eval('(' + jsonInput + ')');
     var key, count = 0;
     for(key in json.feeds) {

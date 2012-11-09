@@ -1,26 +1,28 @@
-var WEB_SQL_DATABASE = 'html5_mashup_platform_web_database';
-var DB_VERSION = '1.0';
-var DB_TITLE = 'SQL database';
-var DB_BYTES = 2 * 1024 * 1024;
+const WEB_SQL_DATABASE = 'html5_mashup_platform_web_database';
+const DB_VERSION = '1.0';
+const DB_TITLE = 'SQL database';
+const DB_BYTES = 2 * 1024 * 1024;
 
-var FEED_TYPE_REST = 'rest';
-var FEED_TYPE_SOAP = 'soap';
+const INDEXEDDB_DATABASE = 'html5_mashup_platform_web_database';
+const INDEXEDDB_VERSION = 1;
+const INDEXEDDB_STORE = 'projects';
 
-var _database;
+const SHOW_PROJECTS = 'showProject';
+
+const FEED_TYPE_REST = 'rest';
+const FEED_TYPE_SOAP = 'soap';
+
+var _database, idb;
 
 var feeds_html = '';
 var feeds_name_list = '';
 
 var _current_container_id;
+var _currentPlace = undefined;
 
 function initialise() {
     readyDatabase();
     updateFeedsHTML();
-    // _database.transaction(function(tx) {
-        // tx.executeSql('DELETE FROM feeds WHERE name=\'Google Map\'');
-    // //     tx.executeSql('DROP TABLE feeds');
-    //     // tx.executeSql('INSERT INTO feeds (name, url, feed_type) VALUES ("Yahoo! PlaceFinder", "http://where.yahooapis.com/geocode?", "rest")');
-    // });
 }
 
 function visibleElement(elementId) {
@@ -29,6 +31,10 @@ function visibleElement(elementId) {
 
 function invisibleElement(elementId) {
     document.getElementById(elementId).style.visibility = 'hidden';
+}
+
+function resetCurrentPlace() {
+    _currentPlace = undefined;
 }
 
 function showFeedsPanel(containerId) {
@@ -121,12 +127,24 @@ function updateFeedsHTML() {
                 var name = row['name'];
                 var url = row['url'];
                 var type = row['feed_type'];
-                feeds_html += '<tr><td><table cellpadding="0px" cellsapcing="0px"><tr><td><center><div id="feed_panel_item_table" class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" width="15px" height="15px">&nbsp;&nbsp;&nbsp;&nbsp;</div></center></td><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="drawARestFeed(\'' + name + '\', \'' + url + '\')"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr></table></td></tr>';
+                feeds_html += '<tr><td><table cellpadding="0px" cellsapcing="0px"><tr><td><div id="feed_panel_item_table" class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" width="15px" height="15px">&nbsp;&nbsp;&nbsp;&nbsp;</div></center></td><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="drawARestFeed(\'' + name + '\', \'' + url + '\')"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr></table></td></tr>';
                 appendFeedsNameList(name);
             }
         }, null);
         feeds_html += '</table>'; 
     });
+}
+
+function showSaveProjectDialog() {
+    visibleElement('dashboard');
+    visibleElement('dashboard_div');
+    $('#dashboard_output').html('<table class="frame_table"><tr><td>Save as:</td></tr><tr><td><input width="100%" type="TEXT" id="save_project_name_input" class="input_box" placeholder="Please give a name to your project..."/></td></tr><tr><td><div class="div_push_button" onclick="saveAProjectFromDialog();invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Save</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Cancel</div></td></tr></table>');
+}
+
+function showRemoveProjectDialog(id, name) {
+    visibleElement('dashboard');
+    visibleElement('dashboard_div');
+    $('#dashboard_output').html('<table class="frame_table"><tr><td><div>Are you sure you want to remove \"' + name + '\"?</div></td></tr><tr><td><div class="div_push_button" onclick="removeAProject(' + id + ');invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Yes</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">No</div></td></tr></table>');
 }
 
 function showNotificationInDashboard(msg) {
@@ -158,6 +176,80 @@ function readyDatabase() {
         tx.executeSql('CREATE TABLE IF NOT EXISTS feeds (name, url, feed_type)');
     }
     );
+
+    // now, initialise Indexed DB
+    // In the following line, you should include the prefixes of implementations you want to test.
+    window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+    // DON'T use "var indexedDB = ..." if you're not in a function.
+    // Moreover, you may need references to some window.IDB* objects:
+    window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+    window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
+    // (Mozilla has never prefixed these objects, so we don't need window.mozIDB*)
+    if (!window.indexedDB) {
+       window.alert("Your browser doesn't support a stable version of IndexedDB. Load and Save features will not be available.");
+       return;
+    }
+
+    var request = indexedDB.open(INDEXEDDB_DATABASE, INDEXEDDB_VERSION);
+    request.onsuccess = function(evt) {
+        idb = request.result;
+        readProjects('options_field_output');
+    };
+
+    request.onerror = function(evt) {
+        console.log("IndexedDB error: " + evt.target.errorCode);
+    };
+
+    request.onupgradeneeded = function(evt) {
+        var objectStore = evt.currentTarget.result.createObjectStore(INDEXEDDB_STORE, {keyPath: "id", autoIncrement:true});
+        objectStore.createIndex("name", "name", {unique: false});
+        objectStore.createIndex("json", "json", {unique: false});
+    };
+}
+
+function readProjects(containerId) {
+    _currentPlace = SHOW_PROJECTS;
+    var html = '<div>Existing projects</div><hr class="seperator_hr" /><table class="panel_table">';
+    var objectStore = idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_ONLY).objectStore(INDEXEDDB_STORE);
+    objectStore.openCursor().onsuccess = function(evt) {
+        var cursor = evt.target.result;
+        if(cursor) {
+            var id = cursor.key;
+            var name = cursor.value.name;
+            html += '<tr><td><table cellpadding="0px" cellsapcing="0px" style="width:100%;"><tr><td><center><div id="feed_panel_item_table" class="feed_delelte_img" onclick="showRemoveProjectDialog(' + id + ', \'' + name + '\');" width="15px" height="15px">&nbsp;&nbsp;&nbsp;&nbsp;</div></center></td><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="readAProject(' + id + ')">' + name + '</div></td></tr></table></td></tr>';
+            cursor.continue();
+        }
+        html += '</table>';
+        $('#' + containerId).html(html);
+    };
+}
+
+function readAProject(id) {
+    var getRequest = idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_ONLY).objectStore(INDEXEDDB_STORE).get(id);
+    getRequest.onsuccess = function(evt) {
+        loadFromJSON(getRequest.result.json);
+    };
+}
+
+function removeAProject(id) {
+    idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_WRITE).objectStore(INDEXEDDB_STORE).delete(id).onsuccess = function(evt) {
+        if(_currentPlace == SHOW_PROJECTS) {
+            readProjects('options_field_output');
+        }
+    };
+}
+
+function saveAProject(inputName, inputJson) {
+    var json = inputJson;
+    idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_WRITE).objectStore(INDEXEDDB_STORE).add({name: inputName, json: json}).onsuccess = function(evt) {
+        showNotificationInDashboard(inputName + " has been saved.");
+    };
+}
+
+function saveAProjectFromDialog() {
+    var name = $('#save_project_name_input').val();
+    var json = getFeedsJSON();
+    saveAProject(name, json);
 }
 
 function propertiesPanelShowRestFeed(service) {

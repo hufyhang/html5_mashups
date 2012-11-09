@@ -103,7 +103,7 @@
     }
 
     function testLoad() {
-        var data = '{"feeds":[ {"feed":[{"next":"1", "id":"1", "name":"Online Media", "type":"rest", "restUrl":"http://localhost:8080/media/", "restMethod":"get" }]}, {"feed":[{"next":"2", "id":"2", "name":"HTML5 Audio", "type":"widget", "restUrl":"undefined", "restMethod":"undefined" }]}, {"feed":[{"next":"-1"}]}]}';
+        var data = '{\"feeds\":[ {\"feed\":[{\"next\":\"1\", \"id\":\"1\", \"name\":\"Online Media\", \"type\":\"rest\", \"restUrl\":\"http://localhost:8080/media/\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"2\", \"id\":\"2\", \"name\":\"HTML5 Audio\", \"type\":\"widget\", \"restUrl\":\"undefined\", \"restMethod\":\"undefined\" }]}, {\"feed\":[{\"next\":\"-1\"}]}]}';
         // var data = '{\"feeds\":[ {\"feed\":[{\"next\":\"1\", \"id\":\"1\", \"name\":\"UoM Events\", \"type\":\"rest\", \"restUrl\":\"http://localhost:8080/event/\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"2\", \"id\":\"2\", \"name\":\"UoM Address List\", \"type\":\"rest\", \"restUrl\":\"http://localhost:8080/geocode/\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"3\", \"id\":\"3\", \"name\":\"Google Map\", \"type\":\"rest\", \"restUrl\":\"http://maps.google.co.uk/maps?f=q&source=s_q&hl=en&geocode=&output=embed&t=h&ie=UTF8&aq=0\", \"restMethod\":\"get\" }]}, {\"feed\":[{\"next\":\"-1\"}]}]}';
         loadFromJSON(data);
     }
@@ -137,8 +137,8 @@
         <table border="0" cellpadding="0" cellspacing="0"><tr>
                 <td>
                     <!-- <div class="head_links_button" onclick="testRest()">element</div> -->
-                    <div class="head_links_button" onclick="alert(getFeedsJSON());">JSON</div>
-                    <div class="head_links_button" onclick="testLoad()">Load</div>
+                    <div class="head_links_button" onclick="readProjects('options_field_output')">Open...</div>
+                    <div class="head_links_button" onclick="showSaveProjectDialog();">Save...</div>
                     <!-- <div class="head_links_button" onclick="testWebPy()">element</div> -->
                     <div class="head_links_button" onclick="test()">element</div>
                 </td>
@@ -193,9 +193,9 @@
 
     <!-- top sidebar -->
     <table class="top_sidebar_frame" border="0" cellpadding="2px;" onmouseover="visibleElement('dashboard')" onmouseout="invisibleElement('dashboard')">
-        <tr><td><div class="sidebar_button" onclick="showFeedsPanel('options_field_output')">Feeds</div></td>
+        <tr><td><div class="sidebar_button" onclick="resetCurrentPlace();showFeedsPanel('options_field_output');">Feeds</div></td>
             <tr><td><div class="sidebar_button">Workers</div></td>
-                <tr><td><div class="sidebar_button" onclick="showWidgetsPanel('options_field_output')">Widgets</div></td>
+                <tr><td><div class="sidebar_button" onclick="resetCurrentPlace();showWidgetsPanel('options_field_output');">Widgets</div></td>
         </tr>
     </table>
 
