@@ -1,16 +1,18 @@
 var _services_list = [];
 var id_counter = 0;
-var NAME_SYS_START = '_sys_start_';
-var TYPE_SYS_START = '_sys_start_';
-var TYPE_REST = 'rest';
-var TYPE_SOAP = 'soap';
-var TYPE_WIDGET = 'widget';
-var TYPE_WORKER = 'worker';
+const NAME_SYS_START = '_sys_start_';
+const TYPE_SYS_START = '_sys_start_';
+const TYPE_REST = 'rest';
+const TYPE_SOAP = 'soap';
+const TYPE_WIDGET = 'widget';
+const TYPE_WORKER = 'worker';
 
-var REST_METHOD_GET = 'get';
-var REST_METHOD_POST = 'post';
-var REST_METHOD_PUT = 'put';
-var REST_METHOD_DELETE = 'delete';
+const REST_METHOD_GET = 'get';
+const REST_METHOD_POST = 'post';
+const REST_METHOD_PUT = 'put';
+const REST_METHOD_DELETE = 'delete';
+
+const PHP_GET = 'php/phpGet.php?url='
 
 function Service(name, type) {
     var id = id_counter++, name, type, rest_url, rest_method;
@@ -101,8 +103,24 @@ function updateRestMethodById(id, method) {
 
 function performRestService(uri, resultBuffer, method) {
     var url = uri + resultBuffer;
+    var middle = '';
+    if(method == REST_METHOD_GET) {
+        // use GET middleware
+        middle = PHP_GET;
+    }
+    else if(method == REST_METHOD_POST){
+        // use POST middleware
+    
+    }
+    else if(method == REST_METHOD_PUT) {
+        // use PUT middleware
+
+    }
+    else if(method == REST_METHOD_DELETE) {
+        // use DELETE middleware
+    }
     return $.ajax({
-            url: uri,
+            url: middle + uri,
             type: method,
             async: false}).responseText;
     // $.ajax({
