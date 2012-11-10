@@ -144,13 +144,10 @@ function iterateFeedsFrom(feed) {
         if(service.getType() == TYPE_REST && next != 'undefined') {
             //check if the service is available first
             _big_buffer += 'var _code = checkRestService(\'' + service.getRestUrl() + '\', __result_buffer__);' + '\n\n';
-            // _big_buffer += 'console.log(\'URL: \' + \'' + service.getRestUrl()+ '\' + __result_buffer__);';
-            // _big_buffer += 'console.log(\'CODE: \' + _code);';
             _big_buffer += 'if(_code == \'200\') {\n';
             _big_buffer += '__result_buffer__ = performRestService(\'' + service.getRestUrl() + '\', __result_buffer__, \'' + service.getRestMethod() + '\');' + '\n\n';
-            // _big_buffer += 'if(__result_buffer__ === undefined) {\n' +
             _big_buffer += '} else {\n' +
-                'showMessageDialog(\'Oops! Service \"' + service.getName() + '\" is down. Please try later or use an alternative service feed. [\' + _code + \']\');'+ 
+                'showMessageDialog(\'Oops! Service \"' + service.getName() + '\" is down. Please try later or use an alternative service feed.\');'+ 
                 '\nreturn;' + 
                 '}' + '\n\n';
         }

@@ -1,5 +1,6 @@
 <?php
-echo put_contents($_GET['url']);
+$url = str_replace(' ','%20',$_GET['url']);
+echo put_contents($url);
 
 function put_contents($url,$headers=false) {
     $url = parse_url($url);
