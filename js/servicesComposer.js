@@ -12,6 +12,7 @@ const REST_METHOD_POST = 'post';
 const REST_METHOD_PUT = 'put';
 const REST_METHOD_DELETE = 'delete';
 
+const PHP_CHECK_ACCESS = 'php/phpCheckAccess.php?url='
 const PHP_GET = 'php/phpGet.php?url='
 const PHP_POST = 'php/phpPost.php?url='
 const PHP_PUT = 'php/phpPut.php?url='
@@ -124,7 +125,7 @@ function performRestService(uri, resultBuffer, method) {
         middle = PHP_DELETE;
     }
     return $.ajax({
-            url: middle + uri,
+            url: middle + url,
             type: REST_METHOD_GET,
             async: false}).responseText;
     // $.ajax({
@@ -136,6 +137,14 @@ function performRestService(uri, resultBuffer, method) {
     //         alert('CHECK: ' + resultBuffer);
     //     }
     // });
+}
+
+function checkRestService(uri, resultBuffer) {
+    var url = uri + resultBuffer;
+    return $.ajax({
+            url: PHP_CHECK_ACCESS + url,
+            type: REST_METHOD_GET,
+            async: false}).responseText;
 }
 
 // TODO: going to be worked out
