@@ -13,6 +13,7 @@ const REST_METHOD_PUT = 'put';
 const REST_METHOD_DELETE = 'delete';
 
 const PHP_GET = 'php/phpGet.php?url='
+const PHP_POST = 'php/phpPost.php?url='
 
 function Service(name, type) {
     var id = id_counter++, name, type, rest_url, rest_method;
@@ -110,7 +111,7 @@ function performRestService(uri, resultBuffer, method) {
     }
     else if(method == REST_METHOD_POST){
         // use POST middleware
-    
+        middle = PHP_POST;
     }
     else if(method == REST_METHOD_PUT) {
         // use PUT middleware
@@ -121,7 +122,7 @@ function performRestService(uri, resultBuffer, method) {
     }
     return $.ajax({
             url: middle + uri,
-            type: method,
+            type: REST_METHOD_GET,
             async: false}).responseText;
     // $.ajax({
     //     url: url,
