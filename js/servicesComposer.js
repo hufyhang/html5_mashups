@@ -14,6 +14,8 @@ const REST_METHOD_DELETE = 'delete';
 
 const PHP_GET = 'php/phpGet.php?url='
 const PHP_POST = 'php/phpPost.php?url='
+const PHP_PUT = 'php/phpPut.php?url='
+const PHP_DELETE = 'php/phpDelete.php?url='
 
 function Service(name, type) {
     var id = id_counter++, name, type, rest_url, rest_method;
@@ -115,10 +117,11 @@ function performRestService(uri, resultBuffer, method) {
     }
     else if(method == REST_METHOD_PUT) {
         // use PUT middleware
-
+        middle = PHP_PUT;
     }
     else if(method == REST_METHOD_DELETE) {
         // use DELETE middleware
+        middle = PHP_DELETE;
     }
     return $.ajax({
             url: middle + uri,
