@@ -16,6 +16,14 @@
 <body cellpadding="0" cellspacing="0" link="white" vlink="white" onload="initialise(); initialiseBigCanvas();">    
 <output id="temp_script_output"></output>
 <script>
+    var welcomeInfo = 'Welcome to HyperMash - the service composition platform for us.<br/><br/>Due to the fact HyperMash is still under development, unexpected outputs or errors may be occurred at use time, yet we are working extremely hard to keep that possibility as low as possible. However, we apologize that we will not be responsible for any of the problems and unstables happened at use time as HyperMash is still at its very early stage (just like a testing version).<br/><br/>If you are unhappy with this you can close HyperMash by leaving this Web page. Otherwise, please click the below button to accept the agreement.';
+
+    $(document).ready(function() {
+        visibleElement('dashboard');
+        visibleElement('dashboard_div');
+        $('#dashboard_output').html('<div>INFORMATION AND AGREEMENT</div><hr/><table class="frame_class"><tr><td><div class="scrollable_div" style="height: 85%;background:grey;">' + welcomeInfo + '</div></td></tr><tr><td align="center"><div class="div_long_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">I agree</div></td></tr></table>');
+    });
+
     // add iOS supports
     $('.top_sidebar_frame').bind('touchstart', function() {
         $(this).addClass('hover');
