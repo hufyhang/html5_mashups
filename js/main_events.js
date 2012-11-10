@@ -40,13 +40,13 @@ function resetCurrentPlace() {
 
 function showFeedsPanel(containerId) {
     _current_container_id = containerId;
-    document.getElementById(containerId).innerHTML = '<table class="panel_table"><tr><td><div class="div_long_push_button" onclick="showAddFeedForm(\'dashboard_output\')">Add feed...</div></td>' + 
+    document.getElementById(containerId).innerHTML = '<table class="panel_table"><tr><td><table><tr><td><div>Feeds</div></td><td><div class="div_push_button" onclick="showAddFeedForm(\'dashboard_output\')">Add feed...</div></td></tr></table></td>' + 
     '</tr></table><hr class="seperator_hr"/>' + feeds_html;
 }
 
 function showWidgetsPanel(containerId) {
     _current_container_id = containerId;
-    $('#'+ containerId).html('<div>Widgets</div><hr class="seperator_hr" /><table class="panel_table" style="padding-left:15px;"><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'' + WIDGET_AUDIO + '\');">HTML5 Audio</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'' + WIDGET_VIDEO + '\');">HTML5 Video</div></td></tr></table>');
+    $('#'+ containerId).html('<div>Widgets</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;"><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'' + WIDGET_AUDIO + '\');">HTML5 Audio</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'' + WIDGET_VIDEO + '\');">HTML5 Video</div></td></tr></table>');
 }
 
 
@@ -146,6 +146,14 @@ function showRemoveProjectDialog(md5, name) {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
     $('#dashboard_output').html('<table class="frame_table"><tr><td><div>Are you sure you want to remove \"' + name + '\"?</div></td></tr><tr><td><div class="div_push_button" onclick="removeAProject(\'' + md5 + '\');invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Yes</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">No</div></td></tr></table>');
+}
+
+function showMessageDialog(msg) {
+    // show message
+    visibleElement('dashboard');
+    visibleElement('dashboard_div');
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>'
+    ;
 }
 
 function showNotificationInDashboard(msg) {

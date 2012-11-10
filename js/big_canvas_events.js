@@ -144,7 +144,7 @@ function iterateFeedsFrom(feed) {
         if(service.getType() == TYPE_REST && next != 'undefined') {
             _big_buffer += '__result_buffer__ = performRestService(\'' + service.getRestUrl() + '\' + __result_buffer__, __result_buffer__ , \'' + service.getRestMethod() + '\');' + '\n\n';
             _big_buffer += 'if(__result_buffer__ === undefined) {\n' +
-                'alert(\'Oops! Service \"' + service.getName() + '\" is down. Please try later or use an alternative service feed.\');'+ 
+                'showMessageDialog(\'Oops! Service \"' + service.getName() + '\" is down. Please try later or use an alternative service feed.\');'+ 
                 '\nreturn;' + 
                 '}' + '\n\n';
         }
@@ -354,10 +354,6 @@ function Connector(parent_feed) {
         _big_canvas_layer.draw();
         _big_canvas_stage.draw();
     }
-}
-
-function test() {
-    _feeds_nodes[0].getConnector().connectTo(_feeds_nodes[2]);
 }
 
 function drawStartNode() {
