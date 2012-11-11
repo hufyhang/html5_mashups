@@ -22,25 +22,44 @@
         visibleElement('dashboard');
         visibleElement('dashboard_div');
         $('#dashboard_output').html('<div>INFORMATION AND AGREEMENT</div><hr/><table class="frame_class"><tr><td><div class="scrollable_div" style="height: 85%;background:grey;">' + welcomeInfo + '</div></td></tr><tr><td align="center"><div class="div_long_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">I agree</div></td></tr></table>');
-    });
 
-    // add iOS supports
-    $('.top_sidebar_frame').bind('touchstart', function() {
-        $(this).addClass('hover');
-        visibleElement('dashboard');
-    }).bind('touchend', function() {
-    $(this).removeClass('hover');
-    invisibleElement('dashboard');
-    });
+        // add sidebars ease-in on hover effect
+        $('.top_sidebar_frame').hover(function() {
+            $(this).css('left', '-10px' );
+            visibleElement('dashboard');
+        },
+        function() {
+            $(this).css('left', '-90px');
+            invisibleElement('dashboard');
+        });
 
-    $('.bottom_sidebar_frame').bind('touchstart', function() {
-        $(this).addClass('hover');
-        visibleElement('dashboard');
-    }).bind('touchend', function() {
-    $(this).removeClass('hover');
-    invisibleElement('dashboard');
-    });
+        $('.bottom_sidebar_frame').hover(function() {
+            $(this).css('left', '-10px' );
+            visibleElement('dashboard');
+        },
+        function() {
+            $(this).css('left', '-90px');
+            invisibleElement('dashboard');
+        });
 
+        // add iOS supports
+        $('.top_sidebar_frame').bind('touchstart', function() {
+            $(this).addClass('hover');
+            visibleElement('dashboard');
+        }).bind('touchend', function() {
+        $(this).removeClass('hover');
+        invisibleElement('dashboard');
+        });
+
+        $('.bottom_sidebar_frame').bind('touchstart', function() {
+            $(this).addClass('hover');
+            visibleElement('dashboard');
+        }).bind('touchend', function() {
+        $(this).removeClass('hover');
+        invisibleElement('dashboard');
+        });
+
+    });
 
     function parseXML(xml) {
         var data = $(xml).find("Result");
@@ -200,7 +219,7 @@
     </div>
 
     <!-- top sidebar -->
-    <table class="top_sidebar_frame" border="0" cellpadding="2px;" onmouseover="visibleElement('dashboard')" onmouseout="invisibleElement('dashboard')">
+    <table class="top_sidebar_frame" border="0" cellpadding="2px;">
         <tr><td><div class="sidebar_button" onclick="resetCurrentPlace();showFeedsPanel('options_field_output');">Feeds</div></td>
             <tr><td><div class="sidebar_button">Workers</div></td>
                 <tr><td><div class="sidebar_button" onclick="resetCurrentPlace();showWidgetsPanel('options_field_output');">Widgets</div></td>
@@ -208,7 +227,7 @@
     </table>
 
     <!-- bottom sidebar -->
-    <table class="bottom_sidebar_frame" border="0" cellpadding="2px;" onmouseover="visibleElement('dashboard')" onmouseout="invisibleElement('dashboard')">
+    <table class="bottom_sidebar_frame" border="0" cellpadding="2px;">
         <tr><td><div class="sidebar_button">element</div></td>
         <tr><td><div class="sidebar_button">element</div></td>
         </tr>

@@ -152,9 +152,9 @@ body {
     -ms-transition: all 1s;
 }
 
-.top_sidebar_frame:hover {
-    left: -10px;
-}
+/* .top_sidebar_frame:hover { */
+/*     left: -10px; */
+/* } */
 
 /* bottom sidebar */
 .bottom_sidebar_frame {
@@ -169,9 +169,9 @@ body {
     -ms-transition: all 1s;
 }
 
-.bottom_sidebar_frame:hover {
-    left: -10px;
-}
+/* .bottom_sidebar_frame:hover { */
+/*     left: -10px; */
+/* } */
 
 .sidebar_button {
     cursor: default;
