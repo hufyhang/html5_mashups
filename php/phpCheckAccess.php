@@ -1,10 +1,5 @@
 <?php
-$url = str_replace(' ','%20',$_GET['url']);
-// echo get_http_response_code($url);
-// function get_http_response_code($url) {
-//     $headers = get_headers($url);
-//     return substr($headers[0], 9, 3);
-// }
+$url = substr(str_replace(' ','%20',$_GET['url']), 1, -1);
 $curl = curl_init();
 curl_setopt_array( $curl, array(
     CURLOPT_RETURNTRANSFER => true,

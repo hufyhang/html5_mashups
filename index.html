@@ -46,7 +46,8 @@
         $('.top_sidebar_frame').bind('touchstart', function() {
             $(this).addClass('hover');
             visibleElement('dashboard');
-        }).bind('touchend', function() {
+        });
+        $('.top_sidebar_frame').bind('touchend', function() {
         $(this).removeClass('hover');
         invisibleElement('dashboard');
         });
@@ -54,7 +55,8 @@
         $('.bottom_sidebar_frame').bind('touchstart', function() {
             $(this).addClass('hover');
             visibleElement('dashboard');
-        }).bind('touchend', function() {
+        })
+        $('.bottom_sidebar_frame').bind('touchend', function() {
         $(this).removeClass('hover');
         invisibleElement('dashboard');
         });

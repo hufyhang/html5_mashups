@@ -106,7 +106,7 @@ function updateRestMethodById(id, method) {
 }
 
 function performRestService(uri, resultBuffer, method) {
-    var url = uri + resultBuffer;
+    var url = '"' +  uri + resultBuffer + '"';
     var middle = '';
     if(method == REST_METHOD_GET) {
         // use GET middleware
@@ -140,7 +140,7 @@ function performRestService(uri, resultBuffer, method) {
 }
 
 function checkRestService(uri, resultBuffer) {
-    var url = uri + resultBuffer;
+    var url = '"' + uri + resultBuffer + '"';
     return $.ajax({
             url: PHP_CHECK_ACCESS + url,
             type: REST_METHOD_GET,
