@@ -13,6 +13,7 @@ const FEED_TYPE_REST = 'rest';
 const FEED_TYPE_SOAP = 'soap';
 
 var _database, idb;
+var _log;
 
 var feeds_html = '';
 var feeds_name_list = '';
@@ -21,9 +22,24 @@ var _current_container_id;
 var _currentPlace = undefined;
 
 function initialise() {
+    _log = '';
+    appendLog('Session start.');
+
     readyDatabase();
     updateFeedsHTML();
     readProjects('options_field_output');
+}
+
+function appendLog(msg) {
+    var now = new Date();
+    _log += '[' + now.toTimeString() + '] ' + msg + '<br/><br/>';
+}
+
+function showLogDialog() {
+    visibleElement('dashboard');
+    visibleElement('dashboard_div');
+    $('#dashboard_output').html('<div>System Log</div><hr/><table style="width: 100%;"><tr><td><div style="overflow: auto; width: 40em; height: 300px; background:grey; padding-left: 5px; padding-right: 5px;">' + _log + '</div></td></tr><tr><td align="center"><div class="div_long_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Close</div></td></tr></table>');
+
 }
 
 function visibleElement(elementId) {

@@ -52,10 +52,12 @@ function getFeedsJSON() {
 
     // }
     buffer += ']}';
+    appendLog('Generate Feeds JSON: ' + buffer + '');
     return buffer;
 }
 
 function loadFromJSON(jsonInput) {
+    appendLog('Load from JSON: ' + jsonInput);
     // clear canvas
 
     var json = eval('(' + jsonInput + ')');
@@ -120,6 +122,8 @@ function loadFromJSON(jsonInput) {
 }
 
 function startIterate(dataset) {
+    appendLog('Start generating workflow with dataset "' + dataset + '".');
+
     // reset function counter
     _big_counter = 0;
     // initiate _big_buffer
@@ -144,12 +148,15 @@ function iterateFeedsFrom(feed) {
         if(service.getType() == TYPE_REST && next != 'undefined') {
             //check if the service is available first
             _big_buffer += 'var _code = checkRestService(\'' + service.getRestUrl() + '\', __result_buffer__);' + '\n\n';
+            _big_buffer += 'appendLog(\'Received code: \' + _code + \' from \' + \'' + service.getRestUrl() + '\' +  __result_buffer__);' + '\n\n';
             _big_buffer += 'if(_code == \'200\') {\n';
             _big_buffer += '__result_buffer__ = performRestService(\'' + service.getRestUrl() + '\', __result_buffer__, \'' + service.getRestMethod() + '\');' + '\n\n';
+            _big_buffer += 'appendLog(\'Received data: \' + __result_buffer__ );' + '\n\n';
             _big_buffer += '} else {\n' +
-                'showMessageDialog(\'Oops! Service \"' + service.getName() + '\" is down. Please try later or use an alternative service feed.\');'+ 
-                '\nreturn;' + 
-                '}' + '\n\n';
+                'showMessageDialog(\'Oops! Service \"' + service.getName() + '\" is down. Please try later or use an alternative service feed.\');'+ '\n\n'; 
+            _big_buffer += 'appendLog(\'' + service.getName() + ' is down.\');' + '\n\n';
+            _big_buffer += 'return;\n\n';
+            _big_buffer += '}' + '\n\n';
         }
     }
 
@@ -157,6 +164,7 @@ function iterateFeedsFrom(feed) {
         iterateFeedsFrom(next);
     }
     else {
+        appendLog('Showing result in execute_output.');
         if(service.getType() == TYPE_REST) {
             _big_buffer += 'var url = \'' + service.getRestUrl() + '\' + __result_buffer__;' + '\n\n';
             _big_buffer += '$(\"#execute_output\").html(\'<iframe frameborder="0" width="100%" height="400px" src=\"\' + url + \'\" seamless=\"seamless\"><p>Surprisingly, your browser does not support iframes.</p></iframe>\');' + '\n\n';
