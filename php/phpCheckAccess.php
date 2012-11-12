@@ -1,5 +1,12 @@
 <?php
-$url = substr(str_replace(' ','%20',$_GET['url']), 1, -1);
+$arg = str_replace(' ', '%20', $_GET['url']);
+$index_a = 1;
+$index_b = -1;
+if(substr($arg, 0, 2) == '\"' && substr($arg, -2) == '\"') {
+    $index_a = 2;
+    $index_b = -2;
+}
+$url = substr($arg, $index_a, $index_b);
 $curl = curl_init();
 curl_setopt_array( $curl, array(
     CURLOPT_RETURNTRANSFER => true,
