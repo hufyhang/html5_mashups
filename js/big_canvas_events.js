@@ -26,6 +26,16 @@ function createBigCanvas(_width, _height) {
     drawStartNode();
 }
 
+function renewCheck() {
+    if(_feeds_nodes.length > 1) {
+        visibleElement('dashboard');
+        visibleElement('dashboard_div');
+        $('#dashboard_output').html('<table style="width: 100%;"><tr><td><div>Are you sure you want to renew the workbench? All unsaved works will be lost.</div></td></tr><tr><td><div class="div_push_button" onclick="newProject();invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\')">Yes</div><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\')">No</div></td></tr></table>');
+    } else {
+        newProject();
+    }
+}
+
 function newProject() {
     _big_counter = 0;
     _big_buffer = '';
