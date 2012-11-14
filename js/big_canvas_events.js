@@ -5,17 +5,39 @@ var _feeds_nodes = [];
 var _big_counter = 0;
 var _big_buffer = '';
 
+var fixedWidth, fixedHeight;
+
 function initialiseBigCanvas() {
     var canvas = document.getElementById('big_canvas_canvas');
+    fixedWidth = canvas.offsetWidth;
+    fixedHeight = canvas.offsetHeight;
+    createBigCanvas(fixedWidth, fixedHeight);
+}
+
+function createBigCanvas(_width, _height) {
     _big_canvas_stage = new Kinetic.Stage({
         container: "big_canvas_canvas",
-        width: canvas.offsetWidth,
-        height: canvas.offsetHeight,
+        width: _width,
+        height: _height,
     });
 
     _big_canvas_layer = new Kinetic.Layer();
     _big_canvas_stage.add(_big_canvas_layer);
+    drawStartNode();
+}
 
+function newProject() {
+    _big_counter = 0;
+    _big_buffer = '';
+    for(var index = 0; index != _feeds_nodes.length; ++index) {
+        _feeds_nodes[index].getNode().hide();
+        _feeds_nodes[index].getConnector().getConnector().hide();
+        if(index != 0) {
+            _feeds_nodes[index].getBeConnectedLine().hide();
+            _feeds_nodes[index].getRemoveDot().getRemoveDot().hide();
+        }
+    }
+    _feeds_nodes = [];
     drawStartNode();
 }
 
@@ -567,6 +589,14 @@ function RestFeed(name, url) {
 
     this.getId = function() {
         return id;
+    }
+
+    this.getRemoveDot = function() {
+        return removeDot;
+    }
+
+    this.getConnector = function() {
+        return feedConnector;
     }
 
     var feed = new Kinetic.Text({
