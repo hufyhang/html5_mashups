@@ -71,6 +71,10 @@ function Widget(type) {
 
     removeDot = new RemoveDot(this);
 
+    this.getRemoveDot = function() {
+        return removeDot;
+    }
+
     feed.on('mouseover', function() {
         this.setStroke('red');
         _big_canvas_layer.draw();

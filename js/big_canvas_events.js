@@ -41,9 +41,14 @@ function newProject() {
     _big_buffer = '';
     for(var index = 0; index != _feeds_nodes.length; ++index) {
         _feeds_nodes[index].getNode().hide();
-        _feeds_nodes[index].getConnector().getConnector().hide();
+        if(_feeds_nodes[index].getService().getType() != TYPE_WIDGET) { // widgets have no connectors
+            _feeds_nodes[index].getConnector().getConnector().hide();
+        }
         if(index != 0) {
-            _feeds_nodes[index].getBeConnectedLine().hide();
+            var line = _feeds_nodes[index].getBeConnectedLine();
+            if(line != undefined && line != 'undefined') {
+                line.hide();
+            }
             _feeds_nodes[index].getRemoveDot().getRemoveDot().hide();
         }
     }
@@ -65,24 +70,6 @@ function getFeedsJSON() {
         }
     }
 
-    // for(var index = 0; index != _feeds_nodes.length; ++index) {
-    //     var n = _feeds_nodes[index];
-    //     var nxt = n.getNextFeed();
-    //     var nxtId;
-    //     if(nxt !== undefined && nxt !== 'undefined' && index != _feeds_nodes.length - 1) {
-    //         nxtId = nxt.getId();
-    //         buffer += '{\"feed\":[{\"next\":\"' + nxtId + '\", ';
-    //         buffer += nxt.getService().getJSON();
-    //         buffer += '}]}';
-    //         if(index != _feeds_nodes.length - 1) {
-    //             buffer += ', ';
-    //         }
-    //     }
-    //     else if(index == _feeds_nodes.length - 1) {
-    //         buffer += '{\"feed\":[{\"next\":\"-1\"}]}';
-    //     }
-
-    // }
     buffer += ']}';
     appendLog('Generate Feeds JSON: ' + buffer + '');
     return buffer;
@@ -129,7 +116,7 @@ function loadFromJSON(jsonInput) {
         list[index] = new Array(next, id, name, type, restUrl, restMethod);
     }
 
-    // create connecting lines
+    // create connecting lines and set configurations
     for(var index = 0; index != list.length; ++index) {
         _feeds_nodes[index].getConnector().connectTo(_feeds_nodes[index + 1]);
         var type = list[index][3];
@@ -138,19 +125,6 @@ function loadFromJSON(jsonInput) {
             _feeds_nodes[index + 1].getService().setRestMethod(method);
         }
     }
-
-    // for(var index = 0; index != list.length; ++index) {
-    //     var id = parseInt(list[index][1]);
-    //     var node = _feeds_nodes[id];
-    //     var nxtId = parseInt(list[index][0]);
-    //     _feeds_nodes[index].getConnector().connectTo(_feeds_nodes[nxtId]);
-    //     var type = list[index][3];
-    //     if(type == TYPE_REST) {
-    //         var method = list[index][5];
-    //         _feeds_nodes[nxtId].getService().setRestMethod(method);
-    //     }
-    // }
-
 }
 
 function startIterate(dataset) {
@@ -244,8 +218,6 @@ function RemoveDot(parent_feed) {
         fontSize: 10,
         align: 'center',
         valign: 'center',
-        // fontFamily: 'Calibri',
-        // fontStyle: 'bold',
         textFill: 'white',
         draggable: false
     });
@@ -269,30 +241,51 @@ function RemoveDot(parent_feed) {
 }
 
 function removeFeedFromCanvas(feed) {
+    alert('To be continued...');
+    return;
+    feed.getNode().hide();
+    feed.getConnector().getConnector().hide();
+    feed.getBeConnectedLine().hide();
+    feed.getRemoveDot().getRemoveDot().hide();
+
     var id = feed.getId();
     _feeds_nodes.splice(id, 1);
     // tidy up
-    for(var i = 1; i != _feeds_nodes.length; ++i) {
-        _feeds_nodes[i].setId(i - 1);
+    for(var i = 0; i != _feeds_nodes.length; ++i) {
+        if(_feeds_nodes[i].getService().getType() != TYPE_SYS_START) {
+            _feeds_nodes[i].setId(i + 1);
+        }
     }
+    var temp = _feeds_nodes;
+    newProject();
+    drawFromFeedList(temp);
 
-    alert('To be continued...');
-    // drawFromFeedList(_feeds_nodes);
+    // make connections
+    // for(var i = 0; i != _feeds_nodes.length; ++i) {
+    //     var cur = temp[i];
+    //     var next = cur.getNextFeed();
+    //     if(next != 'undefined' && next != undefined) {
+    //         alert(next.getService().getName());
+    //         var nextId = next.getId();
+    //         _feeds_nodes[i].getConnector().connectTo(_feeds_nodes[nextId]);
+    //     }
+    // }
 }
 
 function drawFromFeedList(list) {
-    // clear the big layer first
-    _big_canvas_layer.clear();
-    alert('CHECK: ' + list.length);
+    var size = list.length;
 
-    for(var index = 1; index != list.length - 1; ++index) {
+    for(var index = 1; index != size; ++index) {
         var ser = list[index].getService();
-        alert(ser.getName());
         if(ser.getType() == TYPE_SYS_START) {
             drawStartNode();
         }
         else if(ser.getType() == TYPE_REST) {
             drawARestFeed(ser.getName(), ser.getRestUrl());
+            _feeds_nodes[index].getService().setRestMethod(ser.getRestMethod());
+        }
+        else if(ser.getType() == TYPE_WIDGET) {
+            drawAWidget(ser.getName());
         }
     }
 }
