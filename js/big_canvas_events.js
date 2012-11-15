@@ -358,10 +358,20 @@ function Connector(parent_feed) {
         for(var index = 0; index != _feeds_nodes.length; ++index) {
             var nodeObj = _feeds_nodes[index];
             if(ifContains(mouseX, mouseY, nodeObj.getNode())) {
+                if(nodeObj.getService().getType() == TYPE_SYS_START) {
+                    showMessageDialog('Oops! The "Start" node should not be connected by any other.');
+                    break;
+                }
+                var cline = nodeObj.getBeConnectedLine();
+                if(cline != 'undefined') {
+                    nodeObj.getBeConnectedLine().hide();
+                }
+                _feeds_nodes[index].setBeConnectedLine('undefined');
+
                 connectingLine.setPoints([org_x, org_y, 
                                     nodeObj.getNode().getX() + nodeObj.getNode().getBoxWidth()/2, 
                                     nodeObj.getNode().getY() + nodeObj.getNode().getBoxHeight()/2]);
-                nodeObj.setBeConnectedLine(connectingLine);
+                _feeds_nodes[index].setBeConnectedLine(connectingLine);
 
                 parentFeed.setNextFeed(nodeObj);
 
