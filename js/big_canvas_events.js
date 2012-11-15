@@ -245,32 +245,44 @@ function removeFeedFromCanvas(feed) {
     alert('To be continued...');
     return;
     feed.getNode().hide();
-    feed.getConnector().getConnector().hide();
-    feed.getBeConnectedLine().hide();
+    var cline = feed.getBeConnectedLine();
+    if(cline != 'undefined' && cline != undefined) {
+        feed.getBeConnectedLine().hide();
+    }
     feed.getRemoveDot().getRemoveDot().hide();
+    if(feed.getService().getType() != TYPE_WIDGET) {
+        feed.getConnector().getConnector().hide();
+    }
+
+    var next = feed.getNextFeed();
+    if(next != 'undefined' && next != undefined) {
+        next.getBeConnectedLine().hide();
+        next.setBeConnectedLine('undefined');
+        feed.setNextFeed('undefined');
+    }
 
     var id = feed.getId();
     _feeds_nodes.splice(id, 1);
     // tidy up
     for(var i = 0; i != _feeds_nodes.length; ++i) {
         if(_feeds_nodes[i].getService().getType() != TYPE_SYS_START) {
-            _feeds_nodes[i].setId(i + 1);
+            _feeds_nodes[i].setId(i);
         }
     }
     var temp = _feeds_nodes;
     newProject();
     drawFromFeedList(temp);
 
-    // make connections
-    // for(var i = 0; i != _feeds_nodes.length; ++i) {
-    //     var cur = temp[i];
-    //     var next = cur.getNextFeed();
-    //     if(next != 'undefined' && next != undefined) {
-    //         alert(next.getService().getName());
-    //         var nextId = next.getId();
-    //         _feeds_nodes[i].getConnector().connectTo(_feeds_nodes[nextId]);
-    //     }
-    // }
+    //make connections
+    for(var i = 0; i != _feeds_nodes.length; ++i) {
+        var cur = temp[i];
+        var next = cur.getNextFeed();
+        alert(next);
+        if(next != 'undefined' && next != undefined) {
+            var nextId = next.getId();
+            _feeds_nodes[i].getConnector().connectTo(_feeds_nodes[nextId]);
+        }
+    }
 }
 
 function drawFromFeedList(list) {
@@ -410,8 +422,6 @@ function drawStartNode() {
     this.clearNextFeed = function() {
         nextFeed = 'undefined';
     };
-
-
 
     var service = new Service(NAME_SYS_START, TYPE_SYS_START); 
 
@@ -593,8 +603,8 @@ function RestFeed(name, url) {
         return feed;
     }
 
-    this.setId = function(id) {
-        id = id;
+    this.setId = function(inputId) {
+        id = inputId;
     }
 
     this.getId = function() {

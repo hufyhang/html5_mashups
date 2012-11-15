@@ -285,7 +285,7 @@ function removeAProject(md5) {
         tx.executeSql('DELETE FROM projects WHERE md5="' + md5 + '"');
         if(_currentPlace == SHOW_PROJECTS) {
             readProjects('options_field_output');
-            appendLog('Project with MD5 \"' + md5 + '\" removed.');
+            appendLog('Project with MD5 \"' + md5 + '\" has been removed.');
         }
     });
 
@@ -302,7 +302,7 @@ function saveAProject(inputName, inputJson) {
         var md5 = MD5(new Date() + inputName);
         tx.executeSql('INSERT INTO projects (md5, name, json) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\')');
         showNotificationInDashboard(inputName + " has been saved.");
-        appendLog('Project \"' + inputName + '\" saved.');
+        appendLog('Project \"' + inputName + '\" has been saved.');
     });
 
     // idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_WRITE).objectStore(INDEXEDDB_STORE).add({name: inputName, json: json}).onsuccess = function(evt) {
