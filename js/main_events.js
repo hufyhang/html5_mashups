@@ -56,7 +56,7 @@ function resetCurrentPlace() {
 
 function showFeedsPanel(containerId) {
     _current_container_id = containerId;
-    document.getElementById(containerId).innerHTML = '<table class="panel_table"><tr><td><table><tr><td><div>Feeds</div></td><td><div class="div_push_button" onclick="showAddFeedForm(\'dashboard_output\')">Add feed...</div></td></tr></table></td>' + 
+    document.getElementById(containerId).innerHTML = '<table class="panel_table"><tr><td><table><tr><td><div>Feeds</div></td><td><div class="div_push_button" onclick="showAddFeedForm(\'dashboard_output\')">Add feed...</div><div class="div_push_button" onclick="loadMarket();">Feed Market</div></td></tr></table></td>' + 
     '</tr></table><hr class="seperator_hr"/>' + feeds_html;
 }
 
@@ -116,6 +116,14 @@ function addFeedFromFeedForm(containerId) {
         tx.executeSql('INSERT INTO feeds (name, url, feed_type) VALUES (\"' + name + '\", \"' + url +'\", \"' + type + '\")');
 
         document.getElementById('add_feed_form_feed_url').value = document.getElementById('add_feed_form_feed_name').value = '';
+        showNotificationInDashboard('Feed "' + name + '" has been added.');
+    });
+}
+
+function insertFeedIntoHyperMash(name, url, type) {
+    // insert into database
+    _database.transaction(function(tx) {
+        tx.executeSql('INSERT INTO feeds (name, url, feed_type) VALUES (\"' + name + '\", \"' + url +'\", \"' + type + '\")');
         showNotificationInDashboard('Feed "' + name + '" has been added.');
     });
 }
