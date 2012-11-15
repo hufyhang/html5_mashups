@@ -54,6 +54,7 @@ function newProject() {
     }
     _feeds_nodes = [];
     drawStartNode();
+    appendLog('Clear workbench.');
 }
 
 function getFeedsJSON() {
@@ -333,6 +334,12 @@ function Connector(parent_feed) {
         this.moveToTop();
     });
     connector.on("dragend", function() {
+        // reset next feed and beConnectedLine
+        if(parentFeed.getNextFeed() != 'undefined' && parentFeed.getNextFeed() != undefined) {
+            parentFeed.getNextFeed().setBeConnectedLine('undefined');
+        }
+        parentFeed.setNextFeed('undefined');
+
         var mouseX = _big_canvas_stage.getMousePosition().x;
         var mouseY = _big_canvas_stage.getMousePosition().y;
         var result = false;
