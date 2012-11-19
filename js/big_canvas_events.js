@@ -242,8 +242,9 @@ function RemoveDot(parent_feed) {
 }
 
 function removeFeedFromCanvas(feed) {
-    alert('To be continued...');
-    return;
+    // alert('To be continued...');
+    // return;
+
     feed.getNode().hide();
     var cline = feed.getBeConnectedLine();
     if(cline != 'undefined' && cline != undefined) {
@@ -269,18 +270,73 @@ function removeFeedFromCanvas(feed) {
             _feeds_nodes[i].setId(i);
         }
     }
-    var temp = _feeds_nodes;
+
+    var json = '{"feeds":[';
+    for(var i = 0; i != _feeds_nodes.length; ++i) {
+        var url = 'undefined';
+        var restMethod = 'undefined';
+        var name = _feeds_nodes[i].getService().getName();
+        var type = _feeds_nodes[i].getService().getType();
+        if(type == TYPE_REST) {
+            url = _feeds_nodes[i].getService().getRestUrl();
+            restMethod = _feeds_nodes[i].getService().getRestMethod();
+        }
+        var next = _feeds_nodes[i].getNextFeed();
+        var nextId = -1;
+        if(next != 'undefined' && next != undefined) {
+            nextId = next.getId();
+            if(nextId == id) { // if nextId is equal to the one removed.
+                nextId = -1;
+            }
+        }
+        json += '{"name":"' + name + '", "type":"' + type + '", "url":"' + url + '", "restMethod": "' + restMethod  + '", "nextId":"' + nextId + '"}';
+        if(i != _feeds_nodes.length - 1) {
+            json += ', ';
+        }
+
+    }
+    json += ']}';
+
+    appendLog('Generate JSON: ' + json);
     newProject();
-    drawFromFeedList(temp);
+    appendLog('Auto-load from JSON: ' + json);
+
+    var jsonObj = eval('(' + json + ')');
+    var key, count = 0;
+    for(key in jsonObj.feeds) {
+        ++count;
+    }
+
+    var nextIds = [];
+    for(var index = 0; index != count; ++index) {
+        var item = jsonObj.feeds[index];
+        var name = item.name;
+        var type = item.type;
+        var url = item.url;
+        var restMethod = item.restMethod;
+        var nid = item.nextId;
+        nextIds[index] = parseInt(nid);
+        switch(type) {
+            case TYPE_SYS_START:
+                break;
+            case TYPE_REST:
+                drawARestFeed(name, url);
+                _feeds_nodes[_feeds_nodes.length - 1].getService().setRestMethod(restMethod);
+                break;
+            case TYPE_WIDGET:
+                drawAWidget(name);
+                break;
+            default:
+                    break;
+        }
+    }
 
     //make connections
-    for(var i = 0; i != _feeds_nodes.length; ++i) {
-        var cur = temp[i];
-        var next = cur.getNextFeed();
-        alert(next);
-        if(next != 'undefined' && next != undefined) {
-            var nextId = next.getId();
-            _feeds_nodes[i].getConnector().connectTo(_feeds_nodes[nextId]);
+    for(var index = 0; index != _feeds_nodes.length; ++index) {
+        var nextId = nextIds[index];
+        if(nextId != -1) {
+            _feeds_nodes[index].setNextFeed(_feeds_nodes[nextId]);
+            _feeds_nodes[index].getConnector().connectTo(_feeds_nodes[nextId]);
         }
     }
 }
