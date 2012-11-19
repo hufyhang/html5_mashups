@@ -54,6 +54,7 @@ function newProject() {
     }
     _feeds_nodes = [];
     drawStartNode();
+    $('#properties_panel_output').html('<center><img src="img/crest.png" alt="University of Manchester Crest" style="margin-top: 5%;" width="40%" height="80%"/></center>');
     appendLog('Clear workbench.');
 }
 
