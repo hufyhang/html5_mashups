@@ -29,7 +29,17 @@ function registerTouchEvents(stage) {
                 touchedObj = connector;
                 org_x = touchedObj.getX();
                 org_y = touchedObj.getY();
-                break;
+                return;
+            }
+        }
+        // iterate _feeds_nodes to capture the touched removeDot
+        for(var index = 0; index != _feeds_nodes.length; ++index) {
+            var removeDot = _feeds_nodes[index].getRemoveDot();
+            var parentFeed = removeDot.getParentFeed();
+            if((x - TOUCH_OFFSET <= removeDot.getX() && removeDot.getX() + removeDot.getWidth() <= x + TOUCH_OFFSET) && 
+                (y - TOUCH_OFFSET <= removeDot.getY() && removeDot.getY() + removeDot.getHeight() <= y + TOUCH_OFFSET)) {
+                removeFeedFromCanvas(parentFeed);
+                return;
             }
         }
     });
@@ -288,6 +298,18 @@ function RemoveDot(parent_feed) {
     var node_x = parent_node.getX() - 5;
     var node_y = parent_node.getY() - 5; 
     var parentFeed = parent_feed;
+
+    var getParentFeed = function() {
+        return parentFeed;
+    };
+
+    var getWidth = function() {
+        return removeDot.getWidth();
+    };
+
+    var getHeight = function() {
+        return removeDot.getHeight();
+    };
 
     var removeDot = new Kinetic.Text({
         x: node_x,
