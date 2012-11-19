@@ -1,4 +1,5 @@
-var _LOCAL_STORAGE = 'html5_mashup_kineticjs_stage';
+const _LOCAL_STORAGE = 'html5_mashup_kineticjs_stage';
+const TOUCH_OFFSET = 5;
 var _big_canvas_stage, _big_canvas_layer;
 var _feeds_nodes = [];
 
@@ -6,12 +7,94 @@ var _big_counter = 0;
 var _big_buffer = '';
 
 var fixedWidth, fixedHeight;
+var touchedObj = undefined;
 
 function initialiseBigCanvas() {
     var canvas = document.getElementById('big_canvas_canvas');
     fixedWidth = canvas.offsetWidth;
     fixedHeight = canvas.offsetHeight;
     createBigCanvas(fixedWidth, fixedHeight);
+    registerTouchEvents(_big_canvas_stage);
+}
+
+function registerTouchEvents(stage) {
+    stage.on('touchstart', function(evt) {
+        var x = stage.getTouchPosition().x;
+        var y = stage.getTouchPosition().y;
+        // iterate _feeds_nodes to capture the touched connector
+        for(var index = 0; index != _feeds_nodes.length; ++index) {
+            var connector = _feeds_nodes[index].getConnector();
+            if((x - TOUCH_OFFSET <= connector.getX() && connector.getX() <= x + TOUCH_OFFSET) && 
+                (y - TOUCH_OFFSET <= connector.getY() && connector.getY() <= y + TOUCH_OFFSET)) {
+                touchedObj = connector;
+                org_x = touchedObj.getX();
+                org_y = touchedObj.getY();
+                break;
+            }
+        }
+    });
+
+    stage.on('touchmove', function(evt) {
+        if(touchedObj == undefined) { // if no connectors selected, do nothing
+            return;
+        }
+        var x = stage.getTouchPosition().x;
+        var y = stage.getTouchPosition().y;
+        touchedObj.getConnectingLine().show();
+        touchedObj.getConnectingLine().setPoints([org_x, org_y, x, y]);
+    });
+
+    stage.on('touchend', function(evt) {
+        var parentFeed;
+        var tObj = touchedObj;
+        if(touchedObj == undefined) {
+            return;
+        }
+        else {
+            parentFeed = touchedObj.getParentFeed();
+            touchedObj = undefined;
+        }
+
+        // reset next feed and beConnectedLine
+        if(parentFeed.getNextFeed() != 'undefined' && parentFeed.getNextFeed() != undefined) {
+            parentFeed.getNextFeed().setBeConnectedLine('undefined');
+        }
+        parentFeed.setNextFeed('undefined');
+
+        var mouseX = stage.getTouchPosition().x;
+        var mouseY = stage.getTouchPosition().y;
+        var result = false;
+        for(var index = 0; index != _feeds_nodes.length; ++index) {
+            var nodeObj = _feeds_nodes[index];
+            if(ifContains(mouseX, mouseY, nodeObj.getNode())) {
+                if(nodeObj.getService().getType() == TYPE_SYS_START) {
+                    showMessageDialog('Oops! The "Start" node should not be connected by any other.');
+                    break;
+                }
+                var cline = nodeObj.getBeConnectedLine();
+                if(cline != 'undefined') {
+                    nodeObj.getBeConnectedLine().hide();
+                }
+                _feeds_nodes[index].setBeConnectedLine('undefined');
+
+                tObj.getConnectingLine().setPoints([org_x, org_y, 
+                                    nodeObj.getNode().getX() + nodeObj.getNode().getBoxWidth()/2, 
+                                    nodeObj.getNode().getY() + nodeObj.getNode().getBoxHeight()/2]);
+                _feeds_nodes[index].setBeConnectedLine(tObj.getConnectingLine());
+
+                parentFeed.setNextFeed(nodeObj);
+
+                result = true;
+                break;
+            }
+        }
+        if(result == false) {
+            tObj.getConnectingLine().hide();
+            parentFeed.clearNextFeed();
+        }
+        tObj.setPosition(org_x, org_y);
+        tObj.moveToTop();
+    });
 }
 
 function createBigCanvas(_width, _height) {
@@ -370,6 +453,22 @@ function Connector(parent_feed) {
 
     this.getConnectingLine = function() {
         return connectingLine;
+    };
+
+    this.getParentNode = function() {
+        return parent_node;
+    };
+
+    this.getParentFeed = function() {
+        return parentFeed;
+    };
+
+    this.getX = function() {
+        return connector.getX();
+    };
+
+    this.getY = function() {
+        return connector.getY();
     };
 
     var connector = new Kinetic.Circle({
