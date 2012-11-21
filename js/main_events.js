@@ -133,7 +133,7 @@ function insertProjectIntoHyperMash(inputName, inputJson) {
     _database.transaction(function(tx) {
         var md5 = MD5(new Date() + inputName);
         tx.executeSql('INSERT INTO projects (md5, name, json) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\')');
-        showNotificationInDashboard(inputName + " has been saved.");
+        showNotificationInDashboard('"' + inputName + '" has been saved.');
         appendLog('Project \"' + inputName + '\" has been saved.');
     });
 
@@ -323,7 +323,7 @@ function saveAProject(inputName, inputJson) {
     _database.transaction(function(tx) {
         var md5 = MD5(new Date() + inputName);
         tx.executeSql('INSERT INTO projects (md5, name, json) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\')');
-        showNotificationInDashboard(inputName + " has been saved.");
+        showNotificationInDashboard('"' + inputName + '" has been saved.');
         appendLog('Project \"' + inputName + '\" has been saved.');
     });
 
