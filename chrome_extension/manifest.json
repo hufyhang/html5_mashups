@@ -1,13 +1,14 @@
 {
     "app" : {
         "launch" : {
-            "web_url" : "http://feifeihang.github.com/project/index.html"
+            "web_url" : "http://feifeihang.info/hypermash/index.html"
         },
-        "urls" : ["http://feifeihang.github.com/project/index.html"]
+        "urls" : ["http://feifeihang.info/hypermash/index.html"]
     },
-    "name" : "HTML5 Mashup Platform",
-    "version" : "1.0",
-    "description" : "HTML5 Mashup Platform",
+    "name" : "HyperMash",
+    "manifest_version" : 2,
+    "version" : "2.0",
+    "description" : "HyperMash - The Service Composition Platform for Us.",
      "permissions": [
         "http://*/",
         "https://*/"
