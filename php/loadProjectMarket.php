@@ -3,9 +3,10 @@ $host = '31.22.4.32';
 $usrname = 'feifeiha_public';
 $password = 'p0OnMM722iqZ';
 $db = 'feifeiha_hypermash_market';
-$table = 'feeds';
+$table = 'projects';
 
-$result = '{"feeds": [';
+
+$result = '{"projects": [';
 
 $con = mysql_connect($host, $usrname, $password);
 if(!$con) {
@@ -17,13 +18,14 @@ $data = mysql_query("SELECT * FROM " . $table);
 while($row = mysql_fetch_array($data)) {
     $md5 = $row['md5'];
     $name = $row['name'];
-    $type = $row['type'];
-    $restUrl = $row['url'];
-    $desc = $row['description'];
-    // $desc = str_replace('"', '&quot;' $desc);
-    $key = $row['keyword'];
+    $author = $row['author'];
+    $description = $row['description'];
+    $json = $row['json'];
+    // $description = str_replace('"', '&quot;' $description);
+    $description = addslashes($description);
+    $json = addslashes($json);
 
-    $result = $result . '{"md5":"' . $md5 . '", "name":"' . $name . '", "type":"' . $type . '", "url":"' . $restUrl . '", "desc":"' . $desc . '", "keyword":"' . $key .'"},';
+    $result = $result . '{"md5":"' . $md5 . '", "name":"' . $name . '", "author":"' . $author . '", "description":"' . $description . '", "json":"' . $json . '"},';
 }
 
 // remove the comma at the very last position
@@ -31,5 +33,6 @@ $result = substr($result, 0, strlen($result) - 1);
 $result = $result . ']}';
 
 echo $result;
+mysql_close($con);
 ?>
 

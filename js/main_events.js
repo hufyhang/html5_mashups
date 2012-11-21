@@ -56,7 +56,7 @@ function resetCurrentPlace() {
 
 function showFeedsPanel(containerId) {
     _current_container_id = containerId;
-    document.getElementById(containerId).innerHTML = '<table class="panel_table"><tr><td><table><tr><td><div>Feeds</div></td><td><div class="div_push_button" onclick="showAddFeedForm(\'dashboard_output\')">Add feed...</div><div class="div_push_button" onclick="loadMarket();">Feed Market</div></td></tr></table></td>' + 
+    document.getElementById(containerId).innerHTML = '<table class="panel_table"><tr><td><table><tr><td><div>Feeds</div></td><td><div class="div_push_button" onclick="showAddFeedForm(\'dashboard_output\')">Add feed...</div><div class="div_push_button" onclick="loadFeedMarket();">Feed Market</div></td></tr></table></td>' + 
     '</tr></table><hr class="seperator_hr"/>' + feeds_html;
 }
 
@@ -126,6 +126,20 @@ function insertFeedIntoHyperMash(name, url, type) {
         tx.executeSql('INSERT INTO feeds (name, url, feed_type) VALUES (\"' + name + '\", \"' + url +'\", \"' + type + '\")');
         showNotificationInDashboard('Feed "' + name + '" has been added.');
     });
+}
+
+function insertProjectIntoHyperMash(inputName, inputJson) {
+    var json = inputJson;
+    _database.transaction(function(tx) {
+        var md5 = MD5(new Date() + inputName);
+        tx.executeSql('INSERT INTO projects (md5, name, json) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\')');
+        showNotificationInDashboard(inputName + " has been saved.");
+        appendLog('Project \"' + inputName + '\" has been saved.');
+    });
+
+    // idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_WRITE).objectStore(INDEXEDDB_STORE).add({name: inputName, json: json}).onsuccess = function(evt) {
+    //     showNotificationInDashboard(inputName + " has been saved.");
+    // };
 }
 
 function closeAddNewFeed(containerId) {
@@ -245,7 +259,7 @@ function readyDatabase() {
 function readProjects(containerId) {
     _currentPlace = SHOW_PROJECTS;
     _database.transaction(function(tx) {
-    var html = '<div>Existing projects</div><hr class="seperator_hr" /><table class="panel_table">';
+        var html = '<table><tr><td><div>Existing projects</div></td><td><div class="div_long_push_button" onclick="loadProjectMarket();">Project Market</div></td></tr></table><hr class="seperator_hr" /><table class="panel_table">';
         tx.executeSql('SELECT md5, name, json FROM projects', [], function(tx, results) {
             for(var index = 0; index != results.rows.length; ++index) {
                 var row = results.rows.item(index);
