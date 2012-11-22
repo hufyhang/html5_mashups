@@ -6,6 +6,7 @@ var _feed_market_names = [];
 var _feed_market_urls = [];
 var _feed_market_types = [];
 
+var _project_market_md5s = [];
 var _project_market_names = [];
 var _project_market_authors = [];
 var _project_market_descs = [];
@@ -27,6 +28,7 @@ function loadProjectMarket() {
     var html = '<div style="padding-left:5px; font-weight:bold;">Project Market</div><table class="frame_table" width="100%"><tr><td width="40%"><div style="height:300px;" class="scrollable_div"><table style="width: 100%;">';
     for(var index = 0; index != count; ++index) {
         var item = jsonObj.projects[index];
+        _project_market_md5s[index] = item.md5;
         _project_market_names[index] = item.name;
         _project_market_authors[index] = item.author;
         _project_market_descs[index] = item.description.replace('\"', '"');
@@ -48,7 +50,7 @@ function showProjectMarketItem(index) {
 }
 
 function doInsertProject(index) {
-    insertProjectIntoHyperMash(_project_market_names[index], _project_market_json[index]);
+    insertProjectIntoHyperMash(_project_market_md5s[index], _project_market_names[index], _project_market_json[index]);
 }
 
 function loadFeedMarket() {

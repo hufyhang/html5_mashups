@@ -128,13 +128,13 @@ function insertFeedIntoHyperMash(name, url, type) {
     });
 }
 
-function insertProjectIntoHyperMash(inputName, inputJson) {
+function insertProjectIntoHyperMash(inputMd5, inputName, inputJson) {
     var json = inputJson;
     _database.transaction(function(tx) {
-        var md5 = MD5(new Date() + inputName);
+        var md5 = inputMd5;
         tx.executeSql('INSERT INTO projects (md5, name, json) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\')');
         showNotificationInDashboard('"' + inputName + '" has been saved.');
-        appendLog('Project \"' + inputName + '\" has been saved.');
+        appendLog('Project \"' + inputName + '\" with MD5 \"' + md5 + '\" has been added from Project Market.');
     });
 
     // idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_WRITE).objectStore(INDEXEDDB_STORE).add({name: inputName, json: json}).onsuccess = function(evt) {
@@ -190,16 +190,14 @@ function showMessageDialog(msg) {
     // show message
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>'
-    ;
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>';
 }
 
 function showNotificationInDashboard(msg) {
     // show message
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onmouseover="if(_currentPlace != SHOW_PROJECTS) {updateFeedsHTML();}" onclick="if(_currentPlace == SHOW_PROJECTS){readProjects(\'options_field_output\');} else{showFeedsPanel(_current_container_id);}invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>'
-    ;
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onmouseover="if(_currentPlace != SHOW_PROJECTS) {updateFeedsHTML();}" onclick="if(_currentPlace == SHOW_PROJECTS){readProjects(\'options_field_output\');} else{showFeedsPanel(_current_container_id);}invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>';
 }
 
 function removeFeedFromFeedList(name) {

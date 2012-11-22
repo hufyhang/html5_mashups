@@ -12,11 +12,11 @@ const REST_METHOD_POST = 'post';
 const REST_METHOD_PUT = 'put';
 const REST_METHOD_DELETE = 'delete';
 
-const PHP_CHECK_ACCESS = 'php/phpCheckAccess.php?url='
-const PHP_GET = 'php/phpGet.php?url='
-const PHP_POST = 'php/phpPost.php?url='
-const PHP_PUT = 'php/phpPut.php?url='
-const PHP_DELETE = 'php/phpDelete.php?url='
+const PHP_CHECK_ACCESS = 'php/phpCheckAccess.php?url=';
+const PHP_GET = 'php/phpGet.php?url=';
+const PHP_POST = 'php/phpPost.php?url=';
+const PHP_PUT = 'php/phpPut.php?url=';
+const PHP_DELETE = 'php/phpDelete.php?url=';
 
 function Service(name, type) {
     var id = id_counter++, name, type, rest_url, rest_method;
@@ -78,7 +78,7 @@ function Service(name, type) {
         json += '\"restUrl\":\"' + rest_url + '\", ';
         json += '\"restMethod\":\"' +  rest_method + '\" ';
         return json;
-    }
+    };
 
     appendServicesList(this);
 }
@@ -128,15 +128,6 @@ function performRestService(uri, resultBuffer, method) {
             url: middle + url,
             type: REST_METHOD_GET,
             async: false}).responseText;
-    // $.ajax({
-    //     url: url,
-    //     type: method,
-    //     async: false,
-    //     success: function(result) {
-    //         resultBuffer = result.toString();
-    //         alert('CHECK: ' + resultBuffer);
-    //     }
-    // });
 }
 
 function checkRestService(uri, resultBuffer) {
@@ -144,17 +135,7 @@ function checkRestService(uri, resultBuffer) {
     return $.ajax({
             url: PHP_CHECK_ACCESS + url,
             type: REST_METHOD_GET,
+            timeout: 5000,
             async: false}).responseText;
-}
-
-// TODO: going to be worked out
-function createRestCode(service) {
-        var req = new XMLHttpRequest();
-        var url = service.getRestUrl();
-        var method = service.getRestMethod().toUpperCase();
-        req.onload = function() {
-        }
-        req.open(method, url, true);
-        req.send(null);
 }
 

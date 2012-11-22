@@ -190,7 +190,7 @@ function loadFromJSON(jsonInput) {
     var list = new Array();
     for(var index = 0; index != count; ++ index) {
         var item = json.feeds[index].feed[0];
-        var next, id, name, type, restUrl, restMethod
+        var next, id, name, type, restUrl, restMethod;
         next = parseInt(item.next);
         if(next != -1) {
             id = parseInt(item.id);
@@ -344,7 +344,7 @@ function RemoveDot(parent_feed) {
 
     this.getRemoveDot = function() {
         return removeDot;
-    }
+    };
 }
 
 function removeFeedFromCanvas(feed) {
@@ -586,7 +586,7 @@ function Connector(parent_feed) {
 
     this.getConnector = function() {
         return connector;
-    }
+    };
 
     this.connectTo = function(nextFeed) {
         connectingLine.setPoints([connector.getX(), connector.getY(),
@@ -596,7 +596,7 @@ function Connector(parent_feed) {
         parentFeed.setNextFeed(nextFeed);
         _big_canvas_layer.draw();
         _big_canvas_stage.draw();
-    }
+    };
 }
 
 function drawStartNode() {
@@ -649,7 +649,7 @@ function drawStartNode() {
 
     this.getConnector = function() {
         return startConnector;
-    }
+    };
 
     start.on('mouseover', function() {
         this.setStroke('red');
@@ -789,23 +789,23 @@ function RestFeed(name, url) {
 
     this.getNode = function() {
         return feed;
-    }
+    };
 
     this.setId = function(inputId) {
         id = inputId;
-    }
+    };
 
     this.getId = function() {
         return id;
-    }
+    };
 
     this.getRemoveDot = function() {
         return removeDot;
-    }
+    };
 
     this.getConnector = function() {
         return feedConnector;
-    }
+    };
 
     var feed = new Kinetic.Text({
             draggable: true,
@@ -836,7 +836,7 @@ function RestFeed(name, url) {
 
     this.getConnector = function() {
         return feedConnector;
-    }
+    };
 
     feed.on('mouseover', function() {
         this.setStroke('red');

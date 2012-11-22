@@ -14,10 +14,10 @@ function Widget(type) {
     var nextFeed = 'undefined';
     this.getNextFeed = function() {
         return nextFeed;
-    }
+    };
     this.clearNextFeed = function() {
         nextFeed = 'undefined';
-    }
+    };
 
     var service = new Service(type, TYPE_WIDGET);
 
@@ -35,15 +35,15 @@ function Widget(type) {
 
     this.getNode = function() {
         return feed;
-    }
+    };
 
-    this.setId = function(id) {
-        id = id;
-    }
+    this.setId = function(inputId) {
+        id = inputId;
+    };
 
     this.getId = function() {
         return id;
-    }
+    };
 
     var feed = new Kinetic.Text({
             draggable: true,
@@ -73,7 +73,7 @@ function Widget(type) {
 
     this.getRemoveDot = function() {
         return removeDot;
-    }
+    };
 
     feed.on('mouseover', function() {
         this.setStroke('red');
