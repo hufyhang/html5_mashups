@@ -289,7 +289,7 @@ function generateCode() {
     _big_buffer += 'return;\n\n';
     _big_buffer += '}\n\n';
     _big_buffer += 'if(currentServce.getType() == TYPE_REST){\n\n';
-    _big_buffer += 'appendLog(\'Received code: \' + code + \' from \' + currentServce.getRestUrl() +  __result_buffer__);' + '\n\n';
+    _big_buffer += 'appendLog(\'Received code: \' + code + \' from \' + currentServce.getRestUrl());' + '\n\n';
 
     // if this is the last feed and is a REST service
     _big_buffer += 'if(counter == serviceBuffer.length - 1) {\n\n';
