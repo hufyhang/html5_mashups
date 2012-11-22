@@ -275,7 +275,7 @@ function generateCode() {
     _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
     // handle the very first feed
     _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
-    _big_buffer += 'checkWorker.postMessage(serviceBuffer[counter].getRestUrl() + __result_buffer__);\n\n';
+    _big_buffer += 'checkWorker.postMessage(serviceBuffer[counter].getRestUrl());\n\n';
     _big_buffer += '}\n\n';
 
     // checkWorker onmessage event
@@ -284,7 +284,7 @@ function generateCode() {
     _big_buffer += 'var code = e.data;\n\n';
     _big_buffer += 'if(code != \'200\') {\n\n';
     _big_buffer += 'showMessageDialog(\'Oops! Service \"\' + currentServce.getName() + \'\" is down. Please try later or use an alternative service feed.\');'+ '\n\n'; 
-    _big_buffer += 'appendLog(\'"\' + currentServce.getName() + \'" is down.\');' + '\n\n';
+    _big_buffer += 'appendLog(\'"\' + currentServce.getName() + \'" is down. #\' + code);' + '\n\n';
     _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\n';
     _big_buffer += 'return;\n\n';
     _big_buffer += '}\n\n';
@@ -315,7 +315,7 @@ function generateCode() {
     _big_buffer += 'appendLog(\'Received data: \' + __result_buffer__ );' + '\n\n';
     _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
     _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
-    _big_buffer += 'checkWorker.postMessage(currentServce.getRestUrl() + __result_buffer__);\n\n';
+    _big_buffer += 'checkWorker.postMessage(currentServce.getRestUrl());\n\n';
     _big_buffer += '}\n\n';
 
     // else if it is TYPE_WIDGET

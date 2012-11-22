@@ -105,37 +105,37 @@ function updateRestMethodById(id, method) {
     }
 }
 
-function performRestService(uri, resultBuffer, method) {
-    var url = '"' +  uri + resultBuffer + '"';
-    var middle = '';
-    if(method == REST_METHOD_GET) {
-        // use GET middleware
-        middle = PHP_GET;
-    }
-    else if(method == REST_METHOD_POST){
-        // use POST middleware
-        middle = PHP_POST;
-    }
-    else if(method == REST_METHOD_PUT) {
-        // use PUT middleware
-        middle = PHP_PUT;
-    }
-    else if(method == REST_METHOD_DELETE) {
-        // use DELETE middleware
-        middle = PHP_DELETE;
-    }
-    return $.ajax({
-            url: middle + url,
-            type: REST_METHOD_GET,
-            async: false}).responseText;
-}
-
-function checkRestService(uri, resultBuffer) {
-    var url = '"' + uri + resultBuffer + '"';
-    return $.ajax({
-            url: PHP_CHECK_ACCESS + url,
-            type: REST_METHOD_GET,
-            timeout: 5000,
-            async: false}).responseText;
-}
+// function performRestService(uri, resultBuffer, method) {
+//     var url = '"' +  uri + resultBuffer + '"';
+//     var middle = '';
+//     if(method == REST_METHOD_GET) {
+//         // use GET middleware
+//         middle = PHP_GET;
+//     }
+//     else if(method == REST_METHOD_POST){
+//         // use POST middleware
+//         middle = PHP_POST;
+//     }
+//     else if(method == REST_METHOD_PUT) {
+//         // use PUT middleware
+//         middle = PHP_PUT;
+//     }
+//     else if(method == REST_METHOD_DELETE) {
+//         // use DELETE middleware
+//         middle = PHP_DELETE;
+//     }
+//     return $.ajax({
+//             url: middle + url,
+//             type: REST_METHOD_GET,
+//             async: false}).responseText;
+// }
+// 
+// function checkRestService(uri, resultBuffer) {
+//     var url = '"' + uri + resultBuffer + '"';
+//     return $.ajax({
+//             url: PHP_CHECK_ACCESS + url,
+//             type: REST_METHOD_GET,
+//             timeout: 5000,
+//             async: false}).responseText;
+// }
 
