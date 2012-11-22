@@ -9,6 +9,9 @@ var _big_buffer = '';
 var fixedWidth, fixedHeight;
 var touchedObj = undefined;
 
+var serviceBuffer = []; // for iterating feeds
+var serviceIndex = 0;
+
 function initialiseBigCanvas() {
     var canvas = document.getElementById('big_canvas_canvas');
     fixedWidth = canvas.offsetWidth;
@@ -231,7 +234,7 @@ function startIterate(dataset) {
     _big_buffer = '\n<script>\nfunction executeMashup() {\n' +
                 'var __result_buffer__ = \'' + dataset + '\';\n';
 
-    iterateFeedsFrom(_feeds_nodes[0]);
+    startToIterateFeeds(_feeds_nodes[0]);
 
     // finalise _big_buffer
     _big_buffer += '\n}\n</script>\n';
@@ -242,43 +245,93 @@ function startIterate(dataset) {
     executeMashup();
 }
 
-function iterateFeedsFrom(feed) {
-    var service = feed.getService();
-    var next = feed.getNextFeed();
-    if(service.getType() != TYPE_SYS_START) {
-        if(service.getType() == TYPE_REST && next != 'undefined') {
-            //check if the service is available first
-            _big_buffer += 'var _code = checkRestService(\'' + service.getRestUrl() + '\', __result_buffer__);' + '\n\n';
-            _big_buffer += 'appendLog(\'Received code: \' + _code + \' from \' + \'' + service.getRestUrl() + '\' +  __result_buffer__);' + '\n\n';
-            _big_buffer += 'if(_code == \'200\') {\n';
-            _big_buffer += '__result_buffer__ = performRestService(\'' + service.getRestUrl() + '\', __result_buffer__, \'' + service.getRestMethod() + '\');' + '\n\n';
-            _big_buffer += 'appendLog(\'Received data: \' + __result_buffer__ );' + '\n\n';
-            _big_buffer += '} else {\n' +
-                'showMessageDialog(\'Oops! Service \"' + service.getName() + '\" is down. Please try later or use an alternative service feed.\');'+ '\n\n'; 
-            _big_buffer += 'appendLog(\'' + service.getName() + ' is down.\');' + '\n\n';
-            _big_buffer += 'return;\n\n';
-            _big_buffer += '}' + '\n\n';
-        }
-    }
+function startToIterateFeeds(feed) {
+    // reset serviceBuffer & serviceIndex
+    serviceBuffer = [];
+    serviceIndex = 0;
+    iterateFeeds(feed);
+    generateCode();
+}
 
+function iterateFeeds(feed){
+    var service = feed.getService();
+    serviceBuffer[serviceIndex] = service;
+    serviceIndex++;
+    var next = feed.getNextFeed();
     if(next !== 'undefined') {
-        iterateFeedsFrom(next);
+        iterateFeeds(next);
     }
-    else {
-        appendLog('Showing result in execute_output.');
-        if(service.getType() == TYPE_REST) {
-            _big_buffer += 'var url = \'' + service.getRestUrl() + '\' + __result_buffer__;' + '\n\n';
-            _big_buffer += '$(\"#execute_output\").html(\'<iframe frameborder="0" width="100%" height="400px" src=\"\' + url + \'\" seamless=\"seamless\"><p>Surprisingly, your browser does not support iframes.</p></iframe>\');' + '\n\n';
-        }
-        else if(service.getType() == TYPE_WIDGET) {
-            if(service.getName() == WIDGET_AUDIO) {
-                _big_buffer += '$(\"#execute_output\").html(\'<audio width="100%" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the audio element.</audio>\');' + '\n\n';
-            }
-            else if(service.getName() == WIDGET_VIDEO){
-                _big_buffer += '$(\"#execute_output\").html(\'<video width="100%" height="400px" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the video tag.</video>\');' + '\n\n' ;
-            }
-        }
-    }
+}
+
+function generateCode() {
+    _big_buffer += 'var counter = 1;\n\n'; // skip the start node
+    _big_buffer += 'var currentServce;\n\n';
+    _big_buffer += 'appendLog(\'Initialising Web Worker "serviceWorker"...\');' + '\n\n';
+    _big_buffer += 'var serviceWorker = new Worker("js/serviceWorker.js");\n\n';
+    _big_buffer += 'appendLog(\'Web Worker "serviceWorker" initialised.\');' + '\n\n';
+    _big_buffer += 'appendLog(\'Initialising Web Worker "checkRestWorker"...\');' + '\n\n';
+    _big_buffer += 'var checkWorker = new Worker("js/checkRestWorker.js");\n\n';
+    _big_buffer += 'appendLog(\'Web Worker "checkRestWorker" initialised.\');' + '\n\n';
+    _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
+    // handle the very first feed
+    _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
+    _big_buffer += 'checkWorker.postMessage(serviceBuffer[counter].getRestUrl() + __result_buffer__);\n\n';
+    _big_buffer += '}\n\n';
+
+    // checkWorker onmessage event
+    _big_buffer += 'checkWorker.onmessage = function(e) {\n\n';
+    _big_buffer += 'var bf = __result_buffer__.replace(\'"\', \'\\"\');\n\n';
+    _big_buffer += 'var code = e.data;\n\n';
+    _big_buffer += 'if(code != \'200\') {\n\n';
+    _big_buffer += 'showMessageDialog(\'Oops! Service \"\' + currentServce.getName() + \'\" is down. Please try later or use an alternative service feed.\');'+ '\n\n'; 
+    _big_buffer += 'appendLog(\'"\' + currentServce.getName() + \'" is down.\');' + '\n\n';
+    _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\n';
+    _big_buffer += 'return;\n\n';
+    _big_buffer += '}\n\n';
+    _big_buffer += 'if(currentServce.getType() == TYPE_REST){\n\n';
+    _big_buffer += 'appendLog(\'Received code: \' + code + \' from \' + currentServce.getRestUrl() +  __result_buffer__);' + '\n\n';
+
+    // if this is the last feed and is a REST service
+    _big_buffer += 'if(counter == serviceBuffer.length - 1) {\n\n';
+    _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
+    _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
+    _big_buffer += 'var url = currentServce.getRestUrl() +  __result_buffer__;\n\n';
+    _big_buffer += '$(\"#execute_output\").html(\'<iframe frameborder="0" width="100%" height="400px" src=\"\' + url + \'\" seamless=\"seamless\"><p>Surprisingly, your browser does not support iframes.</p></iframe>\');' + '\n\n';
+    _big_buffer += '}\n\n';
+    _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
+    _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
+    _big_buffer += '}\n\n';
+    // <END> if this is the last feed and is a REST service </END>
+    
+    _big_buffer += 'counter++;\n\n';
+    _big_buffer += 'var json = \'{"type":"\' + currentServce.getType() + \'", "url":"\' + currentServce.getRestUrl() + \'", "method":"\' + currentServce.getRestMethod() + \'", "buffer":"\' + bf + \'"}\';\n\n';
+    _big_buffer += 'serviceWorker.postMessage(json);\n\n';
+    _big_buffer += '}\n\n';
+    _big_buffer += '}\n\n';
+
+    // serviceWorker onmessage event
+    _big_buffer += 'serviceWorker.onmessage = function(e) {\n\n';
+    _big_buffer += '__result_buffer__ = e.data;\n\n';
+    _big_buffer += 'appendLog(\'Received data: \' + __result_buffer__ );' + '\n\n';
+    _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
+    _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
+    _big_buffer += 'checkWorker.postMessage(currentServce.getRestUrl() + __result_buffer__);\n\n';
+    _big_buffer += '}\n\n';
+
+    // else if it is TYPE_WIDGET
+    _big_buffer += 'else if(currentServce.getType() == TYPE_WIDGET) {\n\n';
+    _big_buffer += 'if(currentServce.getName() == WIDGET_AUDIO) {\n\n';
+    _big_buffer += '$(\"#execute_output\").html(\'<audio width="100%" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the audio element.</audio>\');' + '\n\n';
+    _big_buffer += '}\n\n';
+    _big_buffer += 'else if (currentServce.getName() == WIDGET_VIDEO) {\n\n';
+    _big_buffer += '$(\"#execute_output\").html(\'<video width="100%" height="400px" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the video tag.</video>\');' + '\n\n' ;
+    _big_buffer += '}\n\n';
+    _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
+    _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
+    _big_buffer += '}\n\n';
+    // <END>else if it is TYPE_WIDGET</END>
+    
+    _big_buffer += '}\n\n';
 }
 
 function moveRemoveDot(removeDot, parent_node) {
