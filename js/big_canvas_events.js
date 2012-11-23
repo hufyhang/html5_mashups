@@ -294,6 +294,7 @@ function generateCode() {
     _big_buffer += 'showMessageDialog(\'Oops! Service \"\' + currentServce.getName() + \'\" is down. Please try later or use an alternative service feed.\');'+ '\n\n'; 
     _big_buffer += 'appendLog(\'"\' + currentServce.getName() + \'" is down. #\' + code);' + '\n\n';
     _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
+    _big_buffer += 'highlightErrorNode(counter);\n\n';
     _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\n';
     _big_buffer += 'return;\n\n';
     _big_buffer += '}\n\n';
@@ -908,6 +909,7 @@ function RestFeed(name, url) {
     });
     feed.on('mouseout', function() {
         this.setStroke('black');
+        this.setFill('#ddf');
         _big_canvas_layer.draw();
     });
 
@@ -977,4 +979,17 @@ function drawARect() {
     _big_canvas_stage.add(_big_canvas_layer);
     _big_canvas_stage.draw();
 }
+
+function highlightErrorNode(inputIndex) {
+    var counter = 0;
+    var feed = _feeds_nodes[0];
+    while(counter != inputIndex) {
+        feed = feed.getNextFeed();
+        ++counter;
+    }
+
+    feed.getNode().setFill('yellow');
+    _big_canvas_layer.draw();
+}
+
 
