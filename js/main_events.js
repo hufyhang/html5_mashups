@@ -69,7 +69,7 @@ function showWidgetsPanel(containerId) {
 function showExecuteInputForm() {
     visibleElement('serviceBoard');
     visibleElement('serviceBoard_div');
-    $('#serviceBoard_output').html('<form id="execute_form"><table class="frame_table" cellpadding="5px"><tr><td><label>Data set:</label><br/><input type="TEXT" id="execute_data_input" class="input_box" placeholder="Parameters..." form="execute_form"></td></tr><tr><td><div class="div_push_button" onclick="var executeData=$(\'#execute_data_input\').val(); startIterate(executeData);">Run</div><div class="div_push_button" onclick="closeServiceBoard()">Close</div></td></tr><tr><td><output id="execute_output"></output></td></tr></table></form>');
+    $('#serviceBoard_output').html('<form id="execute_form"><table class="frame_table" cellpadding="5px"><tr><td><label>Data set:</label><br/><input type="TEXT" id="execute_data_input" class="input_box" placeholder="Parameters..." form="execute_form"></td></tr><tr><td><div class="div_push_button" onclick="var executeData=$(\'#execute_data_input\').val(); startIterate(executeData);">Run</div><div class="div_push_button" onclick="closeServiceBoard(); invisibleElement(\'activity_indicator\');">Close</div><div style="display: table-cell; padding-left: 10px;"><img id="activity_indicator" style="display: table-cell;" width="30px" height="30px" src="img/indicator.png"/></div></td></tr><tr><td><output id="execute_output"></output></td></tr></table></form>');
 }
 
 function closeServiceBoard() {

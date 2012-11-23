@@ -246,6 +246,8 @@ function startIterate(dataset) {
 }
 
 function startToIterateFeeds(feed) {
+    // visible activity_indicator
+    visibleElement('activity_indicator');
     // reset serviceBuffer & serviceIndex
     serviceBuffer = [];
     serviceIndex = 0;
@@ -267,6 +269,7 @@ function generateCode() {
     _big_buffer += 'if(typeof(Worker) === \'undefined\') {\n\n';
     _big_buffer += 'showMessageDialog(\'Oops! Surprisingly, your Web browser does not support Web Worker. Working procedure terminated.\');\n\n';
     _big_buffer += 'appendLog(\'Web browser does not support Web Worker. Working procedure terminated.\');\n\n';
+    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
     _big_buffer += 'return;\n\n';
     _big_buffer += '}\n\n';
     _big_buffer += 'var counter = 1;\n\n'; // skip the start node
@@ -290,6 +293,7 @@ function generateCode() {
     _big_buffer += 'if(code != \'200\') {\n\n';
     _big_buffer += 'showMessageDialog(\'Oops! Service \"\' + currentServce.getName() + \'\" is down. Please try later or use an alternative service feed.\');'+ '\n\n'; 
     _big_buffer += 'appendLog(\'"\' + currentServce.getName() + \'" is down. #\' + code);' + '\n\n';
+    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
     _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\n';
     _big_buffer += 'return;\n\n';
     _big_buffer += '}\n\n';
@@ -304,6 +308,7 @@ function generateCode() {
     _big_buffer += '$(\"#execute_output\").html(\'<iframe frameborder="0" width="100%" height="400px" src=\"\' + url + \'\" seamless=\"seamless\"><p>Surprisingly, your browser does not support iframes.</p></iframe>\');' + '\n\n';
     _big_buffer += '}\n\n';
     _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
+    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
     _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
     _big_buffer += '}\n\n';
     // <END> if this is the last feed and is a REST service </END>
@@ -332,6 +337,7 @@ function generateCode() {
     _big_buffer += '$(\"#execute_output\").html(\'<video width="100%" height="400px" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the video tag.</video>\');' + '\n\n' ;
     _big_buffer += '}\n\n';
     _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
+    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
     _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
     _big_buffer += '}\n\n';
     // <END>else if it is TYPE_WIDGET</END>

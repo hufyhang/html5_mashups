@@ -1,3 +1,20 @@
+@keyframes turning {
+    from {transform: rotate(0deg); -webkit-transform: rotate(0deg);}
+    to {transform: rotate(360deg); -webkit-transform: rotate(360deg);}
+}
+
+@-webkit-keyframes turning {
+    from {transform: rotate(0deg); -webkit-transform: rotate(0deg);}
+    to {transform: rotate(360deg); -webkit-transform: rotate(360deg);}
+}
+
+#activity_indicator {
+    visibility: hidden;
+    animation: turning 1s infinite;
+    -webkit-animation: turning 1s infinite;
+}
+
+
 ::selection { background: rgb(239, 72, 50); color: #ffffff; } /* Safari 3.1+, Opera 9.5+, Chrome 2+ */
 ::-moz-selection { background: rgb(239, 72, 50); color: #ffffff; } /* Mozilla Firefox */
 
