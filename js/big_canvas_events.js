@@ -274,6 +274,7 @@ function generateCode() {
     _big_buffer += '}\n\n';
     _big_buffer += 'var counter = 1;\n\n'; // skip the start node
     _big_buffer += 'var currentServce;\n\n';
+    _big_buffer += 'var tempBuffer;\n\n';  // for storing the special chars replaced __result_buffer__
     _big_buffer += 'appendLog(\'Initialising Web Worker "serviceWorker"...\');' + '\n\n';
     _big_buffer += 'var serviceWorker = new Worker("js/serviceWorker.js");\n\n';
     _big_buffer += 'appendLog(\'Web Worker "serviceWorker" initialised.\');' + '\n\n';
@@ -283,7 +284,8 @@ function generateCode() {
     _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
     // handle the very first feed
     _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
-    _big_buffer += 'checkWorker.postMessage(serviceBuffer[counter].getRestUrl());\n\n';
+    _big_buffer += 'tempBuffer = __result_buffer__.replace(/&/g, \'%26\');\n\n'; // replace all & in __result_buffer__ in order to make PHP works correctly
+    _big_buffer += 'checkWorker.postMessage(serviceBuffer[counter].getRestUrl() + tempBuffer);\n\n';
     _big_buffer += '}\n\n';
 
     // checkWorker onmessage event
@@ -299,7 +301,7 @@ function generateCode() {
     _big_buffer += 'return;\n\n';
     _big_buffer += '}\n\n';
     _big_buffer += 'if(currentServce.getType() == TYPE_REST){\n\n';
-    _big_buffer += 'appendLog(\'Received code: \' + code + \' from \' + currentServce.getRestUrl());' + '\n\n';
+    _big_buffer += 'appendLog(\'Received code: \' + code + \' from \' + currentServce.getRestUrl() + __result_buffer__);' + '\n\n';
 
     // if this is the last feed and is a REST service
     _big_buffer += 'if(counter == serviceBuffer.length - 1) {\n\n';
@@ -326,7 +328,8 @@ function generateCode() {
     _big_buffer += 'appendLog(\'Received data: \' + __result_buffer__ );' + '\n\n';
     _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
     _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
-    _big_buffer += 'checkWorker.postMessage(currentServce.getRestUrl());\n\n';
+    _big_buffer += 'tempBuffer = __result_buffer__.replace(/&/g, \'%26\');\n\n'; // replace all & in __result_buffer__ in order to make PHP works correctly
+    _big_buffer += 'checkWorker.postMessage(currentServce.getRestUrl() + tempBuffer);\n\n';
     _big_buffer += '}\n\n';
 
     // else if it is TYPE_WIDGET

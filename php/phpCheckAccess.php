@@ -1,6 +1,5 @@
 <?php
 $arg = str_replace(' ', '%20', $_GET['url']);
-$arg = str_replace('&', '%26', $arg);
 $index_a = 1;
 $index_b = -1;
 if(substr($arg, 0, 2) == '\"' && substr($arg, -2) == '\"') {
