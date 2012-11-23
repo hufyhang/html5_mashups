@@ -231,6 +231,8 @@ function startIterate(dataset) {
     // reset function counter
     _big_counter = 0;
     // initiate _big_buffer
+    dataset = dataset.replace(/\'/g, '\\\''); // replace ' with \'
+    dataset = dataset.replace(/\"/g, '\\\"'); // replace " with \"
     _big_buffer = '\n<script>\nfunction executeMashup() {\n' +
                 'var __result_buffer__ = \'' + dataset + '\';\n';
 
@@ -274,7 +276,7 @@ function generateCode() {
     _big_buffer += '}\n\n';
     _big_buffer += 'var counter = 1;\n\n'; // skip the start node
     _big_buffer += 'var currentServce;\n\n';
-    _big_buffer += 'var tempBuffer;\n\n';  // for storing the special chars replaced __result_buffer__
+    _big_buffer += 'var tempBuffer = \'\';\n\n';  // for storing the special chars replaced __result_buffer__
     _big_buffer += 'appendLog(\'Initialising Web Worker "serviceWorker"...\');' + '\n\n';
     _big_buffer += 'var serviceWorker = new Worker("js/serviceWorker.js");\n\n';
     _big_buffer += 'appendLog(\'Web Worker "serviceWorker" initialised.\');' + '\n\n';
