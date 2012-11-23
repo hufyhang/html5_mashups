@@ -264,6 +264,11 @@ function iterateFeeds(feed){
 }
 
 function generateCode() {
+    _big_buffer += 'if(typeof(Worker) === \'undefined\') {\n\n';
+    _big_buffer += 'showMessageDialog(\'Oops! Surprisingly, your Web browser does not support Web Worker. Working procedure terminated.\');\n\n';
+    _big_buffer += 'appendLog(\'Web browser does not support Web Worker. Working procedure terminated.\');\n\n';
+    _big_buffer += 'return;\n\n';
+    _big_buffer += '}\n\n';
     _big_buffer += 'var counter = 1;\n\n'; // skip the start node
     _big_buffer += 'var currentServce;\n\n';
     _big_buffer += 'appendLog(\'Initialising Web Worker "serviceWorker"...\');' + '\n\n';
