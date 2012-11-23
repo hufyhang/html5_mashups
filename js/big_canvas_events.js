@@ -334,11 +334,17 @@ function generateCode() {
 
     // else if it is TYPE_WIDGET
     _big_buffer += 'else if(currentServce.getType() == TYPE_WIDGET) {\n\n';
+    // if it is a WIDGET_AUDIO
     _big_buffer += 'if(currentServce.getName() == WIDGET_AUDIO) {\n\n';
     _big_buffer += '$(\"#execute_output\").html(\'<audio width="100%" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the audio element.</audio>\');' + '\n\n';
     _big_buffer += '}\n\n';
+    // if it is a WIDGET_VIDEO
     _big_buffer += 'else if (currentServce.getName() == WIDGET_VIDEO) {\n\n';
     _big_buffer += '$(\"#execute_output\").html(\'<video width="100%" height="400px" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the video tag.</video>\');' + '\n\n' ;
+    _big_buffer += '}\n\n';
+    // if it is a WIDGET_IMAGE
+    _big_buffer += 'else if(currentServce.getName() == WIDGET_IMAGE) {\n\n';
+    _big_buffer += '$(\"#execute_output\").html(\'<img width="100%" height="400px" src="\' + __result_buffer__ + \'"/>\');\n\n';
     _big_buffer += '}\n\n';
     _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
     _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
