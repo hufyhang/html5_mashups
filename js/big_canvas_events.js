@@ -232,7 +232,7 @@ function startIterate(dataset) {
     _big_counter = 0;
     // initiate _big_buffer
     dataset = dataset.replace(/[\\]/g, '\\\\'); // replace \ with \\
-    dataset = dataset.replace(/"/g, '\\\"'); // replace " with \"
+    dataset = dataset.replace(/"/g, '&quot;'); // replace " with \"
     dataset = dataset.replace(/\'/g, '\\\''); // replace ' with \'
     _big_buffer = '\n<script>\nfunction executeMashup() {\n' +
                 'var __result_buffer__ = \'' + dataset + '\';\n';
