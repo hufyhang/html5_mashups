@@ -231,8 +231,9 @@ function startIterate(dataset) {
     // reset function counter
     _big_counter = 0;
     // initiate _big_buffer
+    dataset = dataset.replace(/[\\]/g, '\\\\'); // replace \ with \\
+    dataset = dataset.replace(/"/g, '\\\"'); // replace " with \"
     dataset = dataset.replace(/\'/g, '\\\''); // replace ' with \'
-    dataset = dataset.replace(/\"/g, '\\\"'); // replace " with \"
     _big_buffer = '\n<script>\nfunction executeMashup() {\n' +
                 'var __result_buffer__ = \'' + dataset + '\';\n';
 
@@ -305,7 +306,7 @@ function generateCode() {
     _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\n';
     _big_buffer += 'return;\n\n';
     _big_buffer += '}\n\n';
-    _big_buffer += 'if(currentServce.getType() == TYPE_REST){\n\n';
+    _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
     _big_buffer += 'appendLog(\'Received code: \' + code + \' from \' + currentServce.getRestUrl() + __result_buffer__);' + '\n\n';
 
     // if this is the last feed and is a REST service
