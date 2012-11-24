@@ -250,6 +250,9 @@ function startIterate(dataset) {
 function startToIterateFeeds(feed) {
     // visible activity_indicator
     visibleElement('activity_indicator');
+    // invisible executionFullScreenToggleButton
+    invisibleElement('executionFullScreenToggleButton');
+
     // reset serviceBuffer & serviceIndex
     serviceBuffer = [];
     serviceIndex = 0;
@@ -314,6 +317,7 @@ function generateCode() {
     _big_buffer += '}\n\n';
     _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
     _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
+    _big_buffer += 'visibleElement(\'executionFullScreenToggleButton\');\n\n';
     _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
     _big_buffer += '}\n\n';
     // <END> if this is the last feed and is a REST service </END>
@@ -350,6 +354,7 @@ function generateCode() {
     _big_buffer += '}\n\n';
     _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
     _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
+    _big_buffer += 'visibleElement(\'executionFullScreenToggleButton\');\n\n';
     _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
     _big_buffer += '}\n\n';
     // <END>else if it is TYPE_WIDGET</END>

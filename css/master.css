@@ -14,6 +14,10 @@
     -webkit-animation: turning 1s infinite;
 }
 
+#executionFullScreenToggleButton {
+    visibility: hidden;
+    padding-left: 10px;
+}
 
 ::selection { background: rgb(239, 72, 50); color: #ffffff; } /* Safari 3.1+, Opera 9.5+, Chrome 2+ */
 ::-moz-selection { background: rgb(239, 72, 50); color: #ffffff; } /* Mozilla Firefox */
