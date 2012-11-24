@@ -60,6 +60,11 @@ function showFeedsPanel(containerId) {
     '</tr></table><hr class="seperator_hr"/>' + feeds_html;
 }
 
+function showWorkersPanel(containerId) {
+    _current_container_id = containerId;
+    $('#'+ containerId).html('<div>Workers</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;"><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_FETCH_LAST_BY_KEY + '\');">Fetch Data</div></td></tr></table>');
+}
+
 function showWidgetsPanel(containerId) {
     _current_container_id = containerId;
     $('#'+ containerId).html('<div>Widgets</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;"><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'' + WIDGET_AUDIO + '\');">HTML5 Audio</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'' + WIDGET_VIDEO + '\');">HTML5 Video</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'' + WIDGET_IMAGE + '\');">HTML5 Image</div></td></tr></table>');
@@ -347,6 +352,19 @@ function saveAProjectFromDialog() {
     var name = $('#save_project_name_input').val();
     var json = getFeedsJSON();
     saveAProject(name, json);
+}
+
+function propertiesPanelShowSysWorker(service) {
+    var name = service.getName();
+    var key = service.getFetchJSONKey();
+    var id = service.getId();
+
+    document.getElementById('properties_panel_output').innerHTML = '<table class="properties_panel_table"><tr><td>Target Key:<br/><input type="TEXT" class="input_box" id="SysworkerPropertiesTargetKey" placeholder="Please enter the target key..." value="' + key + '"/></td></tr></table>';
+
+    $('#SysworkerPropertiesTargetKey').change(function() {
+        var data = $('#SysworkerPropertiesTargetKey').val();
+        service.setFetchJSONKey(data);
+    });
 }
 
 function propertiesPanelShowRestFeed(service) {

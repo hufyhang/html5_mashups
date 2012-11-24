@@ -20,7 +20,16 @@ const PHP_DELETE = 'php/phpDelete.php?url=';
 
 function Service(name, type) {
     var id = id_counter++, name, type, rest_url, rest_method;
+    //extra data members
+    var fetchJSONkey = ''; 
     var nextService = 'undefined';
+
+    this.setFetchJSONKey = function(inputKey) {
+        fetchJSONkey = inputKey;
+    };
+    this.getFetchJSONKey = function() {
+        return fetchJSONkey;
+    };
 
     this.getNextService = function() {
         return nextService;
@@ -76,7 +85,8 @@ function Service(name, type) {
         json += '\"name\":\"' + name + '\", ';
         json += '\"type\":\"' + type + '\", ';
         json += '\"restUrl\":\"' + rest_url + '\", ';
-        json += '\"restMethod\":\"' +  rest_method + '\" ';
+        json += '\"restMethod\":\"' +  rest_method + '\", ';
+        json += '\"fetchJSONkey\":\"' + fetchJSONkey + '\" ';
         return json;
     };
 

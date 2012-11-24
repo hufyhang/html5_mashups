@@ -227,7 +227,7 @@
     <!-- top sidebar -->
     <table class="top_sidebar_frame" border="0" cellpadding="2px;">
         <tr><td><div class="sidebar_button" onclick="resetCurrentPlace();showFeedsPanel('options_field_output');">Feeds</div></td>
-            <tr><td><div class="sidebar_button">Workers</div></td>
+            <tr><td><div class="sidebar_button" onclick="resetCurrentPlace();showWorkersPanel('options_field_output');">Workers</div></td>
                 <tr><td><div class="sidebar_button" onclick="resetCurrentPlace();showWidgetsPanel('options_field_output');">Widgets</div></td>
         </tr>
     </table>
@@ -318,8 +318,10 @@
     <script src="js/main_events.js"></script>
     <script src="js/big_canvas_events.js"></script>
     <script src="js/servicesComposer.js"></script>
+    <script src="js/workers.js"></script>
     <script src="js/widget.js"></script>
     <script src="js/market.js"></script>
+    <script src="js/jsonFetcher.js"></script>
     <script src="js/md5.js"></script>
 </body>
 </html>

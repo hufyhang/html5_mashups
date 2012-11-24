@@ -207,6 +207,10 @@ function loadFromJSON(jsonInput) {
             else if(type == TYPE_WIDGET) {
                 drawAWidget(name);
             }
+            else if(type == TYPE_WORKER) {
+                drawAWorker(name);
+                _feeds_nodes[_feeds_nodes.length - 1].getService().setFetchJSONKey(item.fetchJSONkey);
+            }
         }
         else {
             continue;
@@ -334,11 +338,50 @@ function generateCode() {
     _big_buffer += '__result_buffer__ = e.data;\n\n';
     _big_buffer += 'appendLog(\'Received data: \' + __result_buffer__ );' + '\n\n';
     _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
+    // if the current feed is an RESTful service
     _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
     _big_buffer += 'tempBuffer = __result_buffer__.replace(/&/g, \'%26\');\n\n'; // replace all & in __result_buffer__ in order to make PHP works correctly
     _big_buffer += 'checkWorker.postMessage(currentServce.getRestUrl() + tempBuffer);\n\n';
     _big_buffer += '}\n\n';
-
+    //else if it is TYPE_WORKER
+    _big_buffer += 'else if(currentServce.getType() == TYPE_WORKER) {\n\n';
+    _big_buffer += 'if(currentServce.getName() == WORKER_FETCH_LAST_BY_KEY) {\n\n';
+    _big_buffer += 'var key = currentServce.getFetchJSONKey();\n\n';
+    _big_buffer += 'var json = __result_buffer__;\n\n';
+    _big_buffer += '__result_buffer__ = fetchLastValueByKey(key, json);\n\n';
+    _big_buffer += '}\n\n';
+        //keeping iterating from SYSWORKER
+    _big_buffer += 'counter++;\n\n';
+    _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
+    _big_buffer += 'if(currentServce == "undefined" || currentServce == undefined) {\n\n';
+    _big_buffer += '$(\'#execute_output\').html(\'<div class="scrollable_div">\' + __result_buffer__ + \'</div>\');\n\n';
+    _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
+    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
+    // _big_buffer += 'visibleElement(\'executionFullScreenToggleButton\');\n\n';
+    _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
+    _big_buffer += '}\n\n';
+    _big_buffer += 'else if(currentServce.getType() == TYPE_REST) {\n\n';
+    _big_buffer += 'tempBuffer = __result_buffer__.replace(/&/g, \'%26\');\n\n'; // replace all & in __result_buffer__ in order to make PHP works correctly
+    _big_buffer += 'checkWorker.postMessage(currentServce.getRestUrl() + tempBuffer);\n\n';
+    _big_buffer += '}\n\n';
+    _big_buffer += 'else if(currentServce.getType() == TYPE_WIDGET) {\n\n';
+    _big_buffer += 'if(currentServce.getName() == WIDGET_AUDIO) {\n\n';
+    _big_buffer += '$(\"#execute_output\").html(\'<audio width="100%" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the audio element.</audio>\');' + '\n\n';
+    _big_buffer += '}\n\n';
+    _big_buffer += 'else if (currentServce.getName() == WIDGET_VIDEO) {\n\n';
+    _big_buffer += '$(\"#execute_output\").html(\'<video width="100%" height="400px" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the video tag.</video>\');' + '\n\n' ;
+    _big_buffer += '}\n\n';
+    _big_buffer += 'else if(currentServce.getName() == WIDGET_IMAGE) {\n\n';
+    _big_buffer += '$(\"#execute_output\").html(\'<img width="100%" height="400px" src="\' + __result_buffer__ + \'"/>\');\n\n';
+    _big_buffer += '}\n\n';
+    _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
+    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
+    _big_buffer += 'visibleElement(\'executionFullScreenToggleButton\');\n\n';
+    _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
+    _big_buffer += '}\n\n';
+        //<END> keeping iterating from SYSWORKER </END>
+    _big_buffer += '}\n\n';
+    // <END>else if it is TYPE_WORKER</END>
     // else if it is TYPE_WIDGET
     _big_buffer += 'else if(currentServce.getType() == TYPE_WIDGET) {\n\n';
     // if it is a WIDGET_AUDIO
