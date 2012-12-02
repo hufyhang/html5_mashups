@@ -74,7 +74,15 @@ function showWidgetsPanel(containerId) {
 function showExecuteInputForm() {
     visibleElement('serviceBoard');
     visibleElement('serviceBoard_div');
-    $('#serviceBoard_output').html('<form id="execute_form"><table class="frame_table" cellpadding="5px"><tr><td><label>Data set:</label><br/><input type="TEXT" id="execute_data_input" class="input_box" placeholder="Parameters..." form="execute_form"></td></tr><tr><td><div class="div_push_button" onclick="var executeData=$(\'#execute_data_input\').val(); startIterate(executeData);">Run</div><div class="div_push_button" onclick="closeServiceBoard(); invisibleElement(\'activity_indicator\'); invisibleElement(\'executionFullScreenToggleButton\');">Close</div><div style="display: table-cell; padding-left: 10px; padding-right: 10px;"><img id="activity_indicator" style="display: table-cell;" width="30px" height="30px" src="img/indicator.png"/></div><div id="executionFullScreenToggleButton" class="div_long_push_button" onclick="fullscreenFirstElementChild(\'execute_output\');">Toggle fullscreen</div></td></tr><tr><td><output id="execute_output"></output></td></tr></table></form>');
+    $('#serviceBoard_output').html('<form id="execute_form"><table class="frame_table" cellpadding="5px"><tr><td><label>Data set:</label><br/><input type="TEXT" id="execute_data_input" class="input_box" placeholder="Parameters..." form="execute_form"></td></tr><tr><td><div id="execute_run_button" class="div_push_button" onclick="var executeData=$(\'#execute_data_input\').val(); startIterate(executeData);">Run</div><div class="div_push_button" onclick="closeServiceBoard(); invisibleElement(\'activity_indicator\'); invisibleElement(\'executionFullScreenToggleButton\');">Close</div><div style="display: table-cell; padding-left: 10px; padding-right: 10px;"><img id="activity_indicator" style="display: table-cell;" width="30px" height="30px" src="img/indicator.png"/></div><div id="executionFullScreenToggleButton" class="div_long_push_button" onclick="fullscreenFirstElementChild(\'execute_output\');">Toggle fullscreen</div></td></tr><tr><td><output id="execute_output"></output></td></tr></table></form>');
+
+    $('#execute_data_input').keypress(function(evt) {
+        if(evt.keyCode == 13) { // if enter hit
+            evt.preventDefault();
+            $('#execute_run_button').click();
+            return false;
+        }
+    });
 }
 
 function fullscreenFirstElementChild(inputElementId) {
@@ -195,7 +203,16 @@ function updateFeedsHTML() {
 function showSaveProjectDialog() {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    $('#dashboard_output').html('<table class="frame_table"><tr><td>Save as:</td></tr><tr><td><input width="100%" type="TEXT" id="save_project_name_input" class="input_box" placeholder="Please give a name to your project..."/></td></tr><tr><td><div class="div_push_button" onclick="saveAProjectFromDialog();invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Save</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Cancel</div></td></tr></table>');
+    $('#dashboard_output').html('<table class="frame_table"><tr><td>Save as:</td></tr><tr><td><input width="100%" type="TEXT" id="save_project_name_input" class="input_box" placeholder="Please give a name to your project..."/></td></tr><tr><td><div id="save_project_button" class="div_push_button" onclick="saveAProjectFromDialog();invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Save</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Cancel</div></td></tr></table>');
+
+    $('#save_project_name_input').keypress(function(evt) {
+        if(evt.keyCode == 13) { // if enter up
+            evt.preventDefault();
+            $('#save_project_button').click();
+            return false;
+        }
+    });
+
 }
 
 function showRemoveProjectDialog(md5, name) {
