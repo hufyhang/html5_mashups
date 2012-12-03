@@ -510,6 +510,7 @@ function removeFeedFromCanvas(feed) {
         var name = _feeds_nodes[i].getService().getName();
         var type = _feeds_nodes[i].getService().getType();
         var keywords = _feeds_nodes[i].getService().getKeywords();
+        var fetchJSONkey = _feeds_nodes[i].getService().getFetchJSONKey();
         if(type == TYPE_REST) {
             url = _feeds_nodes[i].getService().getRestUrl();
             restMethod = _feeds_nodes[i].getService().getRestMethod();
@@ -522,7 +523,7 @@ function removeFeedFromCanvas(feed) {
                 nextId = -1;
             }
         }
-        json += '{"name":"' + name + '", "type":"' + type + '", "url":"' + url + '", "restMethod": "' + restMethod  + '", "keywords": "' + keywords + '", "nextId":"' + nextId + '"}';
+        json += '{"name":"' + name + '", "type":"' + type + '", "url":"' + url + '", "restMethod": "' + restMethod + '", "fetchJSONkey":"' + fetchJSONkey + '", "keywords": "' + keywords + '", "nextId":"' + nextId + '"}';
         if(i != _feeds_nodes.length - 1) {
             json += ', ';
         }
@@ -548,6 +549,7 @@ function removeFeedFromCanvas(feed) {
         var url = item.url;
         var restMethod = item.restMethod;
         var keywords = item.keywords;
+        var fetchJSONkey = item.fetchJSONkey;
         var nid = item.nextId;
         nextIds[index] = parseInt(nid);
         switch(type) {
@@ -559,6 +561,10 @@ function removeFeedFromCanvas(feed) {
                 break;
             case TYPE_WIDGET:
                 drawAWidget(name);
+                break;
+            case TYPE_WORKER:
+                drawAWorker(name);
+                _feeds_nodes[_feeds_nodes.length - 1].getService().setFetchJSONKey(fetchJSONkey);
                 break;
             default:
                     break;
@@ -589,6 +595,9 @@ function drawFromFeedList(list) {
         }
         else if(ser.getType() == TYPE_WIDGET) {
             drawAWidget(ser.getName());
+        }
+        else if(ser.getType() == TYPE_WORKER) {
+            drawAWorker(ser.getName());
         }
     }
 }
