@@ -217,7 +217,7 @@ function showBackupServiceDialog(keyword) {
                 var url = row['url'];
                 var type = row['feed_type'];
                 var keywords = row['keyword'];
-                html += '<tr><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="drawARestFeed(\'' + name + '\', \'' + url + '\', \'' + keywords + '\')"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
+                html += '<tr><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick=""><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
             }
             html += '</table></div>';
             $('#replace_service_output').html(html);
