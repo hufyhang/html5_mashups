@@ -509,6 +509,7 @@ function removeFeedFromCanvas(feed) {
         var restMethod = 'undefined';
         var name = _feeds_nodes[i].getService().getName();
         var type = _feeds_nodes[i].getService().getType();
+        var keywords = _feeds_nodes[i].getService().getKeywords();
         if(type == TYPE_REST) {
             url = _feeds_nodes[i].getService().getRestUrl();
             restMethod = _feeds_nodes[i].getService().getRestMethod();
@@ -521,7 +522,7 @@ function removeFeedFromCanvas(feed) {
                 nextId = -1;
             }
         }
-        json += '{"name":"' + name + '", "type":"' + type + '", "url":"' + url + '", "restMethod": "' + restMethod  + '", "nextId":"' + nextId + '"}';
+        json += '{"name":"' + name + '", "type":"' + type + '", "url":"' + url + '", "restMethod": "' + restMethod  + '", "keywords": "' + keywords + '", "nextId":"' + nextId + '"}';
         if(i != _feeds_nodes.length - 1) {
             json += ', ';
         }
@@ -546,7 +547,7 @@ function removeFeedFromCanvas(feed) {
         var type = item.type;
         var url = item.url;
         var restMethod = item.restMethod;
-        var keywords = item.keyword;
+        var keywords = item.keywords;
         var nid = item.nextId;
         nextIds[index] = parseInt(nid);
         switch(type) {
