@@ -21,10 +21,10 @@ while($row = mysql_fetch_array($data)) {
     $type = $row['type'];
     $restUrl = $row['url'];
     $desc = $row['description'];
+    $keywords = $row['keywords'];
     // $desc = str_replace('"', '&quot;' $desc);
-    $key = $row['keyword'];
 
-    $result = $result . '{"md5":"' . $md5 . '", "name":"' . $name . '", "type":"' . $type . '", "url":"' . $restUrl . '", "desc":"' . $desc . '", "keyword":"' . $key .'"},';
+    $result = $result . '{"md5":"' . $md5 . '", "name":"' . $name . '", "type":"' . $type . '", "url":"' . $restUrl . '", "desc":"' . $desc . '", "keywords":"' . $keywords .'"},';
 }
 
 // remove the comma at the very last position

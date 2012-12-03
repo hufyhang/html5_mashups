@@ -19,7 +19,7 @@ const PHP_PUT = 'php/phpPut.php?url=';
 const PHP_DELETE = 'php/phpDelete.php?url=';
 
 function Service(name, type) {
-    var id = id_counter++, name, type, rest_url, rest_method;
+    var id = id_counter++, name, type, rest_url, rest_method, keywords = '';
     //extra data members
     var fetchJSONkey = ''; 
     var nextService = 'undefined';
@@ -79,6 +79,15 @@ function Service(name, type) {
         return rest_method;
     };
 
+    this.getKeywords = function() {
+        return keywords;
+    };
+
+    this.setKeywords = function(inputKeywords) {
+        keywords = inputKeywords;
+    };
+    
+
     this.getJSON = function() {
         var json = '';
         json += '\"id\":\"' + id + '\", ';
@@ -86,6 +95,7 @@ function Service(name, type) {
         json += '\"type\":\"' + type + '\", ';
         json += '\"restUrl\":\"' + rest_url + '\", ';
         json += '\"restMethod\":\"' +  rest_method + '\", ';
+        json += '\"keywords\":\"' + keywords + '\", ';
         json += '\"fetchJSONkey\":\"' + fetchJSONkey + '\" ';
         return json;
     };

@@ -106,12 +106,13 @@ function closeServiceBoard() {
 function showAddFeedForm(containerId) {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    document.getElementById(containerId).innerHTML = '<form id="the_form"><table class="frame_table" cellpadding="5px"><tr><td><label>Name: </label><br /><input type="TEXT" id="add_feed_form_feed_name" class="input_box" placeholder="Feed name" required="required" form="the_form"/></td></tr><tr><td><label>Feed URL: </label><br /><input type="TEXT" id="add_feed_form_feed_url" class="input_box" placeholder="Feed URL" required="required" form="the_form"/></td></tr><tr><td><label>Type: </label><br /><input type="RADIO" id="add_feed_form_feed_type_rest" name="type" style="margin-left: 50px;" value="REST/HTTP" checked="true"/><label for="add_feed_form_feed_type_rest">REST/HTTP</label><br /><input type="RADIO" id="add_feed_form_feed_type_soap" name="type" style="margin-left: 50px;" value="SOAP" /><label for="add_feed_form_feed_type_soap">SOAP</label></td></tr><tr><td><div class="div_push_button" onclick="addFeedFromFeedForm(\''+ containerId + '\')">OK</div><div class="div_push_button" onclick="closeAddNewFeed(\'' + containerId + '\')">Cancel</div></td></tr></table></form>';
+    document.getElementById(containerId).innerHTML = '<form id="the_form"><table class="frame_table" cellpadding="5px"><tr><td><label>Name: </label><br /><input type="TEXT" id="add_feed_form_feed_name" class="input_box" placeholder="Feed name" required="required" form="the_form"/></td></tr><tr><td><label>Feed URL: </label><br /><input type="TEXT" id="add_feed_form_feed_url" class="input_box" placeholder="Feed URL" required="required" form="the_form"/></td></tr><tr><td><label>Keywords: </label><br /><input type="TEXT" class="input_box" id="add_feed_form_feed_keyword" placeholder="Please enter keywords (e.g. service, example, map)" required="required" form="the_form"/></td></tr><tr><td><label>Type: </label><br /><input type="RADIO" id="add_feed_form_feed_type_rest" name="type" style="margin-left: 50px;" value="REST/HTTP" checked="true"/><label for="add_feed_form_feed_type_rest">REST/HTTP</label><br /><input type="RADIO" id="add_feed_form_feed_type_soap" name="type" style="margin-left: 50px;" value="SOAP" /><label for="add_feed_form_feed_type_soap">SOAP</label></td></tr><tr><td><div class="div_push_button" onclick="addFeedFromFeedForm(\''+ containerId + '\')">OK</div><div class="div_push_button" onclick="closeAddNewFeed(\'' + containerId + '\')">Cancel</div></td></tr></table></form>';
 }
 
 function addFeedFromFeedForm(containerId) {
     var url = document.getElementById('add_feed_form_feed_url').value;
     var name = document.getElementById('add_feed_form_feed_name').value;
+    var keywords = document.getElementById('add_feed_form_feed_keyword').value;
     var type_rest = document.getElementById('add_feed_form_feed_type_rest');
     var type_soap = document.getElementById('add_feed_form_feed_type_soap');
     var type;
@@ -130,6 +131,11 @@ function addFeedFromFeedForm(containerId) {
         return;
     }
 
+    if(keywords.length == 0) {
+        alert('Please declare at least one keyword.');
+        return;
+    }
+
     if(type_rest.checked) {
         type = FEED_TYPE_REST;
     }
@@ -139,26 +145,26 @@ function addFeedFromFeedForm(containerId) {
 
     // insert into database
     _database.transaction(function(tx) {
-        tx.executeSql('INSERT INTO feeds (name, url, feed_type) VALUES (\"' + name + '\", \"' + url +'\", \"' + type + '\")');
+        tx.executeSql('INSERT INTO feeds (name, url, feed_type, keyword) VALUES (\"' + name + '\", \"' + url +'\", \"' + type + '\", \"' + keywords + '\")');
 
         document.getElementById('add_feed_form_feed_url').value = document.getElementById('add_feed_form_feed_name').value = '';
         showNotificationInDashboard('Feed "' + name + '" has been added.');
     });
 }
 
-function insertFeedIntoHyperMash(name, url, type) {
+function insertFeedIntoHyperMash(name, url, type, keywords) {
     // insert into database
     _database.transaction(function(tx) {
-        tx.executeSql('INSERT INTO feeds (name, url, feed_type) VALUES (\"' + name + '\", \"' + url +'\", \"' + type + '\")');
+        tx.executeSql('INSERT INTO feeds (name, url, feed_type, keyword) VALUES (\"' + name + '\", \"' + url +'\", \"' + type + '\", \"' + keywords + '\")');
         showNotificationInDashboard('Feed "' + name + '" has been added.');
     });
 }
 
-function insertProjectIntoHyperMash(inputMd5, inputName, inputJson) {
+function insertProjectIntoHyperMash(inputMd5, inputName, inputJson, inputKeywords) {
     var json = inputJson;
     _database.transaction(function(tx) {
         var md5 = inputMd5;
-        tx.executeSql('INSERT INTO projects (md5, name, json) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\')');
+        tx.executeSql('INSERT INTO projects (md5, name, json, keyword) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\', \'' + inputKeywords + '\')');
         showNotificationInDashboard('"' + inputName + '" has been saved.');
         appendLog('Project \"' + inputName + '\" with MD5 \"' + md5 + '\" has been added from Project Market.');
     });
@@ -186,13 +192,14 @@ function updateFeedsHTML() {
     _database.transaction(function(tx) {
         clearFeedsNameList();
         feeds_html = '<table class="panel_table">';
-        tx.executeSql('SELECT name, url, feed_type FROM feeds', [], function(tx, results) {
+        tx.executeSql('SELECT * FROM feeds', [], function(tx, results) {
             for(var index = 0; index != results.rows.length; ++index) {
                 var row = results.rows.item(index);
                 var name = row['name'];
                 var url = row['url'];
                 var type = row['feed_type'];
-                feeds_html += '<tr><td><table cellpadding="0px" cellsapcing="0px"><tr><td><div id="feed_panel_item_table" class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" width="15px" height="15px">&nbsp;&nbsp;&nbsp;&nbsp;</div></center></td><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="drawARestFeed(\'' + name + '\', \'' + url + '\')"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr></table></td></tr>';
+                var keywords = row['keyword'];
+                feeds_html += '<tr><td><table cellpadding="0px" cellsapcing="0px"><tr><td><div id="feed_panel_item_table" class="feed_delelte_img" onclick="removeFeedFromFeedList(\'' + name + '\')" width="15px" height="15px">&nbsp;&nbsp;&nbsp;&nbsp;</div></center></td><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="drawARestFeed(\'' + name + '\', \'' + url + '\', \'' + keywords + '\')"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr></table></td></tr>';
                 appendFeedsNameList(name);
             }
         }, null);
@@ -200,12 +207,46 @@ function updateFeedsHTML() {
     });
 }
 
+function showBackupServiceDialog(keyword) {
+    _database.transaction(function(tx) {
+        tx.executeSql('SELECT * FROM feeds WHERE keyword LIKE \'%' + keyword + '%\'', [], function(tx, results) {
+            var html = '<div class="scrollable_div" style="max-height: 250px;"><table class="frame_table">';
+            for(var index = 0; index != results.rows.length; ++index) {
+                var row = results.rows.item(index);
+                var name = row['name'];
+                var url = row['url'];
+                var type = row['feed_type'];
+                var keywords = row['keyword'];
+                html += '<tr><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="drawARestFeed(\'' + name + '\', \'' + url + '\', \'' + keywords + '\')"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
+            }
+            html += '</table></div>';
+            $('#replace_service_output').html(html);
+        }, null);
+    });
+}
+
+function showReplaceServiceByKeywordDialog(keywords) {
+    if(keywords.length == 0) {
+        showMessageDialog('Sorry, no suggestions available for this service.');
+        return;
+    }
+
+    var html = '<div>Please choose one of the possible keywords for replacing the unavailable service.</div><div class="scrollable_div" style="max-height: 200px;"><table class="frame_table">';
+    var items = keywords.split(',');
+    for(var index = 0; index != items.length; ++index) {
+        var item = $.trim(items[index]);
+        html += '<tr><td><div class="feed_panel_item" onclick="showBackupServiceDialog(\'' + item + '\');">' + item + '</div></td></tr>';
+    }
+    html += '</table></div><table class="frame_table"><tr><td><hr class="seperator_hr"/><output id="replace_service_output" style="height: 60px;"></output></td></tr></table><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\'); invisibleElement(\'dashboard\');">Close</div>';
+    $('#dashboard_output').html(html);
+}
+
 function showSaveProjectDialog() {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    $('#dashboard_output').html('<table class="frame_table"><tr><td>Save as:</td></tr><tr><td><input width="100%" type="TEXT" id="save_project_name_input" class="input_box" placeholder="Please give a name to your project..."/></td></tr><tr><td><div id="save_project_button" class="div_push_button" onclick="saveAProjectFromDialog();invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Save</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Cancel</div></td></tr></table>');
+    $('#dashboard_output').html('<table class="frame_table"><tr><td>Save as:</td></tr><tr><td><input width="100%" type="TEXT" id="save_project_name_input" class="input_box" placeholder="Please give a name to your project..."/></td></tr><tr><td><label>Keywords:</label><br/><input type="TEXT" class="input_box" id="save_project_keyword_input" placeholder="Please identify keywords (e.g. mashup, example)" /></td></tr><tr><td><div id="save_project_button" class="div_push_button" onclick="saveAProjectFromDialog();invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Save</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Cancel</div></td></tr></table>');
 
-    $('#save_project_name_input').keypress(function(evt) {
+    $('#save_project_name_input, #save_project_keyword_input').keypress(function(evt) {
         if(evt.keyCode == 13) { // if enter up
             evt.preventDefault();
             $('#save_project_button').click();
@@ -219,6 +260,12 @@ function showRemoveProjectDialog(md5, name) {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
     $('#dashboard_output').html('<table class="frame_table"><tr><td><div>Are you sure you want to remove \"' + name + '\"?</div></td></tr><tr><td><div class="div_push_button" onclick="removeAProject(\'' + md5 + '\');invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Yes</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">No</div></td></tr></table>');
+}
+
+function showServiceErrorDialog(msg, keywords) {
+    visibleElement('dashboard');
+    visibleElement('dashboard_div');
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="showReplaceServiceByKeywordDialog(\'' + keywords + '\')">Suggestion</div><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">Close</div></td></tr></table>';
 }
 
 function showMessageDialog(msg) {
@@ -389,11 +436,11 @@ function removeAProject(md5) {
     // };
 }
 
-function saveAProject(inputName, inputJson) {
+function saveAProject(inputName, inputJson, inputKeywords) {
     var json = inputJson;
     _database.transaction(function(tx) {
         var md5 = MD5(new Date() + inputName);
-        tx.executeSql('INSERT INTO projects (md5, name, json) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\')');
+        tx.executeSql('INSERT INTO projects (md5, name, json, keyword) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\', \'' + inputKeywords + '\')');
         showNotificationInDashboard('"' + inputName + '" has been saved.');
         appendLog('Project \"' + inputName + '\" has been saved.');
     });
@@ -405,8 +452,17 @@ function saveAProject(inputName, inputJson) {
 
 function saveAProjectFromDialog() {
     var name = $('#save_project_name_input').val();
+    var keywords = $('#save_project_keyword_input').val();
+    if(name.length == 0) {
+        alert('Project name cannot be empty.');
+        return;
+    }
+    if(keywords.length == 0) {
+        alert('Please identify at least one keyword.');
+        return;
+    }
     var json = getFeedsJSON();
-    saveAProject(name, json);
+    saveAProject(name, json, keywords);
 }
 
 function propertiesPanelShowSysWorker(service) {

@@ -193,16 +193,17 @@ function loadFromJSON(jsonInput) {
     var list = new Array();
     for(var index = 0; index != count; ++ index) {
         var item = json.feeds[index].feed[0];
-        var next, id, name, type, restUrl, restMethod;
+        var next, id, name, type, restUrl, restMethod, keywords;
         next = parseInt(item.next);
         if(next != -1) {
             id = parseInt(item.id);
             name = item.name;
             type = item.type;
+            keywords = item.keywords;
             if(type == TYPE_REST) {
                 restUrl = item.restUrl;
                 restMethod = item.restMethod;
-                drawARestFeed(name, restUrl);
+                drawARestFeed(name, restUrl, keywords);
             }
             else if(type == TYPE_WIDGET) {
                 drawAWidget(name);
@@ -303,7 +304,7 @@ function generateCode() {
     _big_buffer += 'var bf = __result_buffer__.replace(\'"\', \'\\"\');\n\n';
     _big_buffer += 'var code = e.data;\n\n';
     _big_buffer += 'if(code != \'200\') {\n\n';
-    _big_buffer += 'showMessageDialog(\'Oops! Service \"\' + currentServce.getName() + \'\" is down. Please try later or use an alternative service feed.\');'+ '\n\n'; 
+    _big_buffer += 'showServiceErrorDialog(\'Oops! Service \"\' + currentServce.getName() + \'\" is down. Please try later or use an alternative service feed.\', currentServce.getKeywords());'+ '\n\n'; 
     _big_buffer += 'appendLog(\'"\' + currentServce.getName() + \'" is down. #\' + code);' + '\n\n';
     _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
     _big_buffer += 'highlightErrorNode(counter);\n\n';
@@ -545,13 +546,14 @@ function removeFeedFromCanvas(feed) {
         var type = item.type;
         var url = item.url;
         var restMethod = item.restMethod;
+        var keywords = item.keyword;
         var nid = item.nextId;
         nextIds[index] = parseInt(nid);
         switch(type) {
             case TYPE_SYS_START:
                 break;
             case TYPE_REST:
-                drawARestFeed(name, url);
+                drawARestFeed(name, url, keywords);
                 _feeds_nodes[_feeds_nodes.length - 1].getService().setRestMethod(restMethod);
                 break;
             case TYPE_WIDGET:
@@ -581,7 +583,7 @@ function drawFromFeedList(list) {
             drawStartNode();
         }
         else if(ser.getType() == TYPE_REST) {
-            drawARestFeed(ser.getName(), ser.getRestUrl());
+            drawARestFeed(ser.getName(), ser.getRestUrl(), ser.getKeywords());
             _feeds_nodes[index].getService().setRestMethod(ser.getRestMethod());
         }
         else if(ser.getType() == TYPE_WIDGET) {
@@ -873,12 +875,12 @@ function loadLocalStorage() {
     }
 }
 
-function drawARestFeed(name, url) {
-    var feed = new RestFeed(name, url);
+function drawARestFeed(name, url, keywords) {
+    var feed = new RestFeed(name, url, keywords);
     _feeds_nodes.push(feed);
 }
 
-function RestFeed(name, url) {
+function RestFeed(name, url, inputKeywords) {
     var org_connecting_line_points, beConnectedLine = 'undefined';
     var id = _feeds_nodes.length;
     var feedConnector;
@@ -895,9 +897,11 @@ function RestFeed(name, url) {
         nextFeed = 'undefined';
     };
 
+
     var service = new Service(name, TYPE_REST);
     service.setRestUrl(url);
     service.setRestMethod(REST_METHOD_GET);
+    service.setKeywords(inputKeywords);
     // appendServivesList(service);
 
     this.getService = function() {

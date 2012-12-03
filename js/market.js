@@ -5,12 +5,14 @@ var _feed_market_descs = [];
 var _feed_market_names = [];
 var _feed_market_urls = [];
 var _feed_market_types = [];
+var _feed_market_keywords = [];
 
 var _project_market_md5s = [];
 var _project_market_names = [];
 var _project_market_authors = [];
 var _project_market_descs = [];
 var _project_market_json = [];
+var _project_market_keywords = [];
 
 
 function loadProjectMarket() {
@@ -33,6 +35,7 @@ function loadProjectMarket() {
         _project_market_authors[index] = item.author;
         _project_market_descs[index] = item.description.replace('\"', '"');
         _project_market_json[index] = item.json.replace('\"', '"');
+        _project_market_keywords[index] = item.keywords;
         html += '<tr><td><div class="feed_panel_item" style="width: 80%;" onclick="showProjectMarketItem(' + index + ');">';
         html += item.name;
         html += '</div></td></tr>';
@@ -50,7 +53,7 @@ function showProjectMarketItem(index) {
 }
 
 function doInsertProject(index) {
-    insertProjectIntoHyperMash(_project_market_md5s[index], _project_market_names[index], _project_market_json[index]);
+    insertProjectIntoHyperMash(_project_market_md5s[index], _project_market_names[index], _project_market_json[index], _project_market_keywords[index]);
 }
 
 function loadFeedMarket() {
@@ -72,6 +75,7 @@ function loadFeedMarket() {
         _feed_market_names[index] = jsonObj.feeds[index].name;
         _feed_market_urls[index] = jsonObj.feeds[index].url;
         _feed_market_types[index] = jsonObj.feeds[index].type;
+        _feed_market_keywords[index] = jsonObj.feeds[index].keywords;
         html += '<tr><td><div class="feed_panel_item" style="width: 120%;" onclick="showFeedMarketItem(' + index + ');">';
         var typeTag = jsonObj.feeds[index].type.toUpperCase();
         html += '<span style="font-weight:bold; color:black;">' + typeTag + '</span>&nbsp;&nbsp;';
@@ -89,6 +93,6 @@ function loadFeedMarket() {
 
 
 function showFeedMarketItem(index) {
-    $('#market_output').html('<div class="scrollable_div" style="height: 250px; width: 430px; white-space:normal; display:block;">' + _feed_market_descs[index] + '</div><center><div class="div_long_push_button" onclick="insertFeedIntoHyperMash(\'' + _feed_market_names[index] + '\', \'' + _feed_market_urls[index] + '\', \'' + _feed_market_types[index] + '\');">Add to HyperMash</div></center>');
+    $('#market_output').html('<div class="scrollable_div" style="height: 250px; width: 430px; white-space:normal; display:block;">' + _feed_market_descs[index] + '</div><center><div class="div_long_push_button" onclick="insertFeedIntoHyperMash(\'' + _feed_market_names[index] + '\', \'' + _feed_market_urls[index] + '\', \'' + _feed_market_types[index] + '\', \'' + _feed_market_keywords[index] + '\');">Add to HyperMash</div></center>');
 }
 
