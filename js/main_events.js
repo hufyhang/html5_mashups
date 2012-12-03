@@ -1,5 +1,5 @@
 const WEB_SQL_DATABASE = 'html5_mashup_platform_web_database';
-const DB_VERSION = '1.0';
+const DB_VERSION = 2;
 const DB_TITLE = 'SQL database';
 const DB_BYTES = 2 * 1024 * 1024;
 
@@ -249,15 +249,53 @@ function removeFeedFromDatabase(name) {
     });
 }
 
+// This function is created by Max Aller <nanodeath@gmail.com>
+function Migrator(db){
+  var migrations = [];
+  this.migration = function(number, func){
+    migrations[number] = func;
+  };
+  var doMigration = function(number){
+    if(migrations[number]){
+      db.changeVersion(db.version, String(number), function(t){
+        migrations[number](t);
+      }, function(err){
+        if(console.error) console.error("Error!: %o", err);
+      }, function(){
+        doMigration(number+1);
+      });
+    }
+  };
+  this.doIt = function(){
+    var initialVersion = parseInt(db.version) || 0;
+    try {
+      doMigration(initialVersion+1);
+    } catch(e) {
+      if(console.error) console.error(e);
+    }
+  }
+}
+
 function readyDatabase() {
-    _database = openDatabase(WEB_SQL_DATABASE, DB_VERSION, DB_TITLE, DB_BYTES);
+    _database = openDatabase(WEB_SQL_DATABASE, '', DB_TITLE, DB_BYTES);
     // check & create table
-    _database.transaction(function(tx) {
+    var migrator = new Migrator(_database);
+    migrator.migration(1, function(tx) {
         tx.executeSql('CREATE TABLE IF NOT EXISTS feeds (name, url, feed_type)');
         tx.executeSql('CREATE TABLE IF NOT EXISTS projects (md5 NOT NULL PRIMARY KEY, name, json)');
-        // tx.executeSql('DROP TABLE projects');
-    }
-    );
+    });
+    migrator.migration(2, function(tx) {
+        tx.executeSql('ALTER TABLE feeds ADD keyword varchar(255)');
+        tx.executeSql('ALTER TABLE projects ADD keyword varchar(255)');
+    });
+
+    migrator.doIt();
+
+    // _database.transaction(function(tx) {
+    //     tx.executeSql('CREATE TABLE IF NOT EXISTS feeds (name, url, feed_type, keyword)');
+    //     tx.executeSql('CREATE TABLE IF NOT EXISTS projects (md5 NOT NULL PRIMARY KEY, name, json, keyword)');
+    // });
+
 // 
 //     // now, initialise Indexed DB
 //     // In the following line, you should include the prefixes of implementations you want to test.
