@@ -211,6 +211,7 @@ function showBackupServiceDialog(targetIndex, keyword) {
     _database.transaction(function(tx) {
         tx.executeSql('SELECT * FROM feeds WHERE keyword LIKE \'%' + keyword + '%\'', [], function(tx, results) {
             var html = '<div class="scrollable_div" style="max-height: 250px;"><table class="frame_table">';
+            var items = '';
             for(var index = 0; index != results.rows.length; ++index) {
                 var row = results.rows.item(index);
                 var name = row['name'];
@@ -221,8 +222,12 @@ function showBackupServiceDialog(targetIndex, keyword) {
                 if(type == TYPE_REST) {
                     onclick = 'replaceRestFeed(' + targetIndex + ', \'' + name + '\', \'' + url + '\', \'' + keywords + '\');invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');';
                 }
-                html += '<tr><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="' + onclick + '"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
+                items += '<tr><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="' + onclick + '"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
             }
+            if(items.length == 0) {
+                items = '<tr><td>Oops! There is no suggestions available.</td></tr>';
+            }
+            html += items;
             html += '</table></div>';
             $('#replace_service_output').html(html);
         }, null);

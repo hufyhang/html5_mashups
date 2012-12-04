@@ -22,40 +22,20 @@ function initialiseBigCanvas() {
 }
 
 function registerTouchEvents(stage) {
-    stage.on('tap', function(evt) {
+    stage.on('touchstart', function(evt) {
         var x = stage.getTouchPosition().x;
         var y = stage.getTouchPosition().y;
         // iterate _feeds_nodes to capture the tapped removeDot
-        for(var index = 0; index != _feeds_nodes.length; ++index) {
-            var removeDot = _feeds_nodes[index].getRemoveDot();
-            var parentFeed = removeDot.getParentFeed();
-            if((x - TOUCH_OFFSET <= removeDot.getX() && removeDot.getX() + removeDot.getWidth() <= x + TOUCH_OFFSET) && 
-                (y - TOUCH_OFFSET <= removeDot.getY() && removeDot.getY() + removeDot.getHeight() <= y + TOUCH_OFFSET)) {
+        for(var index = 1; index != _feeds_nodes.length; ++index) {
+            var removeDot = _feeds_nodes[index].getRemoveDot().getRemoveDot();
+            var parentFeed = _feeds_nodes[index];
+            if((x - TOUCH_OFFSET >= removeDot.getX() && removeDot.getX() + removeDot.getWidth() >= x + TOUCH_OFFSET) && 
+                (y - TOUCH_OFFSET >= removeDot.getY() && removeDot.getY() + removeDot.getTextHeight() + 3 * TOUCH_OFFSET >= y)) {
                 removeFeedFromCanvas(parentFeed);
                 return;
             }
         }
 
-        // iterate _feeds_nodes to capture the tapped node
-        for(var index = 0; index != _feeds_nodes.length; ++index) {
-            var feed = _feeds_nodes[index];
-            var node = feed.getNode();
-            if((x - TOUCH_OFFSET <= node.getX() && node.getX() + node.getWidth() <= x + TOUCH_OFFSET) && 
-                (y - TOUCH_OFFSET <= node.getY() && node.getY() + node.getHeight() <= y + TOUCH_OFFSET)) {
-                if(feed.getService().getType() == TYPE_REST) {
-                    propertiesPanelShowRestFeed(feed);
-                }
-                else if(feed.getService().getType == TYPE_WORKER) {
-                    propertiesPanelShowSysWorker(feed.getService());
-                }
-                return;
-            }
-        }
-    });
-
-    stage.on('touchstart', function(evt) {
-        var x = stage.getTouchPosition().x;
-        var y = stage.getTouchPosition().y;
         // iterate _feeds_nodes to capture the touched connector
         for(var index = 0; index != _feeds_nodes.length; ++index) {
             var connector = _feeds_nodes[index].getConnector();
@@ -64,6 +44,25 @@ function registerTouchEvents(stage) {
                 touchedObj = connector;
                 org_x = touchedObj.getX();
                 org_y = touchedObj.getY();
+                return;
+            }
+        }
+
+        // iterate _feeds_nodes to capture the touched node
+        for(var index = 0; index != _feeds_nodes.length; ++index) {
+            var node = _feeds_nodes[index].getNode();
+            if((x - TOUCH_OFFSET >= node.getX() && node.getX() + node.getWidth() >= x + TOUCH_OFFSET) && (y - TOUCH_OFFSET >= node.getY() && node.getY() + node.getTextHeight() + 3 * TOUCH_OFFSET >= y)) {
+                var type = _feeds_nodes[index].getService().getType();
+                switch(type) {
+                    case TYPE_REST:
+                        propertiesPanelShowRestFeed(_feeds_nodes[index].getService());
+                        break;
+                    case TYPE_WORKER:
+                        propertiesPanelShowSysWorker(_feeds_nodes[index].getService());
+                        break;
+                    default:
+                        break;
+                }
                 return;
             }
         }
@@ -147,7 +146,7 @@ function createBigCanvas(_width, _height) {
     _big_canvas_stage = new Kinetic.Stage({
         container: "big_canvas_canvas",
         width: _width,
-        height: _height,
+        height: _height
     });
 
     _big_canvas_layer = new Kinetic.Layer();
@@ -486,7 +485,7 @@ function RemoveDot(parent_feed) {
     };
 
     var getHeight = function() {
-        return removeDot.getHeight();
+        return removeDot.getTextHeight();
     };
 
     var removeDot = new Kinetic.Text({
