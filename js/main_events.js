@@ -207,7 +207,7 @@ function updateFeedsHTML() {
     });
 }
 
-function showBackupServiceDialog(keyword) {
+function showBackupServiceDialog(targetIndex, keyword) {
     _database.transaction(function(tx) {
         tx.executeSql('SELECT * FROM feeds WHERE keyword LIKE \'%' + keyword + '%\'', [], function(tx, results) {
             var html = '<div class="scrollable_div" style="max-height: 250px;"><table class="frame_table">';
@@ -217,7 +217,11 @@ function showBackupServiceDialog(keyword) {
                 var url = row['url'];
                 var type = row['feed_type'];
                 var keywords = row['keyword'];
-                html += '<tr><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick=""><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
+                var onclick = '';
+                if(type == TYPE_REST) {
+                    onclick = 'replaceRestFeed(' + targetIndex + ', \'' + name + '\', \'' + url + '\', \'' + keywords + '\');invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');';
+                }
+                html += '<tr><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="' + onclick + '"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
             }
             html += '</table></div>';
             $('#replace_service_output').html(html);
@@ -225,7 +229,7 @@ function showBackupServiceDialog(keyword) {
     });
 }
 
-function showReplaceServiceByKeywordDialog(keywords) {
+function showReplaceServiceByKeywordDialog(targetIndex, keywords) {
     if(keywords.length == 0) {
         showMessageDialog('Sorry, no suggestions available for this service.');
         return;
@@ -235,7 +239,7 @@ function showReplaceServiceByKeywordDialog(keywords) {
     var items = keywords.split(',');
     for(var index = 0; index != items.length; ++index) {
         var item = $.trim(items[index]);
-        html += '<tr><td><div class="feed_panel_item" onclick="showBackupServiceDialog(\'' + item + '\');">' + item + '</div></td></tr>';
+        html += '<tr><td><div class="feed_panel_item" onclick="showBackupServiceDialog(' + targetIndex + ', \'' + item + '\');">' + item + '</div></td></tr>';
     }
     html += '</table></div><table class="frame_table"><tr><td><hr class="seperator_hr"/><output id="replace_service_output" style="height: 60px;"></output></td></tr></table><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\'); invisibleElement(\'dashboard\');">Close</div>';
     $('#dashboard_output').html(html);
@@ -262,10 +266,10 @@ function showRemoveProjectDialog(md5, name) {
     $('#dashboard_output').html('<table class="frame_table"><tr><td><div>Are you sure you want to remove \"' + name + '\"?</div></td></tr><tr><td><div class="div_push_button" onclick="removeAProject(\'' + md5 + '\');invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">Yes</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');">No</div></td></tr></table>');
 }
 
-function showServiceErrorDialog(msg, keywords) {
+function showServiceErrorDialog(msg, targetIndex, keywords) {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="showReplaceServiceByKeywordDialog(\'' + keywords + '\')">Suggestion</div><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">Close</div></td></tr></table>';
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="showReplaceServiceByKeywordDialog(' + targetIndex + ', \'' + keywords + '\')">Suggestion</div><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">Close</div></td></tr></table>';
 }
 
 function showMessageDialog(msg) {

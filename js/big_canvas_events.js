@@ -12,6 +12,7 @@ var touchedObj = undefined;
 var serviceBuffer = []; // for iterating feeds
 var serviceIndex = 0;
 
+
 function initialiseBigCanvas() {
     var canvas = document.getElementById('big_canvas_canvas');
     fixedWidth = canvas.offsetWidth;
@@ -21,6 +22,37 @@ function initialiseBigCanvas() {
 }
 
 function registerTouchEvents(stage) {
+    stage.on('tap', function(evt) {
+        var x = stage.getTouchPosition().x;
+        var y = stage.getTouchPosition().y;
+        // iterate _feeds_nodes to capture the tapped removeDot
+        for(var index = 0; index != _feeds_nodes.length; ++index) {
+            var removeDot = _feeds_nodes[index].getRemoveDot();
+            var parentFeed = removeDot.getParentFeed();
+            if((x - TOUCH_OFFSET <= removeDot.getX() && removeDot.getX() + removeDot.getWidth() <= x + TOUCH_OFFSET) && 
+                (y - TOUCH_OFFSET <= removeDot.getY() && removeDot.getY() + removeDot.getHeight() <= y + TOUCH_OFFSET)) {
+                removeFeedFromCanvas(parentFeed);
+                return;
+            }
+        }
+
+        // iterate _feeds_nodes to capture the tapped node
+        for(var index = 0; index != _feeds_nodes.length; ++index) {
+            var feed = _feeds_nodes[index];
+            var node = feed.getNode();
+            if((x - TOUCH_OFFSET <= node.getX() && node.getX() + node.getWidth() <= x + TOUCH_OFFSET) && 
+                (y - TOUCH_OFFSET <= node.getY() && node.getY() + node.getHeight() <= y + TOUCH_OFFSET)) {
+                if(feed.getService().getType() == TYPE_REST) {
+                    propertiesPanelShowRestFeed(feed);
+                }
+                else if(feed.getService().getType == TYPE_WORKER) {
+                    propertiesPanelShowSysWorker(feed.getService());
+                }
+                return;
+            }
+        }
+    });
+
     stage.on('touchstart', function(evt) {
         var x = stage.getTouchPosition().x;
         var y = stage.getTouchPosition().y;
@@ -35,16 +67,16 @@ function registerTouchEvents(stage) {
                 return;
             }
         }
-        // iterate _feeds_nodes to capture the touched removeDot
-        for(var index = 0; index != _feeds_nodes.length; ++index) {
-            var removeDot = _feeds_nodes[index].getRemoveDot();
-            var parentFeed = removeDot.getParentFeed();
-            if((x - TOUCH_OFFSET <= removeDot.getX() && removeDot.getX() + removeDot.getWidth() <= x + TOUCH_OFFSET) && 
-                (y - TOUCH_OFFSET <= removeDot.getY() && removeDot.getY() + removeDot.getHeight() <= y + TOUCH_OFFSET)) {
-                removeFeedFromCanvas(parentFeed);
-                return;
-            }
-        }
+        // // iterate _feeds_nodes to capture the touched removeDot
+        // for(var index = 0; index != _feeds_nodes.length; ++index) {
+        //     var removeDot = _feeds_nodes[index].getRemoveDot();
+        //     var parentFeed = removeDot.getParentFeed();
+        //     if((x - TOUCH_OFFSET <= removeDot.getX() && removeDot.getX() + removeDot.getWidth() <= x + TOUCH_OFFSET) && 
+        //         (y - TOUCH_OFFSET <= removeDot.getY() && removeDot.getY() + removeDot.getHeight() <= y + TOUCH_OFFSET)) {
+        //         removeFeedFromCanvas(parentFeed);
+        //         return;
+        //     }
+        // }
     });
 
     stage.on('touchmove', function(evt) {
@@ -60,6 +92,7 @@ function registerTouchEvents(stage) {
     stage.on('touchend', function(evt) {
         var parentFeed;
         var tObj = touchedObj;
+
         if(touchedObj == undefined) {
             return;
         }
@@ -304,7 +337,7 @@ function generateCode() {
     _big_buffer += 'var bf = __result_buffer__.replace(\'"\', \'\\"\');\n\n';
     _big_buffer += 'var code = e.data;\n\n';
     _big_buffer += 'if(code != \'200\') {\n\n';
-    _big_buffer += 'showServiceErrorDialog(\'Oops! Service \"\' + currentServce.getName() + \'\" is down. Please try later or use an alternative service feed.\', currentServce.getKeywords());'+ '\n\n'; 
+    _big_buffer += 'showServiceErrorDialog(\'Oops! Service \"\' + currentServce.getName() + \'\" is down. Please try later or use an alternative service feed.\', counter, currentServce.getKeywords());'+ '\n\n'; 
     _big_buffer += 'appendLog(\'"\' + currentServce.getName() + \'" is down. #\' + code);' + '\n\n';
     _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
     _big_buffer += 'highlightErrorNode(counter);\n\n';
@@ -405,6 +438,25 @@ function generateCode() {
     // <END>else if it is TYPE_WIDGET</END>
     
     _big_buffer += '}\n\n';
+}
+
+function replaceRestFeed(targetIndex, inputName, inputUrl, inputKeywords) {
+    var feed;
+    var counter = 0;
+    feed = _feeds_nodes[0];
+    while(counter != targetIndex) {
+        feed = feed.getNextFeed();
+        ++counter;
+    }
+    feed.getService().setName(inputName);
+    feed.getService().setRestUrl(inputUrl);
+    feed.getService().setKeywords(inputKeywords);
+    var targetNode = feed.getNode();
+    feed = new RestFeed(inputName, inputUrl, inputKeywords);
+
+    feed.setNextFeed(_feeds_nodes[feed.getId() - 2].getNextFeed());
+
+    redrawFeed(targetNode, feed);
 }
 
 function moveRemoveDot(removeDot, parent_node) {
@@ -885,9 +937,25 @@ function loadLocalStorage() {
     }
 }
 
+function redrawFeed(node, feed) {
+    var name = feed.getService().getName();
+    var type = feed.getService().getType();
+    if(type == TYPE_REST) {
+        var url = feed.getService().getRestUrl();
+        var text = name + '\n\n' + url;
+        node.setText(text);
+    }
+    _big_canvas_layer.draw();
+}
+
 function drawARestFeed(name, url, keywords) {
     var feed = new RestFeed(name, url, keywords);
     _feeds_nodes.push(feed);
+
+    _big_canvas_layer.add(feed.getNode());
+    _big_canvas_layer.add(feed.getConnector().getConnector());
+    _big_canvas_layer.add(feed.getRemoveDot().getRemoveDot());
+    _big_canvas_stage.draw();
 }
 
 function RestFeed(name, url, inputKeywords) {
@@ -1016,12 +1084,6 @@ function RestFeed(name, url, inputKeywords) {
 
         _big_canvas_layer.draw();
     });
-
-
-    _big_canvas_layer.add(feed);
-    _big_canvas_layer.add(feedConnector.getConnector());
-    _big_canvas_layer.add(removeDot.getRemoveDot());
-    _big_canvas_stage.draw();
 } 
 
 function ifContains(pointX, pointY, node) {
@@ -1038,21 +1100,21 @@ function ifContains(pointX, pointY, node) {
     return result;
 }
 
-function drawARect() {
-    var box = new Kinetic.Rect({
-        x: 0,
-        y: 0,
-        fill: 'blue',
-        stroke: 'black',
-        strokeWidth: 2,
-        width: 200,
-        height: 100,
-        draggable: true
-    });
-    _big_canvas_layer.add(box);
-    _big_canvas_stage.add(_big_canvas_layer);
-    _big_canvas_stage.draw();
-}
+// function drawARect() {
+//     var box = new Kinetic.Rect({
+//         x: 0,
+//         y: 0,
+//         fill: 'blue',
+//         stroke: 'black',
+//         strokeWidth: 2,
+//         width: 200,
+//         height: 100,
+//         draggable: true
+//     });
+//     _big_canvas_layer.add(box);
+//     _big_canvas_stage.add(_big_canvas_layer);
+//     _big_canvas_stage.draw();
+// }
 
 function highlightErrorNode(inputIndex) {
     var counter = 0;
