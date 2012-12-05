@@ -277,6 +277,21 @@ function showServiceErrorDialog(msg, targetIndex, keywords) {
     document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="showReplaceServiceByKeywordDialog(' + targetIndex + ', \'' + keywords + '\')">Suggestion</div><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">Close</div></td></tr></table>';
 }
 
+function showFetchJSONDialog() {
+    // show message
+    visibleElement('dashboard');
+    visibleElement('dashboard_div');
+    $('#dashboard_output').html('<table class="frame_table"><tr><label>Target Key:</label><br/><input type="TEXT" id="fetchJSON_dialog_key_input" class="input_box" placeholder="Please identify the target key to be fetched."/></tr><tr><td><div id="fetchJSON_dialog_ok_button" class="div_push_button" onclick="updateFetchJSONFeed($(\'#fetchJSON_dialog_key_input\').val()); invisibleElement(\'dashboard_div\'); invisibleElement(\'dashboard\');">OK</div></td></tr></table>');
+
+    $('#fetchJSON_dialog_key_input').keypress(function(evt) {
+        if(evt.keyCode == 13) {
+            evt.preventDefault();
+            $('#fetchJSON_dialog_ok_button').click();
+            return false;
+        }
+    });
+}
+
 function showMessageDialog(msg) {
     // show message
     visibleElement('dashboard');

@@ -12,6 +12,7 @@ var touchedObj = undefined;
 var serviceBuffer = []; // for iterating feeds
 var serviceIndex = 0;
 
+var fetchJSONFeed = undefined; // the global variable for keeping the current fetchJSONFeed being connected
 
 function initialiseBigCanvas() {
     var canvas = document.getElementById('big_canvas_canvas');
@@ -456,6 +457,7 @@ function replaceRestFeed(targetIndex, inputName, inputUrl, inputKeywords) {
     feed.setNextFeed(_feeds_nodes[feed.getId() - 2].getNextFeed());
 
     redrawFeed(targetNode, feed);
+    appendLog('Replaced unavailable service No.' + targetIndex + ' with {NAME:"' + inputName + '", URL:"' + inputUrl + '", KEYWORDS:"' +inputKeywords + '"}');
 }
 
 function moveRemoveDot(removeDot, parent_node) {
@@ -742,6 +744,15 @@ function Connector(parent_feed) {
                 parentFeed.setNextFeed(nodeObj);
 
                 result = true;
+
+                // check if need to pop up fetchJSONFeed dialog
+                if(nodeObj.getService().getType() == TYPE_WORKER && nodeObj.getService().getName() == WORKER_FETCH_LAST_BY_KEY) {
+                    if(nodeObj.getService().getFetchJSONKey().length == 0) {
+                        fetchJSONFeed = nodeObj;
+                        showFetchJSONDialog();
+                    }
+                }
+
                 break;
             }
         }
@@ -1114,6 +1125,13 @@ function ifContains(pointX, pointY, node) {
 //     _big_canvas_stage.add(_big_canvas_layer);
 //     _big_canvas_stage.draw();
 // }
+
+function updateFetchJSONFeed(inputTargetKey) {
+    if(fetchJSONFeed != undefined) {
+        fetchJSONFeed.getService().setFetchJSONKey(inputTargetKey);
+    }
+    fetchJSONFeed = undefined;
+}
 
 function highlightErrorNode(inputIndex) {
     var counter = 0;
