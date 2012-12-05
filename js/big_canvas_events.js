@@ -130,6 +130,14 @@ function registerTouchEvents(stage) {
 
                 parentFeed.setNextFeed(nodeObj);
 
+                // check if need to pop up fetchJSONFeed dialog
+                if(nodeObj.getService().getType() == TYPE_WORKER && nodeObj.getService().getName() == WORKER_FETCH_LAST_BY_KEY) {
+                    if(nodeObj.getService().getFetchJSONKey().length == 0) {
+                        fetchJSONFeed = nodeObj;
+                        showFetchJSONDialog();
+                    }
+                }
+
                 result = true;
                 break;
             }
