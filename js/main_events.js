@@ -62,7 +62,7 @@ function showFeedsPanel(containerId) {
 
 function showWorkersPanel(containerId) {
     _current_container_id = containerId;
-    $('#'+ containerId).html('<div>Workers</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;"><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_FETCH_LAST_BY_KEY + '\');">Fetch Data</div></td></tr></table>');
+    $('#'+ containerId).html('<div>Workers</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;"><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_FETCH_LAST_BY_KEY + '\');">Fetch Data</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_ADD_TEXT + '\');">Add Text</div></td></tr></table>');
 }
 
 function showWidgetsPanel(containerId) {
@@ -275,6 +275,22 @@ function showServiceErrorDialog(msg, targetIndex, keywords) {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
     document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="showReplaceServiceByKeywordDialog(' + targetIndex + ', \'' + keywords + '\')">Suggestion</div><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">Close</div></td></tr></table>';
+}
+
+function showAddTextDialog() {
+    // show message
+    visibleElement('dashboard');
+    visibleElement('dashboard_div');
+    $('#dashboard_output').html('<table class="frame_table"><tr><td><label>Before:</label><br/><input type="TEXT" class="input_box" id="AddTextDialogBefore" placeholder="Please specify the text which will be added before the output of the previous connected node..."/></td></tr><tr><td><label>After:</label><br/><input type="TEXT" class="input_box" id="AddTextDialogAfter" placeholder="Please specify the text which will be added after the output of the previous connected node..."/></td></tr><tr><td><div id="addText_dialog_ok" class="div_push_button" onclick="updateAddTextFeed($(\'#AddTextDialogBefore\').val(), $(\'#AddTextDialogAfter\').val()); invisibleElement(\'dashboard_div\'); invisibleElement(\'dashboard\');">OK</div></td></tr></table>');
+
+    $('#AddTextDialogBefore, #AddTextDialogAfter').keypress(function(evt) {
+        if(evt.keyCode == 13) {
+            evt.preventDefault();
+            $('#addText_dialog_ok').click();
+            return false;
+        }
+    });
+
 }
 
 function showFetchJSONDialog() {
@@ -493,13 +509,33 @@ function propertiesPanelShowSysWorker(service) {
     var name = service.getName();
     var key = service.getFetchJSONKey();
     var id = service.getId();
+    var beforeText = service.getAddTextObject().getBeforeText();
+    var afterText = service.getAddTextObject().getAfterText();
 
-    document.getElementById('properties_panel_output').innerHTML = '<table class="properties_panel_table"><tr><td>Target Key:<br/><input type="TEXT" class="input_box" id="SysworkerPropertiesTargetKey" placeholder="Please enter the target key..." value="' + key + '"/></td></tr></table>';
+    switch(name) {
+        case WORKER_FETCH_LAST_BY_KEY:
+            document.getElementById('properties_panel_output').innerHTML = '<table class="properties_panel_table"><tr><td>Target Key:<br/><input type="TEXT" class="input_box" id="SysworkerPropertiesTargetKey" placeholder="Please enter the target key..." value="' + key + '"/></td></tr></table>';
 
-    $('#SysworkerPropertiesTargetKey').change(function() {
-        var data = $('#SysworkerPropertiesTargetKey').val();
-        service.setFetchJSONKey(data);
-    });
+            $('#SysworkerPropertiesTargetKey').change(function() {
+                var data = $('#SysworkerPropertiesTargetKey').val();
+                service.setFetchJSONKey(data);
+            });
+            break;
+
+        case WORKER_ADD_TEXT:
+            $('#properties_panel_output').html('<table class="properties_panel_table"><tr><td><label>Before:</label><br/><input type="TEXT" class="input_box" id="SysworkerPropertiesAddTextBefore" placeholder="Please specify the text which will be added before the output of the previous connected node..." value="' + beforeText + '"/></td></tr><tr><td><label>After:</label><br/><input type="TEXT" class="input_box" id="SysworkerPropertiesAddTextAfter" placeholder="Please specify the text which will be added after the output of the previous connected node..." value="' + afterText + '"/></td></tr></table>');
+
+            $('#SysworkerPropertiesAddTextAfter, #SysworkerPropertiesAddTextBefore').change(function() {
+                var before = $('#SysworkerPropertiesAddTextBefore').val();
+                var after = $('#SysworkerPropertiesAddTextAfter').val();
+                service.getAddTextObject().setBeforeText(before);
+                service.getAddTextObject().setAfterText(after);
+            });
+            break;
+
+        default:
+            break;
+    }
 }
 
 function propertiesPanelShowRestFeed(service) {

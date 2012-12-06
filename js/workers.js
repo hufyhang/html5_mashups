@@ -1,8 +1,30 @@
 const WORKER_FETCH_LAST_BY_KEY = 'Last Value';
+const WORKER_ADD_TEXT = 'Add Text';
 
 function drawAWorker(type) {
     var feed = new SysWorker(type);
     _feeds_nodes.push(feed);
+    _big_canvas_layer.add(feed.getNode());
+    _big_canvas_layer.add(feed.getConnector().getConnector());
+    _big_canvas_layer.add(feed.getRemoveDot().getRemoveDot());
+    _big_canvas_stage.draw();
+}
+
+function WorkerAddText() {
+    var beforeText = '';
+    var afterText = '';
+    this.getBeforeText = function() {
+        return beforeText;
+    };
+    this.getAfterText = function() {
+        return afterText;
+    };
+    this.setBeforeText = function(input) {
+        beforeText = input;
+    };
+    this.setAfterText = function(input) { 
+        afterText = input;
+    };
 }
 
 function SysWorker(type) {
@@ -24,6 +46,7 @@ function SysWorker(type) {
 
     var service = new Service(type, TYPE_WORKER);
     service.setFetchJSONKey(''); 
+    service.setAddTextObject(new WorkerAddText());
 
     this.getService = function() {
         return service;
@@ -123,12 +146,6 @@ function SysWorker(type) {
 
         _big_canvas_layer.draw();
     });
-
-
-    _big_canvas_layer.add(feed);
-    _big_canvas_layer.add(feedConnector.getConnector());
-    _big_canvas_layer.add(removeDot.getRemoveDot());
-    _big_canvas_stage.draw();
 }
 
 

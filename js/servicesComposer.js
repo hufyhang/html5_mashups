@@ -22,7 +22,15 @@ function Service(name, type) {
     var id = id_counter++, name, type, rest_url, rest_method, keywords = '';
     //extra data members
     var fetchJSONkey = ''; 
+    var addTextObject = undefined;
     var nextService = 'undefined';
+
+    this.setAddTextObject = function(obj) {
+        addTextObject = obj;
+    };
+    this.getAddTextObject = function() {
+        return addTextObject;
+    };
 
     this.setFetchJSONKey = function(inputKey) {
         fetchJSONkey = inputKey;

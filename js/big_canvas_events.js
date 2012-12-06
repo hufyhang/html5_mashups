@@ -11,8 +11,10 @@ var touchedObj = undefined;
 
 var serviceBuffer = []; // for iterating feeds
 var serviceIndex = 0;
+var currentServce = undefined;
+var serviceCounter;
 
-var fetchJSONFeed = undefined; // the global variable for keeping the current fetchJSONFeed being connected
+var SysWorkerFeed = undefined; // the global variable for keeping the current SYSWORKER being connected
 
 function initialiseBigCanvas() {
     var canvas = document.getElementById('big_canvas_canvas');
@@ -280,18 +282,11 @@ function startIterate(dataset) {
     dataset = dataset.replace(/[\\]/g, '\\\\'); // replace \ with \\
     dataset = dataset.replace(/"/g, '&quot;'); // replace " with \"
     dataset = dataset.replace(/\'/g, '\\\''); // replace ' with \'
-    _big_buffer = '\n<script>\nfunction executeMashup() {\n' +
-                'var __result_buffer__ = \'' + dataset + '\';\n';
 
     startToIterateFeeds(_feeds_nodes[0]);
 
-    // finalise _big_buffer
-    _big_buffer += '\n}\n</script>\n';
-
-    $("#temp_script_output").html(_big_buffer);
-
     // execute the mashup
-    executeMashup();
+    executeMashup(dataset);
 }
 
 function startToIterateFeeds(feed) {
@@ -304,7 +299,6 @@ function startToIterateFeeds(feed) {
     serviceBuffer = [];
     serviceIndex = 0;
     iterateFeeds(feed);
-    generateCode();
 }
 
 function iterateFeeds(feed){
@@ -317,135 +311,166 @@ function iterateFeeds(feed){
     }
 }
 
-function generateCode() {
-    _big_buffer += 'if(typeof(Worker) === \'undefined\') {\n\n';
-    _big_buffer += 'showMessageDialog(\'Oops! Surprisingly, your Web browser does not support Web Worker. Working procedure terminated.\');\n\n';
-    _big_buffer += 'appendLog(\'Web browser does not support Web Worker. Working procedure terminated.\');\n\n';
-    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
-    _big_buffer += 'return;\n\n';
-    _big_buffer += '}\n\n';
-    _big_buffer += 'var counter = 1;\n\n'; // skip the start node
-    _big_buffer += 'var currentServce;\n\n';
-    _big_buffer += 'var tempBuffer = \'\';\n\n';  // for storing the special chars replaced __result_buffer__
-    _big_buffer += 'appendLog(\'Initialising Web Worker "serviceWorker"...\');' + '\n\n';
-    _big_buffer += 'var serviceWorker = new Worker("js/serviceWorker.js");\n\n';
-    _big_buffer += 'appendLog(\'Web Worker "serviceWorker" initialised.\');' + '\n\n';
-    _big_buffer += 'appendLog(\'Initialising Web Worker "checkRestWorker"...\');' + '\n\n';
-    _big_buffer += 'var checkWorker = new Worker("js/checkRestWorker.js");\n\n';
-    _big_buffer += 'appendLog(\'Web Worker "checkRestWorker" initialised.\');' + '\n\n';
-    _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
+function executeMashup(dataset) {
+    currentServce = undefined;
+    serviceCounter = 1;  // skip the start node
+    var __result_buffer__ = dataset;
+    if(typeof(Worker) === 'undefined') {
+        showMessageDialog('Oops! Surprisingly, your Web browser does not support Web Worker. Working procedure terminated.');
+        appendLog('Web browser does not support Web Worker. Working procedure terminated.');
+        invisibleElement('activity_indicator');
+        return;
+    }
+    var tempBuffer = '';  // for storing the special chars replaced __result_buffer__
+    appendLog('Initialising Web Worker "serviceWorker"...');
+    var serviceWorker = new Worker("js/serviceWorker.js");
+    appendLog('Web Worker "serviceWorker" initialised.');
+    appendLog('Initialising Web Worker "checkRestWorker"...');
+    var checkWorker = new Worker("js/checkRestWorker.js");
+    appendLog('Web Worker "checkRestWorker" initialised.');
+    currentServce = serviceBuffer[serviceCounter];
     // handle the very first feed
-    _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
-    _big_buffer += 'tempBuffer = __result_buffer__.replace(/&/g, \'%26\');\n\n'; // replace all & in __result_buffer__ in order to make PHP works correctly
-    _big_buffer += 'checkWorker.postMessage(serviceBuffer[counter].getRestUrl() + tempBuffer);\n\n';
-    _big_buffer += '}\n\n';
+    if(currentServce.getType() == TYPE_REST) {
+        tempBuffer = __result_buffer__.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
+        checkWorker.postMessage(serviceBuffer[serviceCounter].getRestUrl() + tempBuffer);
+    }
+    else if(currentServce.getType() == TYPE_WORKER) {
+        __result_buffer__ = executeSysWoker(__result_buffer__);
+        if(executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) === false) {
+            serviceWorker.terminate();
+            checkWorker.terminate();
+            return;
+        }
+    }
 
     // checkWorker onmessage event
-    _big_buffer += 'checkWorker.onmessage = function(e) {\n\n';
-    _big_buffer += 'var bf = __result_buffer__.replace(\'"\', \'\\"\');\n\n';
-    _big_buffer += 'var code = e.data;\n\n';
-    _big_buffer += 'if(code != \'200\') {\n\n';
-    _big_buffer += 'showServiceErrorDialog(\'Oops! Service \"\' + currentServce.getName() + \'\" is down. Please try later or use an alternative service feed.\', counter, currentServce.getKeywords());'+ '\n\n'; 
-    _big_buffer += 'appendLog(\'"\' + currentServce.getName() + \'" is down. #\' + code);' + '\n\n';
-    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
-    _big_buffer += 'highlightErrorNode(counter);\n\n';
-    _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\n';
-    _big_buffer += 'return;\n\n';
-    _big_buffer += '}\n\n';
-    _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
-    _big_buffer += 'appendLog(\'Received code: \' + code + \' from \' + currentServce.getRestUrl() + __result_buffer__);' + '\n\n';
+    checkWorker.onmessage = function(e) {
+        var bf = __result_buffer__.replace('"', '\\"');
+        var code = e.data;
+        if(code != '200') {
+            showServiceErrorDialog('Oops! Service "' + currentServce.getName() + '" is down. Please try later or use an alternative service feed.', counter, currentServce.getKeywords()); 
+            appendLog('"' + currentServce.getName() + '" is down. #' + code);
+            invisibleElement('activity_indicator');
+            highlightErrorNode(serviceCounter);
+            serviceWorker.terminate();
+            checkWorker.terminate();
+            return;
+        }
 
-    // if this is the last feed and is a REST service
-    _big_buffer += 'if(counter == serviceBuffer.length - 1) {\n\n';
-    _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
-    _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
-    _big_buffer += 'var url = currentServce.getRestUrl() +  __result_buffer__;\n\n';
-    _big_buffer += '$(\"#execute_output\").html(\'<iframe frameborder="0" width="100%" height="400px" src=\"\' + url + \'\" seamless=\"seamless\"><p>Surprisingly, your browser does not support iframes.</p></iframe>\');' + '\n\n';
-    _big_buffer += '}\n\n';
-    _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
-    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
-    _big_buffer += 'visibleElement(\'executionFullScreenToggleButton\');\n\n';
-    _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
-    _big_buffer += '}\n\n';
-    // <END> if this is the last feed and is a REST service </END>
-    
-    _big_buffer += 'counter++;\n\n';
-    _big_buffer += 'var json = \'{"type":"\' + currentServce.getType() + \'", "url":"\' + currentServce.getRestUrl() + \'", "method":"\' + currentServce.getRestMethod() + \'", "buffer":"\' + bf + \'"}\';\n\n';
-    _big_buffer += 'serviceWorker.postMessage(json);\n\n';
-    _big_buffer += '}\n\n';
-    _big_buffer += '}\n\n';
+        if(currentServce.getType() == TYPE_REST) {
+            appendLog('Received code: ' + code + ' from ' + currentServce.getRestUrl() + __result_buffer__);
+            // if this is the last feed and is a REST service
+            if(serviceCounter == serviceBuffer.length - 1) {
+                currentServce = serviceBuffer[serviceCounter];
+                if(currentServce.getType() == TYPE_REST) {
+                    var url = currentServce.getRestUrl() +  __result_buffer__;
+                    $("#execute_output").html('<iframe frameborder="0" width="100%" height="400px" src="' + url + '" seamless="seamless"><p>Surprisingly, your browser does not support iframes.</p></iframe>');
+                }
+                appendLog('Showing result in execute_output');
+                invisibleElement('activity_indicator');
+                visibleElement('executionFullScreenToggleButton');
+                serviceWorker.terminate();
+                checkWorker.terminate();
+                return;
+            }
+            // <END> if this is the last feed and is a REST service </END>
+            serviceCounter++;
+            var json = '{"type":"' + currentServce.getType() + '", "url":"' + currentServce.getRestUrl() + '", "method":"' + currentServce.getRestMethod() + '", "buffer":"' + bf + '"}';
+            serviceWorker.postMessage(json);
+        }
+    };
 
     // serviceWorker onmessage event
-    _big_buffer += 'serviceWorker.onmessage = function(e) {\n\n';
-    _big_buffer += '__result_buffer__ = e.data;\n\n';
-    _big_buffer += 'appendLog(\'Received data: \' + __result_buffer__ );' + '\n\n';
-    _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
-    // if the current feed is an RESTful service
-    _big_buffer += 'if(currentServce.getType() == TYPE_REST) {\n\n';
-    _big_buffer += 'tempBuffer = __result_buffer__.replace(/&/g, \'%26\');\n\n'; // replace all & in __result_buffer__ in order to make PHP works correctly
-    _big_buffer += 'checkWorker.postMessage(currentServce.getRestUrl() + tempBuffer);\n\n';
-    _big_buffer += '}\n\n';
-    //else if it is TYPE_WORKER
-    _big_buffer += 'else if(currentServce.getType() == TYPE_WORKER) {\n\n';
-    _big_buffer += 'if(currentServce.getName() == WORKER_FETCH_LAST_BY_KEY) {\n\n';
-    _big_buffer += 'var key = currentServce.getFetchJSONKey();\n\n';
-    _big_buffer += 'var json = __result_buffer__;\n\n';
-    _big_buffer += '__result_buffer__ = fetchLastValueByKey(key, json);\n\n';
-    _big_buffer += '}\n\n';
-        //keeping iterating from SYSWORKER
-    _big_buffer += 'counter++;\n\n';
-    _big_buffer += 'currentServce = serviceBuffer[counter];\n\n';
-    _big_buffer += 'if(currentServce == "undefined" || currentServce == undefined) {\n\n';
-    _big_buffer += '$(\'#execute_output\').html(\'<div class="scrollable_div">\' + __result_buffer__ + \'</div>\');\n\n';
-    _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
-    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
-    // _big_buffer += 'visibleElement(\'executionFullScreenToggleButton\');\n\n';
-    _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
-    _big_buffer += '}\n\n';
-    _big_buffer += 'else if(currentServce.getType() == TYPE_REST) {\n\n';
-    _big_buffer += 'tempBuffer = __result_buffer__.replace(/&/g, \'%26\');\n\n'; // replace all & in __result_buffer__ in order to make PHP works correctly
-    _big_buffer += 'checkWorker.postMessage(currentServce.getRestUrl() + tempBuffer);\n\n';
-    _big_buffer += '}\n\n';
-    _big_buffer += 'else if(currentServce.getType() == TYPE_WIDGET) {\n\n';
-    _big_buffer += 'if(currentServce.getName() == WIDGET_AUDIO) {\n\n';
-    _big_buffer += '$(\"#execute_output\").html(\'<audio width="100%" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the audio element.</audio>\');' + '\n\n';
-    _big_buffer += '}\n\n';
-    _big_buffer += 'else if (currentServce.getName() == WIDGET_VIDEO) {\n\n';
-    _big_buffer += '$(\"#execute_output\").html(\'<video width="100%" height="400px" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the video tag.</video>\');' + '\n\n' ;
-    _big_buffer += '}\n\n';
-    _big_buffer += 'else if(currentServce.getName() == WIDGET_IMAGE) {\n\n';
-    _big_buffer += '$(\"#execute_output\").html(\'<img width="100%" height="400px" src="\' + __result_buffer__ + \'"/>\');\n\n';
-    _big_buffer += '}\n\n';
-    _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
-    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
-    _big_buffer += 'visibleElement(\'executionFullScreenToggleButton\');\n\n';
-    _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
-    _big_buffer += '}\n\n';
-        //<END> keeping iterating from SYSWORKER </END>
-    _big_buffer += '}\n\n';
-    // <END>else if it is TYPE_WORKER</END>
-    // else if it is TYPE_WIDGET
-    _big_buffer += 'else if(currentServce.getType() == TYPE_WIDGET) {\n\n';
-    // if it is a WIDGET_AUDIO
-    _big_buffer += 'if(currentServce.getName() == WIDGET_AUDIO) {\n\n';
-    _big_buffer += '$(\"#execute_output\").html(\'<audio width="100%" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the audio element.</audio>\');' + '\n\n';
-    _big_buffer += '}\n\n';
-    // if it is a WIDGET_VIDEO
-    _big_buffer += 'else if (currentServce.getName() == WIDGET_VIDEO) {\n\n';
-    _big_buffer += '$(\"#execute_output\").html(\'<video width="100%" height="400px" controls=\"controls\" autoplay><source src=\"\' + __result_buffer__ + \'\">Surprisingly, your browser does not support the video tag.</video>\');' + '\n\n' ;
-    _big_buffer += '}\n\n';
-    // if it is a WIDGET_IMAGE
-    _big_buffer += 'else if(currentServce.getName() == WIDGET_IMAGE) {\n\n';
-    _big_buffer += '$(\"#execute_output\").html(\'<img width="100%" height="400px" src="\' + __result_buffer__ + \'"/>\');\n\n';
-    _big_buffer += '}\n\n';
-    _big_buffer += 'appendLog(\'Showing result in execute_output\');\n\n';
-    _big_buffer += 'invisibleElement(\'activity_indicator\');\n\n';
-    _big_buffer += 'visibleElement(\'executionFullScreenToggleButton\');\n\n';
-    _big_buffer += 'serviceWorker.terminate();\n\ncheckWorker.terminate();\n\nreturn;\n\n';
-    _big_buffer += '}\n\n';
-    // <END>else if it is TYPE_WIDGET</END>
-    
-    _big_buffer += '}\n\n';
+    serviceWorker.onmessage = function(e) {
+        __result_buffer__ = e.data;
+        appendLog('Received data: ' + __result_buffer__ );
+        currentServce = serviceBuffer[serviceCounter];
+        // if the current feed is an RESTful service
+        if(currentServce.getType() == TYPE_REST) {
+            tempBuffer = __result_buffer__.replace(/&/g, '%26'); // replace all & in __result_buffer__ in order to make PHP works correctly
+            checkWorker.postMessage(currentServce.getRestUrl() + tempBuffer);
+        }
+        //else if it is TYPE_WORKER
+        else if(currentServce.getType() == TYPE_WORKER) {
+            __result_buffer__ = executeSysWoker(__result_buffer__);
+            if(executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) === false) {
+                return;
+            }
+        }
+        // else if it is TYPE_WIDGET
+        else if(currentServce.getType() == TYPE_WIDGET) {
+            executeWidget(__result_buffer__);
+            appendLog('Showing result in execute_output');
+            invisibleElement('activity_indicator');
+            visibleElement('executionFullScreenToggleButton');
+            serviceWorker.terminate();
+            checkWorker.terminate();
+            return;
+        }
+        // <END>else if it is TYPE_WIDGET</END>
+    };
+}
+
+function executeSysWoker(__result_buffer__) {
+    if(currentServce.getName() == WORKER_FETCH_LAST_BY_KEY) {
+        var key = currentServce.getFetchJSONKey();
+        var json = __result_buffer__;
+        __result_buffer__ = fetchLastValueByKey(key, json);
+    }
+    else if(currentServce.getName() == WORKER_ADD_TEXT) {
+        var before = currentServce.getAddTextObject().getBeforeText();
+        var after = currentServce.getAddTextObject().getAfterText();
+        __result_buffer__ = before + __result_buffer__ + after;
+        appendLog('Added text {BEFORE:"' + before + '", AFTER: "' + after + '"} ==> ' + __result_buffer__);
+    }
+    return __result_buffer__;
+}
+
+function executeWidget(__result_buffer__) {
+    if(currentServce.getName() == WIDGET_AUDIO) {
+        $("#execute_output").html('<audio width="100%" controls="controls" autoplay><source src="' + __result_buffer__ + '">Surprisingly, your browser does not support the audio element.</audio>');
+    }
+    else if (currentServce.getName() == WIDGET_VIDEO) {
+        $("#execute_output").html('<video width="100%" height="400px" controls="controls" autoplay><source src="' + __result_buffer__ + '">Surprisingly, your browser does not support the video tag.</video>');
+    }
+    else if(currentServce.getName() == WIDGET_IMAGE) {
+        $("#execute_output").html('<img width="100%" height="400px" src="' + __result_buffer__ + '"/>');
+    }
+}
+
+function executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) {
+    var result = true;
+    serviceCounter++;
+    currentServce = serviceBuffer[serviceCounter];
+    if(currentServce == "undefined" || currentServce == undefined) {
+        $('#execute_output').html('<div class="scrollable_div">' + __result_buffer__ + '</div>');
+        appendLog('Showing result in execute_output');
+        invisibleElement('activity_indicator');
+        // visibleElement('executionFullScreenToggleButton');
+        serviceWorker.terminate();
+        checkWorker.terminate();
+        result = false;
+    }
+    else if(currentServce.getType() == TYPE_REST) {
+        tempBuffer = __result_buffer__.replace(/&/g, '%26'); // replace all & in __result_buffer__ in order to make PHP works correctly
+        checkWorker.postMessage(currentServce.getRestUrl() + tempBuffer);
+    }
+    else if(currentServce.getType() == TYPE_WIDGET) {
+        executeWidget(__result_buffer__);
+        appendLog('Showing result in execute_output');
+        invisibleElement('activity_indicator');
+        visibleElement('executionFullScreenToggleButton');
+        serviceWorker.terminate();
+        checkWorker.terminate();
+        result = false;
+    }
+    else if(currentServce.getType() == TYPE_WORKER) {
+            __result_buffer__ = executeSysWoker(__result_buffer__);
+            if(executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) === false) {
+                result = false;
+            }
+    }
+    return result;
 }
 
 function replaceRestFeed(targetIndex, inputName, inputUrl, inputKeywords) {
@@ -754,10 +779,23 @@ function Connector(parent_feed) {
                 result = true;
 
                 // check if need to pop up fetchJSONFeed dialog
-                if(nodeObj.getService().getType() == TYPE_WORKER && nodeObj.getService().getName() == WORKER_FETCH_LAST_BY_KEY) {
-                    if(nodeObj.getService().getFetchJSONKey().length == 0) {
-                        fetchJSONFeed = nodeObj;
-                        showFetchJSONDialog();
+                if(nodeObj.getService().getType() == TYPE_WORKER) {
+                    switch(nodeObj.getService().getName()) {
+                        case WORKER_FETCH_LAST_BY_KEY:
+                            if(nodeObj.getService().getFetchJSONKey().length == 0) {
+                                SysWorkerFeed = nodeObj;
+                                showFetchJSONDialog();
+                            }
+                            break;
+                        case WORKER_ADD_TEXT:
+                            var obj = nodeObj.getService().getAddTextObject();
+                            if(obj.getBeforeText().length ==0 && obj.getAfterText().length == 0) {
+                                SysWorkerFeed = nodeObj;
+                                showAddTextDialog();
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
 
@@ -1134,11 +1172,20 @@ function ifContains(pointX, pointY, node) {
 //     _big_canvas_stage.draw();
 // }
 
-function updateFetchJSONFeed(inputTargetKey) {
-    if(fetchJSONFeed != undefined) {
-        fetchJSONFeed.getService().setFetchJSONKey(inputTargetKey);
+function updateAddTextFeed(before, after) {
+    if(SysWorkerFeed != undefined) {
+        var addTextObj = SysWorkerFeed.getService().getAddTextObject();
+        addTextObj.setBeforeText(before);
+        addTextObj.setAfterText(after);
     }
-    fetchJSONFeed = undefined;
+    SysWorkerFeed = undefined;
+}
+
+function updateFetchJSONFeed(inputTargetKey) {
+    if(SysWorkerFeed != undefined) {
+        SysWorkerFeed.getService().setFetchJSONKey(inputTargetKey);
+    }
+    SysWorkerFeed = undefined;
 }
 
 function highlightErrorNode(inputIndex) {
