@@ -348,7 +348,7 @@ function executeMashup(dataset) {
         var bf = __result_buffer__.replace('"', '\\"');
         var code = e.data;
         if(code != '200') {
-            showServiceErrorDialog('Oops! Service "' + currentServce.getName() + '" is down. Please try later or use an alternative service feed.', counter, currentServce.getKeywords()); 
+            showServiceErrorDialog('Oops! Service "' + currentServce.getName() + '" is down. Please try later or use an alternative service feed.', serviceCounter, currentServce.getKeywords()); 
             appendLog('"' + currentServce.getName() + '" is down. #' + code);
             invisibleElement('activity_indicator');
             highlightErrorNode(serviceCounter);
