@@ -249,6 +249,8 @@ function loadFromJSON(jsonInput) {
             else if(type == TYPE_WORKER) {
                 drawAWorker(name);
                 _feeds_nodes[_feeds_nodes.length - 1].getService().setFetchJSONKey(item.fetchJSONkey);
+                _feeds_nodes[_feeds_nodes.length - 1].getService().getAddTextObject().setBeforeText(item.addBefore);
+                _feeds_nodes[_feeds_nodes.length - 1].getService().getAddTextObject().setAfterText(item.addAfter);
             }
         }
         else {
@@ -396,9 +398,15 @@ function removeFeedFromCanvas(feed) {
         var type = _feeds_nodes[i].getService().getType();
         var keywords = _feeds_nodes[i].getService().getKeywords();
         var fetchJSONkey = _feeds_nodes[i].getService().getFetchJSONKey();
+        var addBefore = '';
+        var addAfter = '';
         if(type == TYPE_REST) {
             url = _feeds_nodes[i].getService().getRestUrl();
             restMethod = _feeds_nodes[i].getService().getRestMethod();
+        }
+        else if(type == TYPE_WORKER) {
+            addBefore = _feeds_nodes[i].getService().getAddTextObject().getBeforeText();
+            addAfter = _feeds_nodes[i].getService().getAddTextObject().getAfterText();
         }
         var next = _feeds_nodes[i].getNextFeed();
         var nextId = -1;
@@ -408,7 +416,7 @@ function removeFeedFromCanvas(feed) {
                 nextId = -1;
             }
         }
-        json += '{"name":"' + name + '", "type":"' + type + '", "url":"' + url + '", "restMethod": "' + restMethod + '", "fetchJSONkey":"' + fetchJSONkey + '", "keywords": "' + keywords + '", "nextId":"' + nextId + '"}';
+        json += '{"name":"' + name + '", "type":"' + type + '", "url":"' + url + '", "restMethod": "' + restMethod + '", "fetchJSONkey":"' + fetchJSONkey + '", "addBefore":"' + addBefore + '", "addAfter":"' + addAfter + '", "keywords": "' + keywords + '", "nextId":"' + nextId + '"}';
         if(i != _feeds_nodes.length - 1) {
             json += ', ';
         }
@@ -450,6 +458,8 @@ function removeFeedFromCanvas(feed) {
             case TYPE_WORKER:
                 drawAWorker(name);
                 _feeds_nodes[_feeds_nodes.length - 1].getService().setFetchJSONKey(fetchJSONkey);
+                _feeds_nodes[_feeds_nodes.length - 1].getService().getAddTextObject().setBeforeText(item.addBefore);
+                _feeds_nodes[_feeds_nodes.length - 1].getService().getAddTextObject().setAfterText(item.addAfter);
                 break;
             default:
                     break;

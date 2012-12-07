@@ -110,6 +110,8 @@ function Service(name, type) {
         json += '\"restUrl\":\"' + rest_url + '\", ';
         json += '\"restMethod\":\"' +  rest_method + '\", ';
         json += '\"keywords\":\"' + keywords + '\", ';
+        json += '\"addBefore\":\"' + addTextObject.getBeforeText() + '\", ';
+        json += '\"addAfter\":\"' + addTextObject.getAfterText() + '\", ';
         json += '\"fetchJSONkey\":\"' + fetchJSONkey + '\" ';
         return json;
     };
@@ -205,7 +207,9 @@ function executeMashup(dataset) {
         __result_buffer__ = executeSysWoker(__result_buffer__);
         if(executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) === false) {
             serviceWorker.terminate();
+            appendLog('Web Worker "serviceWorker" terminated.');
             checkWorker.terminate();
+            appendLog('Web Worker "checkWorker" terminated.');
             return;
         }
     }
@@ -220,7 +224,9 @@ function executeMashup(dataset) {
             invisibleElement('activity_indicator');
             highlightErrorNode(serviceCounter);
             serviceWorker.terminate();
+            appendLog('Web Worker "serviceWorker" terminated.');
             checkWorker.terminate();
+            appendLog('Web Worker "checkWorker" terminated.');
             return;
         }
 
@@ -237,7 +243,9 @@ function executeMashup(dataset) {
                 invisibleElement('activity_indicator');
                 visibleElement('executionFullScreenToggleButton');
                 serviceWorker.terminate();
+                appendLog('Web Worker "serviceWorker" terminated.');
                 checkWorker.terminate();
+                appendLog('Web Worker "checkWorker" terminated.');
                 return;
             }
             // <END> if this is the last feed and is a REST service </END>
@@ -271,7 +279,9 @@ function executeMashup(dataset) {
             invisibleElement('activity_indicator');
             visibleElement('executionFullScreenToggleButton');
             serviceWorker.terminate();
+            appendLog('Web Worker "serviceWorker" terminated.');
             checkWorker.terminate();
+            appendLog('Web Worker "checkWorker" terminated.');
             return;
         }
         // <END>else if it is TYPE_WIDGET</END>
@@ -315,7 +325,9 @@ function executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) {
         invisibleElement('activity_indicator');
         // visibleElement('executionFullScreenToggleButton');
         serviceWorker.terminate();
+        appendLog('Web Worker "serviceWorker" terminated.');
         checkWorker.terminate();
+        appendLog('Web Worker "checkWorker" terminated.');
         result = false;
     }
     else if(currentServce.getType() == TYPE_REST) {
@@ -328,7 +340,9 @@ function executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) {
         invisibleElement('activity_indicator');
         visibleElement('executionFullScreenToggleButton');
         serviceWorker.terminate();
+        appendLog('Web Worker "serviceWorker" terminated.');
         checkWorker.terminate();
+        appendLog('Web Worker "checkWorker" terminated.');
         result = false;
     }
     else if(currentServce.getType() == TYPE_WORKER) {
