@@ -104,14 +104,20 @@ function Service(name, type) {
 
     this.getJSON = function() {
         var json = '';
+        var beforeText = '';
+        var afterText = '';
+        if(addTextObject !== undefined && addTextObject != 'undefined') {
+            beforeText = addTextObject.getBeforeText();
+            afterText = addTextObject.getAfterText();
+        }
         json += '\"id\":\"' + id + '\", ';
         json += '\"name\":\"' + name + '\", ';
         json += '\"type\":\"' + type + '\", ';
         json += '\"restUrl\":\"' + rest_url + '\", ';
         json += '\"restMethod\":\"' +  rest_method + '\", ';
         json += '\"keywords\":\"' + keywords + '\", ';
-        json += '\"addBefore\":\"' + addTextObject.getBeforeText() + '\", ';
-        json += '\"addAfter\":\"' + addTextObject.getAfterText() + '\", ';
+        json += '\"addBefore\":\"' + beforeText + '\", ';
+        json += '\"addAfter\":\"' + afterText + '\", ';
         json += '\"fetchJSONkey\":\"' + fetchJSONkey + '\" ';
         return json;
     };
