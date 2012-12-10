@@ -205,11 +205,13 @@ function executeMashup(dataset) {
     appendLog('Web Worker "checkRestWorker" initialised.');
     currentServce = serviceBuffer[serviceCounter];
     // handle the very first feed
-    if(currentServce.getType() == TYPE_REST) {
+    switch(currentServce.getType()) {
+    case TYPE_REST:
         tempBuffer = __result_buffer__.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
         checkWorker.postMessage(serviceBuffer[serviceCounter].getRestUrl() + tempBuffer);
-    }
-    else if(currentServce.getType() == TYPE_WORKER) {
+        break;
+
+    case TYPE_WORKER:
         __result_buffer__ = executeSysWoker(__result_buffer__);
         if(executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) === false) {
             serviceWorker.terminate();
@@ -218,6 +220,22 @@ function executeMashup(dataset) {
             appendLog('Web Worker "checkWorker" terminated.');
             return;
         }
+        break;
+
+    case TYPE_WIDGET:
+        executeWidget(__result_buffer__);
+        appendLog('Showing result in execute_output');
+        invisibleElement('activity_indicator');
+        visibleElement('executionFullScreenToggleButton');
+        serviceWorker.terminate();
+        appendLog('Web Worker "serviceWorker" terminated.');
+        checkWorker.terminate();
+        appendLog('Web Worker "checkWorker" terminated.');
+        return;
+        break;
+
+    default:
+        break;
     }
 
     // checkWorker onmessage event
