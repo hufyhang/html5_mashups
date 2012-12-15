@@ -564,6 +564,13 @@ function Connector(parent_feed) {
 
         var mouseX = _big_canvas_stage.getMousePosition().x;
         var mouseY = _big_canvas_stage.getMousePosition().y;
+
+        // firstly check if the connector is released on its own node
+        if(ifContains(mouseX, mouseY, parent_node)) {
+            connectingLine.hide();
+            return;
+        }
+
         var result = false;
         for(var index = 0; index != _feeds_nodes.length; ++index) {
             var nodeObj = _feeds_nodes[index];
