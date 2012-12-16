@@ -1,0 +1,6 @@
+#ignore Chrome extension package
+chrome_extension.crx
+chrome_extension.pem
+#ignore the useless (not sure if will be used in future) files
+iframeforAjax.html
+css/reset.css
