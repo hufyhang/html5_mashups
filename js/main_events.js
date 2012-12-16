@@ -583,3 +583,4 @@ function applyRestMethodUpdate(id) {
     }
     updateRestMethodById(id, method);
 }
+
