@@ -23,6 +23,8 @@ var serviceBuffer = []; // for iterating feeds
 var serviceIndex = 0;
 var currentServce = undefined;
 var serviceCounter;
+var geolocation = {json:'', text: ''};
+var __result_buffer__ = '';
 
 function Service(name, type) {
     var id = id_counter++, name, type, rest_url, rest_method, keywords = '';
@@ -158,7 +160,7 @@ function startComposition(inputFeedNodes, dataset) {
     dataset = dataset.replace(/"/g, '&quot;'); // replace " with \"
     dataset = dataset.replace(/\'/g, '\\\''); // replace ' with \'
 
-    startToIterateFeeds(_feeds_nodes[0]);
+    startToIterateFeeds(_feeds_nodes[0]); 
 
     // execute the mashup
     executeMashup(dataset);
@@ -189,7 +191,7 @@ function iterateFeeds(feed){
 function executeMashup(dataset) {
     currentServce = undefined;
     serviceCounter = 1;  // skip the start node
-    var __result_buffer__ = dataset;
+    __result_buffer__ = dataset;
     if(typeof(Worker) === 'undefined') {
         showMessageDialog('Oops! Surprisingly, your Web browser does not support Web Worker. Working procedure terminated.');
         appendLog('Web browser does not support Web Worker. Working procedure terminated.');
@@ -213,7 +215,7 @@ function executeMashup(dataset) {
 
     case TYPE_WORKER:
         __result_buffer__ = executeSysWoker(__result_buffer__);
-        if(executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) === false) {
+        if(executeFromSysWoker(serviceWorker, checkWorker) === false) {
             serviceWorker.terminate();
             appendLog('Web Worker "serviceWorker" terminated.');
             checkWorker.terminate();
@@ -292,7 +294,7 @@ function executeMashup(dataset) {
         //else if it is TYPE_WORKER
         else if(currentServce.getType() == TYPE_WORKER) {
             __result_buffer__ = executeSysWoker(__result_buffer__);
-            if(executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) === false) {
+            if(executeFromSysWoker(serviceWorker, checkWorker) === false) {
                 return;
             }
         }
@@ -313,18 +315,55 @@ function executeMashup(dataset) {
 }
 
 function executeSysWoker(__result_buffer__) {
-    if(currentServce.getName() == WORKER_FETCH_LAST_BY_KEY) {
+    switch(currentServce.getName()) {
+    case WORKER_FETCH_LAST_BY_KEY:
         var key = currentServce.getFetchJSONKey();
         var json = __result_buffer__;
         __result_buffer__ = fetchLastValueByKey(key, json);
-    }
-    else if(currentServce.getName() == WORKER_ADD_TEXT) {
+        break;
+    case WORKER_ADD_TEXT:
         var before = currentServce.getAddTextObject().getBeforeText();
         var after = currentServce.getAddTextObject().getAfterText();
         __result_buffer__ = before + __result_buffer__ + after;
         appendLog('Added text {BEFORE:"' + before + '", AFTER: "' + after + '"} ==> ' + __result_buffer__);
+        break;
+    case WORKER_GEO_JSON:
+        if(geolocation !== false) {
+            __result_buffer__ = geolocation['json'];
+            appendLog('Retrieved Geolocation: ' + __result_buffer__);
+        }
+        else {
+            showMessageDialog('Oops! Surprisingly, your Web browser does not support HTML5 Geolocation API. Geolocation worker is skipped in your workflow.');
+            appendLog('Web browser does not support HTML5 Geolocation API.');
+        }
+        break;
+    case WORKER_GEO_TEXT:
+        if(geolocation !== false) {
+            __result_buffer__ = geolocation['text'];
+            appendLog('Retrieved Geolocation: ' + __result_buffer__);
+        }
+        else {
+            showMessageDialog('Oops! Surprisingly, your Web browser does not support HTML5 Geolocation API. Geolocation worker is skipped in your workflow.');
+            appendLog('Web browser does not support HTML5 Geolocation API.');
+        }
+        break;
+    default:
+        break;
     }
     return __result_buffer__;
+}
+
+function executeGeolocation() {
+    if(navigator.geolocation) {
+        navigator.geolocation.watchPosition(function(position) {
+            geolocation = {json: '', text: ''};
+            geolocation['json'] = '{"latitude":"' + position.coords.latitude + '", "longitude":"' + position.coords.longitude + '"}';
+            geolocation['text'] = position.coords.latitude + ',' + position.coords.longitude;
+        });
+    }
+    else {
+        geolocation = false;
+    }
 }
 
 function executeWidget(__result_buffer__) {
@@ -339,7 +378,7 @@ function executeWidget(__result_buffer__) {
     }
 }
 
-function executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) {
+function executeFromSysWoker(serviceWorker, checkWorker) {
     var result = true;
     serviceCounter++;
     currentServce = serviceBuffer[serviceCounter];
@@ -376,4 +415,14 @@ function executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) {
             }
     }
     return result;
+}
+
+function checkGeolocation() {
+    for(var index = 0; index != _feeds_nodes.length; ++index) {
+        var service = _feeds_nodes[index].getService();
+        //retrive geolocation if geolocation node is existing in workflow
+        if(service.getType() == TYPE_WORKER && (service.getName() == WORKER_GEO_JSON || service.getName() == WORKER_GEO_TEXT)) {
+            executeGeolocation();
+        }
+    }
 }
