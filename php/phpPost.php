@@ -5,6 +5,7 @@ $arg = str_replace('\\\\', '\\', $arg);
 // $arg = str_replace('\\\"', '\"', $arg);
 $index_a = 1;
 $index_b = -1;
+$arg = substr($arg, $index_a, $index_b);
 if(substr($arg, 0, 2) == '\"' && substr($arg, -2) == '\"') {
     $index_a = 2;
     $index_b = -2;
