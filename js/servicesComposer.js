@@ -159,6 +159,7 @@ function startComposition(inputFeedNodes, dataset) {
     dataset = dataset.replace(/[\\]/g, '\\\\'); // replace \ with \\
     dataset = dataset.replace(/"/g, '&quot;'); // replace " with \"
     dataset = dataset.replace(/\'/g, '\\\''); // replace ' with \'
+    dataset = dataset.replace(/&/g, '%26'); // replace ' with \'
 
     startToIterateFeeds(_feeds_nodes[0]); 
 
@@ -243,6 +244,7 @@ function executeMashup(dataset) {
     // checkWorker onmessage event
     checkWorker.onmessage = function(e) {
         var bf = __result_buffer__.replace('"', '\\"');
+        bf = bf.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
         var code = e.data;
         if(code != '200') {
             showServiceErrorDialog('Oops! Service "' + currentServce.getName() + '" is down. Please try later or use an alternative service feed.', serviceCounter, currentServce.getKeywords()); 
