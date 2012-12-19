@@ -383,7 +383,7 @@ function executeFromSysWoker(serviceWorker, checkWorker) {
     serviceCounter++;
     currentServce = serviceBuffer[serviceCounter];
     if(currentServce == "undefined" || currentServce == undefined) {
-        $('#execute_output').html('<div class="scrollable_div">' + __result_buffer__ + '</div>');
+        $('#execute_output').html('<div style="height:300px;" class="scrollable_div">' + __result_buffer__ + '</div>');
         appendLog('Showing result in execute_output');
         invisibleElement('activity_indicator');
         // visibleElement('executionFullScreenToggleButton');
