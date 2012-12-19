@@ -210,8 +210,9 @@ function executeMashup(dataset) {
     // handle the very first feed
     switch(currentServce.getType()) {
     case TYPE_REST:
+        var url = serviceBuffer[serviceCounter].getRestUrl().replace(/&/g, '%26');
         tempBuffer = __result_buffer__.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
-        checkWorker.postMessage(serviceBuffer[serviceCounter].getRestUrl() + tempBuffer);
+        checkWorker.postMessage(url + tempBuffer);
         break;
 
     case TYPE_WORKER:
@@ -278,7 +279,8 @@ function executeMashup(dataset) {
             }
             // <END> if this is the last feed and is a REST service </END>
             serviceCounter++;
-            var json = '{"type":"' + currentServce.getType() + '", "url":"' + currentServce.getRestUrl() + '", "method":"' + currentServce.getRestMethod() + '", "buffer":"' + bf + '"}';
+            var url = currentServce.getRestUrl().replace(/&/g, '%26');
+            var json = '{"type":"' + currentServce.getType() + '", "url":"' + url + '", "method":"' + currentServce.getRestMethod() + '", "buffer":"' + bf + '"}';
             serviceWorker.postMessage(json);
         }
     };
@@ -290,8 +292,9 @@ function executeMashup(dataset) {
         currentServce = serviceBuffer[serviceCounter];
         // if the current feed is an RESTful service
         if(currentServce.getType() == TYPE_REST) {
+            var url = currentServce.getRestUrl().replace(/&/g, '%26');
             tempBuffer = __result_buffer__.replace(/&/g, '%26'); // replace all & in __result_buffer__ in order to make PHP works correctly
-            checkWorker.postMessage(currentServce.getRestUrl() + tempBuffer);
+            checkWorker.postMessage(url + tempBuffer);
         }
         //else if it is TYPE_WORKER
         else if(currentServce.getType() == TYPE_WORKER) {
@@ -385,7 +388,7 @@ function executeFromSysWoker(serviceWorker, checkWorker) {
     serviceCounter++;
     currentServce = serviceBuffer[serviceCounter];
     if(currentServce == "undefined" || currentServce == undefined) {
-        $('#execute_output').html('<div style="max-height:300px;" class="scrollable_div">' + __result_buffer__ + '</div>');
+        $('#execute_output').html('<div style="max-height:300px;max-width:100%" class="scrollable_div">' + __result_buffer__ + '</div>');
         appendLog('Showing result in execute_output');
         invisibleElement('activity_indicator');
         // visibleElement('executionFullScreenToggleButton');
@@ -397,7 +400,7 @@ function executeFromSysWoker(serviceWorker, checkWorker) {
     }
     else if(currentServce.getType() == TYPE_REST) {
         tempBuffer = __result_buffer__.replace(/&/g, '%26'); // replace all & in __result_buffer__ in order to make PHP works correctly
-        checkWorker.postMessage(currentServce.getRestUrl() + tempBuffer);
+        checkWorker.postMessage(currentServce.getRestUrl().replace(/&/g, '%26') + tempBuffer);
     }
     else if(currentServce.getType() == TYPE_WIDGET) {
         executeWidget(__result_buffer__);
