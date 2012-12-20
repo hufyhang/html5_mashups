@@ -4,6 +4,7 @@ const WORKER_GEO_JSON = 'Geolocation (JSON)';
 const WORKER_GEO_TEXT = 'Geolocation (Text)';
 const WORKER_OUTPUT = 'Push into Output';
 const WORKER_TRIM_WHITESPACE = 'Trim & Replace Whitespace';
+const WORKER_REMOVE_SPECIAL = 'Remove Special Characters';
 
 function drawAWorker(type) {
     var feed = new SysWorker(type);

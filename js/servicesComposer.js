@@ -385,6 +385,18 @@ function executeSysWoker(__result_buffer__) {
     case WORKER_OUTPUT:
         appendOutput(__result_buffer__);
         break;
+    case WORKER_REMOVE_SPECIAL:
+        __result_buffer__ = __result_buffer__.replace(/&/g, '');
+        __result_buffer__ = __result_buffer__.replace(/\'/g, '');
+        __result_buffer__ = __result_buffer__.replace(/\"/g, '');
+        __result_buffer__ = __result_buffer__.replace(/,/g, '');
+        __result_buffer__ = __result_buffer__.replace(/\./g, '');
+        __result_buffer__ = __result_buffer__.replace(/\!/g, '');
+        __result_buffer__ = __result_buffer__.replace(/\?/g, '');
+        __result_buffer__ = __result_buffer__.replace(/\=/g, '');
+        __result_buffer__ = __result_buffer__.replace(/\:/g, '');
+        __result_buffer__ = __result_buffer__.replace(/\;/g, '');
+        break;
     default:
         break;
     }
