@@ -251,6 +251,8 @@ function loadFromJSON(jsonInput) {
                 _feeds_nodes[_feeds_nodes.length - 1].getService().setFetchJSONKey(item.fetchJSONkey);
                 _feeds_nodes[_feeds_nodes.length - 1].getService().getAddTextObject().setBeforeText(item.addBefore);
                 _feeds_nodes[_feeds_nodes.length - 1].getService().getAddTextObject().setAfterText(item.addAfter);
+                var trimWhite = valueOrDefault(item.trimWhiteSpace);
+                _feeds_nodes[_feeds_nodes.length - 1].getService().getTrimWhitespace().setReplaceWith(trimWhite);
             }
         }
         else {
@@ -608,6 +610,13 @@ function Connector(parent_feed) {
                             if(obj.getBeforeText().length ==0 && obj.getAfterText().length == 0) {
                                 SysWorkerFeed = nodeObj;
                                 showAddTextDialog();
+                            }
+                            break;
+                        case WORKER_TRIM_WHITESPACE:
+                            var obj = nodeObj.getService().getTrimWhitespace();
+                            if(obj.getReplaceWith().length ==0) {
+                                SysWorkerFeed = nodeObj;
+                                showTrimWhitespaceDialog();
                             }
                             break;
                         default:
@@ -987,6 +996,14 @@ function ifContains(pointX, pointY, node) {
 //     _big_canvas_stage.add(_big_canvas_layer);
 //     _big_canvas_stage.draw();
 // }
+
+function updateTrimWhitespaceFeed(value) {
+    if(SysWorkerFeed != undefined) {
+        var obj = SysWorkerFeed.getService().getTrimWhitespace();
+        obj.setReplaceWith(value);
+    }
+    SysWorkerFeed = undefined;
+}
 
 function updateAddTextFeed(before, after) {
     if(SysWorkerFeed != undefined) {

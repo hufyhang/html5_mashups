@@ -32,7 +32,15 @@ function Service(name, type) {
     //extra data members
     var fetchJSONkey = ''; 
     var addTextObject = undefined;
+    var trimWhiteSpace = undefined;
     var nextService = 'undefined';
+
+    this.setTrimWhitespace = function(obj) {
+        trimWhiteSpace = obj;
+    };
+    this.getTrimWhitespace = function() {
+        return trimWhiteSpace;
+    };
 
     this.setAddTextObject = function(obj) {
         addTextObject = obj;
@@ -109,9 +117,13 @@ function Service(name, type) {
         var json = '';
         var beforeText = '';
         var afterText = '';
+        var trimWhiteSpaceWith = ' ';
         if(addTextObject !== undefined && addTextObject != 'undefined') {
             beforeText = addTextObject.getBeforeText();
             afterText = addTextObject.getAfterText();
+        }
+        if(trimWhiteSpace !== undefined && trimWhiteSpace != 'undefined') {
+            trimWhiteSpaceWith = trimWhiteSpace.getReplaceWith();
         }
         json += '\"id\":\"' + id + '\", ';
         json += '\"name\":\"' + name + '\", ';
@@ -121,11 +133,17 @@ function Service(name, type) {
         json += '\"keywords\":\"' + keywords + '\", ';
         json += '\"addBefore\":\"' + beforeText + '\", ';
         json += '\"addAfter\":\"' + afterText + '\", ';
+        json += '\"trimWhiteSpace\":\"' + trimWhiteSpaceWith + '\", ';
         json += '\"fetchJSONkey\":\"' + fetchJSONkey + '\" ';
         return json;
     };
 
     appendServicesList(this);
+}
+
+function valueOrDefault(val, def) {
+    if(def === undefined) def = '';
+    return val == undefined ? def : val;
 }
 
 function appendServicesList(service) {
@@ -338,6 +356,11 @@ function executeSysWoker(__result_buffer__) {
         var after = currentServce.getAddTextObject().getAfterText();
         __result_buffer__ = before + __result_buffer__ + after;
         appendLog('Added text {BEFORE:"' + before + '", AFTER: "' + after + '"} ==> ' + __result_buffer__);
+        break;
+    case WORKER_TRIM_WHITESPACE:
+        var trimWith = currentServce.getTrimWhitespace().getReplaceWith();
+        __result_buffer__ = __result_buffer__.replace(/\ /g, trimWith);
+        appendLog('Trimmed & replaced whitespace with "' + trimWith + '".');
         break;
     case WORKER_GEO_JSON:
         if(geolocation !== false) {

@@ -62,7 +62,7 @@ function showFeedsPanel(containerId) {
 
 function showWorkersPanel(containerId) {
     _current_container_id = containerId;
-    $('#'+ containerId).html('<div>Workers</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;"><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_FETCH_LAST_BY_KEY + '\');">Fetch Data</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_ADD_TEXT + '\');">Add Text</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_GEO_TEXT + '\');">Geolocation (Default)</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_GEO_JSON + '\');">Geolocation (JSON)</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_OUTPUT + '\');">Show Output</div></td></tr></table>');
+    $('#'+ containerId).html('<div>Workers</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;"><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_FETCH_LAST_BY_KEY + '\');">Fetch Data</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_ADD_TEXT + '\');">Add Text</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_GEO_TEXT + '\');">Geolocation (Default)</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_GEO_JSON + '\');">Geolocation (JSON)</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_OUTPUT + '\');">Show Output</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWorker(\'' + WORKER_TRIM_WHITESPACE + '\');">Trim & Replace Whitespace</div></td></tr></table>');
 }
 
 function showWidgetsPanel(containerId) {
@@ -275,6 +275,20 @@ function showServiceErrorDialog(msg, targetIndex, keywords) {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
     document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="showReplaceServiceByKeywordDialog(' + targetIndex + ', \'' + keywords + '\')">Suggestion</div><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">Close</div></td></tr></table>';
+}
+
+function showTrimWhitespaceDialog() {
+    visibleElement('dashboard');
+    visibleElement('dashboard_div');
+    $('#dashboard_output').html('<table class="frame_table"><tr><td><label>Replace whitespace with:</label><br/><input type="TEXT" class="input_box" id="ReplaceWhitespaceWithDialogInput" placeholder="Keep blank to remove whitespace."/></td></tr><tr><td><div id="trimWhitespace_dialog_ok" class="div_push_button" onclick="updateTrimWhitespaceFeed($(\'#ReplaceWhitespaceWithDialogInput\').val()); invisibleElement(\'dashboard_div\'); invisibleElement(\'dashboard\');">OK</div></td></tr></table>');
+
+    $('#ReplaceWhitespaceWithDialogInput').keypress(function(evt) {
+        if(evt.keyCode == 13) {
+            evt.preventDefault();
+            $('#trimWhitespace_dialog_ok').click();
+            return false;
+        }
+    });
 }
 
 function showAddTextDialog() {
@@ -511,6 +525,8 @@ function propertiesPanelShowSysWorker(service) {
     var id = service.getId();
     var beforeText = service.getAddTextObject().getBeforeText();
     var afterText = service.getAddTextObject().getAfterText();
+    var trimWith = service.getTrimWhitespace().getReplaceWith();
+    
 
     switch(name) {
         case WORKER_FETCH_LAST_BY_KEY:
@@ -519,6 +535,14 @@ function propertiesPanelShowSysWorker(service) {
             $('#SysworkerPropertiesTargetKey').change(function() {
                 var data = $('#SysworkerPropertiesTargetKey').val();
                 service.setFetchJSONKey(data);
+            });
+            break;
+
+        case WORKER_TRIM_WHITESPACE:
+            $('#properties_panel_output').html('<table class="properties_panel_table"><tr><td>Replace Whitespace with:<br/><input type="TEXT" class="input_box" id="SysworkerPropertiesReplaceWhitespaceWith" placeholder="Keep empty to remove whitespace." value="' + trimWith + '"/></td></tr></table>');
+
+            $('#SysworkerPropertiesReplaceWhitespaceWith').change(function() {
+                service.getTrimWhitespace().setReplaceWith($('#SysworkerPropertiesReplaceWhitespaceWith').val());
             });
             break;
 

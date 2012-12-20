@@ -3,6 +3,7 @@ const WORKER_ADD_TEXT = 'Add Text';
 const WORKER_GEO_JSON = 'Geolocation (JSON)';
 const WORKER_GEO_TEXT = 'Geolocation (Text)';
 const WORKER_OUTPUT = 'Push into Output';
+const WORKER_TRIM_WHITESPACE = 'Trim & Replace Whitespace';
 
 function drawAWorker(type) {
     var feed = new SysWorker(type);
@@ -11,6 +12,16 @@ function drawAWorker(type) {
     _big_canvas_layer.add(feed.getConnector().getConnector());
     _big_canvas_layer.add(feed.getRemoveDot().getRemoveDot());
     _big_canvas_stage.draw();
+}
+
+function WorkerTrimWhitespace() {
+    var replaceWith = '';
+    this.getReplaceWith = function() {
+        return replaceWith;
+    };
+    this.setReplaceWith = function(input) {
+        replaceWith = input;
+    };
 }
 
 function WorkerAddText() {
@@ -50,6 +61,7 @@ function SysWorker(type) {
     var service = new Service(type, TYPE_WORKER);
     service.setFetchJSONKey(''); 
     service.setAddTextObject(new WorkerAddText());
+    service.setTrimWhitespace(new WorkerTrimWhitespace());
 
     this.getService = function() {
         return service;
