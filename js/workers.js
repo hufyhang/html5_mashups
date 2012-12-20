@@ -2,6 +2,7 @@ const WORKER_FETCH_LAST_BY_KEY = 'Fetch Data from JSON';
 const WORKER_ADD_TEXT = 'Add Text';
 const WORKER_GEO_JSON = 'Geolocation (JSON)';
 const WORKER_GEO_TEXT = 'Geolocation (Text)';
+const WORKER_OUTPUT = 'Push into Output';
 
 function drawAWorker(type) {
     var feed = new SysWorker(type);

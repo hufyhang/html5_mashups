@@ -25,6 +25,7 @@ var currentServce = undefined;
 var serviceCounter;
 var geolocation = {json:'', text: ''};
 var __result_buffer__ = '';
+var _output = '';
 
 function Service(name, type) {
     var id = id_counter++, name, type, rest_url, rest_method, keywords = '';
@@ -176,6 +177,7 @@ function startToIterateFeeds(feed) {
     // reset serviceBuffer & serviceIndex
     serviceBuffer = [];
     serviceIndex = 0;
+    _output = '';
     iterateFeeds(feed);
 }
 
@@ -187,6 +189,11 @@ function iterateFeeds(feed){
     if(next !== 'undefined') {
         iterateFeeds(next);
     }
+}
+
+function appendOutput(msg) {
+    _output += msg + '<br/>';
+    appendLog('Appened "' + msg + '" into output buffer.');
 }
 
 function executeMashup(dataset) {
@@ -266,7 +273,7 @@ function executeMashup(dataset) {
                 currentServce = serviceBuffer[serviceCounter];
                 if(currentServce.getType() == TYPE_REST) {
                     var url = currentServce.getRestUrl() +  __result_buffer__;
-                    $("#execute_output").html('<iframe frameborder="0" width="100%" height="400px" src="' + url + '" seamless="seamless"><p>Surprisingly, your browser does not support iframes.</p></iframe>');
+                    $("#execute_output").html(_output + '<iframe frameborder="0" width="100%" height="400px" src="' + url + '" seamless="seamless"><p>Surprisingly, your browser does not support iframes.</p></iframe>');
                 }
                 appendLog('Showing result in execute_output');
                 invisibleElement('activity_indicator');
@@ -352,6 +359,9 @@ function executeSysWoker(__result_buffer__) {
             appendLog('Web browser does not support HTML5 Geolocation API.');
         }
         break;
+    case WORKER_OUTPUT:
+        appendOutput(__result_buffer__);
+        break;
     default:
         break;
     }
@@ -373,13 +383,13 @@ function executeGeolocation() {
 
 function executeWidget(__result_buffer__) {
     if(currentServce.getName() == WIDGET_AUDIO) {
-        $("#execute_output").html('<audio width="100%" controls="controls" autoplay><source src="' + __result_buffer__ + '">Surprisingly, your browser does not support the audio element.</audio>');
+        $("#execute_output").html(_output + '<audio width="100%" controls="controls" autoplay><source src="' + __result_buffer__ + '">Surprisingly, your browser does not support the audio element.</audio>');
     }
     else if (currentServce.getName() == WIDGET_VIDEO) {
-        $("#execute_output").html('<video width="100%" height="400px" controls="controls" autoplay><source src="' + __result_buffer__ + '">Surprisingly, your browser does not support the video tag.</video>');
+        $("#execute_output").html(_output + '<video width="100%" height="400px" controls="controls" autoplay><source src="' + __result_buffer__ + '">Surprisingly, your browser does not support the video tag.</video>');
     }
     else if(currentServce.getName() == WIDGET_IMAGE) {
-        $("#execute_output").html('<img width="100%" height="400px" src="' + __result_buffer__ + '"/>');
+        $("#execute_output").html(_output + '<img width="100%" height="400px" src="' + __result_buffer__ + '"/>');
     }
 }
 
@@ -388,7 +398,7 @@ function executeFromSysWoker(serviceWorker, checkWorker) {
     serviceCounter++;
     currentServce = serviceBuffer[serviceCounter];
     if(currentServce == "undefined" || currentServce == undefined) {
-        $('#execute_output').html('<div style="max-height:300px;max-width:100%" class="scrollable_div">' + __result_buffer__ + '</div>');
+        $('#execute_output').html(_output + '<div style="max-height:300px;max-width:100%" class="scrollable_div">' + __result_buffer__ + '</div>');
         appendLog('Showing result in execute_output');
         invisibleElement('activity_indicator');
         // visibleElement('executionFullScreenToggleButton');
