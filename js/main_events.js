@@ -361,7 +361,7 @@ function Migrator(db){
       db.changeVersion(db.version, String(number), function(t){
         migrations[number](t);
       }, function(err){
-        if(console.error) console.log("Error!: %o", err);
+        if(console.error) console.log("WebSQL Migrator: %o", err);
       }, function(){
         doMigration(number+1);
       });
