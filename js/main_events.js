@@ -361,7 +361,7 @@ function Migrator(db){
       db.changeVersion(db.version, String(number), function(t){
         migrations[number](t);
       }, function(err){
-        if(console.error) console.error("Error!: %o", err);
+        if(console.error) console.log("Error!: %o", err);
       }, function(){
         doMigration(number+1);
       });
@@ -372,7 +372,7 @@ function Migrator(db){
     try {
       doMigration(initialVersion+1);
     } catch(e) {
-      if(console.error) console.log(e);
+      if(console.error) console.error(e);
     }
   };
 }
