@@ -372,9 +372,9 @@ function Migrator(db){
     try {
       doMigration(initialVersion+1);
     } catch(e) {
-      if(console.error) console.error(e);
+      if(console.error) console.log(e);
     }
-  }
+  };
 }
 
 function readyDatabase() {
