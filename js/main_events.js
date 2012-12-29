@@ -148,6 +148,7 @@ function addFeedFromFeedForm(containerId) {
         tx.executeSql('INSERT INTO feeds (name, url, feed_type, keyword) VALUES (\"' + name + '\", \"' + url +'\", \"' + type + '\", \"' + keywords + '\")');
 
         document.getElementById('add_feed_form_feed_url').value = document.getElementById('add_feed_form_feed_name').value = '';
+        updateFeedsHTML();
         showNotificationInDashboard('Feed "' + name + '" has been added.');
     });
 }
@@ -156,6 +157,7 @@ function insertFeedIntoHyperMash(name, url, type, keywords) {
     // insert into database
     _database.transaction(function(tx) {
         tx.executeSql('INSERT INTO feeds (name, url, feed_type, keyword) VALUES (\"' + name + '\", \"' + url +'\", \"' + type + '\", \"' + keywords + '\")');
+        updateFeedsHTML();
         showNotificationInDashboard('Feed "' + name + '" has been added.');
     });
 }
@@ -165,6 +167,7 @@ function insertProjectIntoHyperMash(inputMd5, inputName, inputJson, inputKeyword
     _database.transaction(function(tx) {
         var md5 = inputMd5;
         tx.executeSql('INSERT INTO projects (md5, name, json, keyword) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\', \'' + inputKeywords + '\')');
+        updateFeedsHTML();
         showNotificationInDashboard('"' + inputName + '" has been saved.');
         appendLog('Project \"' + inputName + '\" with MD5 \"' + md5 + '\" has been added from Project Market.');
     });
@@ -333,7 +336,7 @@ function showNotificationInDashboard(msg) {
     // show message
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onmouseover="if(_currentPlace != SHOW_PROJECTS) {updateFeedsHTML();}" onclick="if(_currentPlace == SHOW_PROJECTS){readProjects(\'options_field_output\');} else{showFeedsPanel(_current_container_id);}invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>';
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="if(_currentPlace == SHOW_PROJECTS){readProjects(\'options_field_output\');} else{showFeedsPanel(_current_container_id);}invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>';
 }
 
 function removeFeedFromFeedList(name) {
@@ -347,6 +350,7 @@ function removeFeedFromFeedList(name) {
 function removeFeedFromDatabase(name) {
     _database.transaction(function(tx) {
         tx.executeSql('DELETE FROM feeds WHERE name="' + name + '"');
+        updateFeedsHTML();
     });
 }
 
