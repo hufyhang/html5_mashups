@@ -437,6 +437,7 @@ input, button, select, textarea {
 
 .feed_panel_item {
     cursor: default;
+    text-overflow: ellipsis;
     overflow: auto;
     padding: 10px;
     width: 90%;
