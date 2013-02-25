@@ -28,7 +28,7 @@ var __result_buffer__ = '';
 var _output = '';
 
 function Service(name, type) {
-    var id = id_counter++, name, type, rest_url, rest_method, keywords = '';
+    var id = id_counter++, name, type, soap_wsdl = '', rest_url = '', rest_method, keywords = '';
     //extra data members
     var fetchJSONkey = ''; 
     var addTextObject = undefined;
@@ -80,6 +80,10 @@ function Service(name, type) {
         type = input;
     };
 
+    this.setWSDL = function(input) {
+        soap_wsdl = input;
+    };
+
     this.setRestUrl = function(input) {
         rest_url = input;
     };
@@ -94,6 +98,10 @@ function Service(name, type) {
 
     this.getType = function() {
         return type;
+    };
+
+    this.getWSDL = function() {
+        return soap_wsdl;
     };
 
     this.getRestUrl = function() {
@@ -128,6 +136,7 @@ function Service(name, type) {
         json += '\"id\":\"' + id + '\", ';
         json += '\"name\":\"' + name + '\", ';
         json += '\"type\":\"' + type + '\", ';
+        json += '\"wsdl\":\"' + soap_wsdl + '\", ';
         json += '\"restUrl\":\"' + rest_url + '\", ';
         json += '\"restMethod\":\"' +  rest_method + '\", ';
         json += '\"keywords\":\"' + keywords + '\", ';

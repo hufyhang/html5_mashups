@@ -241,7 +241,7 @@ function loadFromJSON(jsonInput) {
             if(type == TYPE_REST) {
                 restUrl = item.restUrl;
                 restMethod = item.restMethod;
-                drawARestFeed(name, restUrl, keywords);
+                drawAServiceFeed(name, TYPE_REST, restUrl, keywords);
             }
             else if(type == TYPE_WIDGET) {
                 drawAWidget(name);
@@ -451,7 +451,7 @@ function removeFeedFromCanvas(feed) {
             case TYPE_SYS_START:
                 break;
             case TYPE_REST:
-                drawARestFeed(name, url, keywords);
+                drawAServiceFeed(name, TYPE_REST, url, keywords);
                 _feeds_nodes[_feeds_nodes.length - 1].getService().setRestMethod(restMethod);
                 break;
             case TYPE_WIDGET:
@@ -487,7 +487,7 @@ function drawFromFeedList(list) {
             drawStartNode();
         }
         else if(ser.getType() == TYPE_REST) {
-            drawARestFeed(ser.getName(), ser.getRestUrl(), ser.getKeywords());
+            drawAServiceFeed(ser.getName(), TYPE_REST, ser.getRestUrl(), ser.getKeywords());
             _feeds_nodes[index].getService().setRestMethod(ser.getRestMethod());
         }
         else if(ser.getType() == TYPE_WIDGET) {
@@ -829,8 +829,14 @@ function redrawFeed(node, feed) {
     _big_canvas_layer.draw();
 }
 
-function drawARestFeed(name, url, keywords) {
-    var feed = new RestFeed(name, url, keywords);
+function drawAServiceFeed(name, type, url, keywords) {
+    var feed;
+    if(type === TYPE_REST) {
+        feed = new RestFeed(name, url, keywords);
+    }
+    else if(type === TYPE_SOAP) {
+        feed = new SOAPFeed(name, url, keywords);
+    } 
     _feeds_nodes.push(feed);
 
     _big_canvas_layer.add(feed.getNode());
@@ -839,7 +845,15 @@ function drawARestFeed(name, url, keywords) {
     _big_canvas_stage.draw();
 }
 
-function RestFeed(name, url, inputKeywords) {
+function SOAPFeed(name, wsdl, keywords) {
+    return new ServiceFeed(name, wsdl, keywords, TYPE_SOAP);
+}
+
+function RestFeed(name, url, keywords) {
+    return new ServiceFeed(name, url, keywords, TYPE_REST);
+}
+
+function ServiceFeed(name, url, inputKeywords, type) {
     var org_connecting_line_points, beConnectedLine = 'undefined';
     var id = _feeds_nodes.length;
     var feedConnector;
@@ -856,12 +870,18 @@ function RestFeed(name, url, inputKeywords) {
         nextFeed = 'undefined';
     };
 
-
-    var service = new Service(name, TYPE_REST);
-    service.setRestUrl(url);
-    service.setRestMethod(REST_METHOD_GET);
+    var service;
+    if(type == TYPE_REST) {
+        service = new Service(name, TYPE_REST);
+        service.setRestUrl(url);
+        service.setRestMethod(REST_METHOD_GET);
+    }
+    else if(type == TYPE_SOAP) {
+       service = new Service(name, TYPE_SOAP);
+        service.setWSDL(url);
+    }
     service.setKeywords(inputKeywords);
-    // appendServivesList(service);
+        // appendServivesList(service);
 
     this.getService = function() {
         return service;
@@ -937,7 +957,12 @@ function RestFeed(name, url, inputKeywords) {
     });
 
     feed.on('click', function() {
-        propertiesPanelShowRestFeed(service);
+        if(type === TYPE_REST) {
+            propertiesPanelShowRestFeed(service);
+        }
+        else if(type === TYPE_SOAP) {
+            //
+        }
     });
 
     feed.on("dragstart", function() {
