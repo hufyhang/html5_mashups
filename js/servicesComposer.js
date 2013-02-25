@@ -264,6 +264,9 @@ function executeMashup(dataset) {
         tempBuffer = __result_buffer__.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
         checkWorker.postMessage(url + tempBuffer);
         break;
+    case TYPE_SOAP:
+        //TODO HERE
+        break;
 
     case TYPE_WORKER:
         __result_buffer__ = executeSysWoker(__result_buffer__);
