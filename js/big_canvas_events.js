@@ -961,7 +961,7 @@ function ServiceFeed(name, url, inputKeywords, type) {
             propertiesPanelShowRestFeed(service);
         }
         else if(type === TYPE_SOAP) {
-            //
+            propertiesPanelShowSoapFeed(service);
         }
     });
 

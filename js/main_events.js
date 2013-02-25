@@ -568,6 +568,37 @@ function propertiesPanelShowSysWorker(service) {
     }
 }
 
+function propertiesPanelShowSoapFeed(service) {
+    var name = service.getName();
+    var wsdl = service.getWSDL();
+    var id = service.getId();
+    var func = '';
+    var wsdlFunctionsWorker = new Worker('js/wsdlFunctionsWorker.js');
+    wsdlFunctionsWorker.postMessage(wsdl);
+    wsdlFunctionsWorker.onmessage = function(e) {
+        func = e.data;
+        json = $.parseJSON(func);
+
+        var options = '';
+        var cnt = 0;
+        $.each(json, function() {
+            var selected = '';
+            if(cnt === 0) {
+                selected = 'selected';
+            }
+            else {
+                selected = '';
+            }
+            options += '<option value="' + cnt + '"' + selected + '>' + this + '</option>';
+            ++cnt;
+        });
+        
+        $('#properties_panel_output').html('<table class="properties_panel_table"><tr><td>Name:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + name + '"/></td></tr><tr><td>WSDL:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + wsdl + '"></td></tr><tr><td><form>Function:<br/><div ><select name="SoapFunctionsMenu" style="width:90%;">' + options + '</select></div></form></td></tr></table>');
+
+        wsdlFunctionsWorker.terminate();
+    };
+}
+
 function propertiesPanelShowRestFeed(service) {
     var name = service.getName();
     var url = service.getRestUrl();
