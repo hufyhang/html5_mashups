@@ -572,6 +572,7 @@ function propertiesPanelShowSoapFeed(service) {
     var name = service.getName();
     var wsdl = service.getWSDL();
     var id = service.getId();
+    var funcId = service.getSoapFunctionId();
     var func = '';
     var wsdlFunctionsWorker = new Worker('js/wsdlFunctionsWorker.js');
     wsdlFunctionsWorker.postMessage(wsdl);
@@ -579,11 +580,22 @@ function propertiesPanelShowSoapFeed(service) {
         func = e.data;
         json = $.parseJSON(func);
 
+        var funcs = new Array();
         var options = '';
-        var cnt = 0;
         $.each(json, function() {
+            if(funcs.indexOf(this) == -1) {
+                funcs.push(this);
+            }
+        });
+
+        var cnt = 0;
+        if(funcId === undefined || funcId === 'undefined') {
+            funcId = 0;
+        }
+
+        $.each(funcs, function() {
             var selected = '';
-            if(cnt === 0) {
+            if(cnt == funcId) {
                 selected = 'selected';
             }
             else {
@@ -593,7 +605,11 @@ function propertiesPanelShowSoapFeed(service) {
             ++cnt;
         });
         
-        $('#properties_panel_output').html('<table class="properties_panel_table"><tr><td>Name:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + name + '"/></td></tr><tr><td>WSDL:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + wsdl + '"></td></tr><tr><td><form>Function:<br/><div ><select name="SoapFunctionsMenu" style="width:90%;">' + options + '</select></div></form></td></tr></table>');
+        $('#properties_panel_output').html('<table class="properties_panel_table"><tr><td>Name:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + name + '"/></td></tr><tr><td>WSDL:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + wsdl + '"></td></tr><tr><td><form>Function:<br/><div ><select id="SoapFunctionsSelect" name="SoapFunctionsMenu" style="width:90%;">' + options + '</select></div></form></td></tr></table>');
+
+    $('#SoapFunctionsSelect').change(function() {
+        service.setSoapFunctionId($('#SoapFunctionsSelect').val());
+    });
 
         wsdlFunctionsWorker.terminate();
     };

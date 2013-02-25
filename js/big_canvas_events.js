@@ -231,7 +231,7 @@ function loadFromJSON(jsonInput) {
     var list = new Array();
     for(var index = 0; index != count; ++ index) {
         var item = json.feeds[index].feed[0];
-        var next, id, name, type, restUrl, restMethod, keywords;
+        var next, id, name, type, restUrl, restMethod, keywords, wsdl, soapFuncId;
         next = parseInt(item.next);
         if(next != -1) {
             id = parseInt(item.id);
@@ -242,6 +242,11 @@ function loadFromJSON(jsonInput) {
                 restUrl = item.restUrl;
                 restMethod = item.restMethod;
                 drawAServiceFeed(name, TYPE_REST, restUrl, keywords);
+            }
+            else if(type == TYPE_SOAP) {
+                wsdl = item.wsdl;
+                soapFuncId = item.soapFuncId;
+                drawAServiceFeed(name, TYPE_SOAP, wsdl, keywords);
             }
             else if(type == TYPE_WIDGET) {
                 drawAWidget(name);
@@ -258,7 +263,7 @@ function loadFromJSON(jsonInput) {
         else {
             continue;
         }
-        list[index] = new Array(next, id, name, type, restUrl, restMethod);
+        list[index] = new Array(next, id, name, type, restUrl, restMethod, wsdl, soapFuncId);
     }
 
     // create connecting lines and set configurations
@@ -268,6 +273,10 @@ function loadFromJSON(jsonInput) {
         if(type == TYPE_REST) {
             var method = list[index][5];
             _feeds_nodes[index + 1].getService().setRestMethod(method);
+        }
+        else if(type == TYPE_SOAP) {
+            var funcId = list[index][7];
+            _feeds_nodes[index + 1].getService().setSoapFunctionId(funcId);
         }
     }
 }

@@ -28,7 +28,7 @@ var __result_buffer__ = '';
 var _output = '';
 
 function Service(name, type) {
-    var id = id_counter++, name, type, soap_wsdl = '', rest_url = '', rest_method, keywords = '';
+    var id = id_counter++, name, type, soap_wsdl = '', soap_funcId = 0, rest_url = '', rest_method, keywords = '';
     //extra data members
     var fetchJSONkey = ''; 
     var addTextObject = undefined;
@@ -84,6 +84,14 @@ function Service(name, type) {
         soap_wsdl = input;
     };
 
+    this.setSoapFunctionId = function(input) {
+        soap_funcId = input;
+    };
+
+    this.getSoapFunctionId = function() {
+        return soap_funcId;
+    };
+
     this.setRestUrl = function(input) {
         rest_url = input;
     };
@@ -137,6 +145,7 @@ function Service(name, type) {
         json += '\"name\":\"' + name + '\", ';
         json += '\"type\":\"' + type + '\", ';
         json += '\"wsdl\":\"' + soap_wsdl + '\", ';
+        json += '\"soapFuncId\":\"' + soap_funcId + '\", ';
         json += '\"restUrl\":\"' + rest_url + '\", ';
         json += '\"restMethod\":\"' +  rest_method + '\", ';
         json += '\"keywords\":\"' + keywords + '\", ';
@@ -174,6 +183,13 @@ function updateRestMethodById(id, method) {
     var service = findServiceById(id);
     if(service !== 'undefined') {
         service.setRestMethod(method);
+    }
+}
+
+function updateSoapFunctionById(id, funcId) {
+    var service = findServiceById(id);
+    if(service !== 'undefined') {
+        service.setSoapFunctionId(funcId);
     }
 }
 
