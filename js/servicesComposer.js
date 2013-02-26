@@ -274,7 +274,7 @@ function executeMashup(dataset) {
 
     case TYPE_WORKER:
         __result_buffer__ = executeSysWoker(__result_buffer__);
-        if(executeFromSysWoker(serviceWorker, checkWorker, soapWorker) === false) {
+        if(executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker) === false) {
             serviceWorker.terminate();
             appendLog('Web Worker "serviceWorker" terminated.');
             checkWorker.terminate();
@@ -360,7 +360,7 @@ function executeMashup(dataset) {
         //else if it is TYPE_WORKER
         else if(currentServce.getType() == TYPE_WORKER) {
             __result_buffer__ = executeSysWoker(__result_buffer__);
-            if(executeFromSysWoker(serviceWorker, checkWorker, soapWorker) === false) {
+            if(executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker) === false) {
                 return;
             }
         }
@@ -442,7 +442,7 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
             }
             else if(currentServce.getType() == TYPE_WORKER) {
                 __result_buffer__ = executeSysWoker(__result_buffer__);
-                if(executeFromSysWoker(serviceWorker, checkWorker) === false) {
+                if(executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker) === false) {
                     return;
                 }
             }
@@ -546,7 +546,7 @@ function executeWidget(__result_buffer__) {
     }
 }
 
-function executeFromSysWoker(serviceWorker, checkWorker, soapWorker) {
+function executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker) {
     var result = true;
     serviceCounter++;
     currentServce = serviceBuffer[serviceCounter];
@@ -581,7 +581,7 @@ function executeFromSysWoker(serviceWorker, checkWorker, soapWorker) {
     }
     else if(currentServce.getType() == TYPE_WORKER) {
             __result_buffer__ = executeSysWoker(__result_buffer__);
-            if(executeFromSysWoker(serviceWorker, checkWorker, __result_buffer__) === false) {
+            if(executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker) === false) {
                 result = false;
             }
     }
