@@ -313,6 +313,8 @@ function executeMashup(dataset) {
             appendLog('Web Worker "serviceWorker" terminated.');
             checkWorker.terminate();
             appendLog('Web Worker "checkWorker" terminated.');
+            soapWorker.terminate();
+            appendLog('Web Worker "soapWorker" terminated.');
             return;
         }
 
@@ -356,7 +358,7 @@ function executeMashup(dataset) {
         //else if it is TYPE_WORKER
         else if(currentServce.getType() == TYPE_WORKER) {
             __result_buffer__ = executeSysWoker(__result_buffer__);
-            if(executeFromSysWoker(serviceWorker, checkWorker) === false) {
+            if(executeFromSysWoker(serviceWorker, checkWorker, soapWorker) === false) {
                 return;
             }
         }
@@ -397,6 +399,19 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
         soapWorker.onmessage = function(e) {
             var data = e.data;
             appendLog('Received data: ' + data + ' from ' + wsdl);
+            if(data == 'ERROR') {
+                showServiceErrorDialog('Oops! Service "' + currentServce.getName() + '" is down. Please try later or use an alternative service feed.', serviceCounter, currentServce.getKeywords()); 
+                appendLog('"' + currentServce.getName() + '" is down. #' + e.data);
+                invisibleElement('activity_indicator');
+                highlightErrorNode(serviceCounter);
+                serviceWorker.terminate();
+                appendLog('Web Worker "serviceWorker" terminated.');
+                checkWorker.terminate();
+                appendLog('Web Worker "checkWorker" terminated.');
+                soapWorker.terminate();
+                appendLog('Web Worker "soapWorker" terminated.');
+                return;
+            }
             __result_buffer__ = data;
             // if this is the last feed and is a SOAP service
             if(serviceCounter == serviceBuffer.length - 1) {
@@ -529,7 +544,7 @@ function executeWidget(__result_buffer__) {
     }
 }
 
-function executeFromSysWoker(serviceWorker, checkWorker) {
+function executeFromSysWoker(serviceWorker, checkWorker, soapWorker) {
     var result = true;
     serviceCounter++;
     currentServce = serviceBuffer[serviceCounter];
@@ -549,7 +564,7 @@ function executeFromSysWoker(serviceWorker, checkWorker) {
         checkWorker.postMessage(currentServce.getRestUrl().replace(/&/g, '%26') + tempBuffer);
     }
     else if(currentServce.getType() == TYPE_SOAP) {
-        //TODO here
+        executeSoap(__result_buffer__, serviceWorker, checkWorker, soapWorker);
     }
     else if(currentServce.getType() == TYPE_WIDGET) {
         executeWidget(__result_buffer__);
