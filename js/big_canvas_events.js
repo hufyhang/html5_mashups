@@ -404,6 +404,8 @@ function removeFeedFromCanvas(feed) {
     var json = '{"feeds":[';
     for(var i = 0; i != _feeds_nodes.length; ++i) {
         var url = 'undefined';
+        var wsdl = '';
+        var soapFuncId = 0;
         var restMethod = 'undefined';
         var name = _feeds_nodes[i].getService().getName();
         var type = _feeds_nodes[i].getService().getType();
@@ -414,6 +416,10 @@ function removeFeedFromCanvas(feed) {
         if(type == TYPE_REST) {
             url = _feeds_nodes[i].getService().getRestUrl();
             restMethod = _feeds_nodes[i].getService().getRestMethod();
+        }
+        else if(type == TYPE_SOAP) {
+            wsdl = _feeds_nodes[i].getService().getWSDL();
+            soapFuncId = _feeds_nodes[i].getService().getSoapFunctionId();
         }
         else if(type == TYPE_WORKER) {
             addBefore = _feeds_nodes[i].getService().getAddTextObject().getBeforeText();
@@ -427,7 +433,7 @@ function removeFeedFromCanvas(feed) {
                 nextId = -1;
             }
         }
-        json += '{"name":"' + name + '", "type":"' + type + '", "url":"' + url + '", "restMethod": "' + restMethod + '", "fetchJSONkey":"' + fetchJSONkey + '", "addBefore":"' + addBefore + '", "addAfter":"' + addAfter + '", "keywords": "' + keywords + '", "nextId":"' + nextId + '"}';
+        json += '{"name":"' + name + '", "type":"' + type + '", "wsdl":"' + wsdl + '", "soapFuncId":"' + soapFuncId + '", "url":"' + url + '", "restMethod": "' + restMethod + '", "fetchJSONkey":"' + fetchJSONkey + '", "addBefore":"' + addBefore + '", "addAfter":"' + addAfter + '", "keywords": "' + keywords + '", "nextId":"' + nextId + '"}';
         if(i != _feeds_nodes.length - 1) {
             json += ', ';
         }
@@ -450,6 +456,8 @@ function removeFeedFromCanvas(feed) {
         var item = jsonObj.feeds[index];
         var name = item.name;
         var type = item.type;
+        var wsdl = item.wsdl;
+        var soapFuncId = item.soapFuncId;
         var url = item.url;
         var restMethod = item.restMethod;
         var keywords = item.keywords;
@@ -462,6 +470,10 @@ function removeFeedFromCanvas(feed) {
             case TYPE_REST:
                 drawAServiceFeed(name, TYPE_REST, url, keywords);
                 _feeds_nodes[_feeds_nodes.length - 1].getService().setRestMethod(restMethod);
+                break;
+            case TYPE_SOAP:
+                drawAServiceFeed(name, TYPE_SOAP, wsdl, keywords);
+                _feeds_nodes[_feeds_nodes.length - 1].getService().setSoapFunctionId(soapFuncId);
                 break;
             case TYPE_WIDGET:
                 drawAWidget(name);
