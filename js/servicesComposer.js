@@ -256,6 +256,9 @@ function executeMashup(dataset) {
     appendLog('Initialising Web Worker "checkRestWorker"...');
     var checkWorker = new Worker("js/checkRestWorker.js");
     appendLog('Web Worker "checkRestWorker" initialised.');
+    appendLog('Initialising Web Worker "soapWorker"...');
+    var soapWorker = new Worker("js/soapWorker.js");
+    appendLog('Web Worker "soapWorker" initialised.');
     currentServce = serviceBuffer[serviceCounter];
     // handle the very first feed
     switch(currentServce.getType()) {
@@ -264,8 +267,9 @@ function executeMashup(dataset) {
         tempBuffer = __result_buffer__.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
         checkWorker.postMessage(url + tempBuffer);
         break;
+
     case TYPE_SOAP:
-        //TODO HERE
+        executeSoap(__result_buffer__, serviceWorker, checkWorker, soapWorker);
         break;
 
     case TYPE_WORKER:
@@ -369,6 +373,75 @@ function executeMashup(dataset) {
             return;
         }
         // <END>else if it is TYPE_WIDGET</END>
+        else if(currentServce.getType() == TYPE_SOAP) {
+            executeSoap(__result_buffer__, serviceWorker, checkWorker, soapWorker);
+        }
+    };
+}
+
+function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) {
+    var bf = __result_buffer__.replace('"', '\\"');
+    bf = bf.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
+    var wsdl = currentServce.getWSDL();
+    var funcId = currentServce.getSoapFunctionId();
+    var func = '';
+    var par = __result_buffer__;
+    var wkr = new Worker("js/wsdlFunctionsWorker.js");
+    wkr.postMessage(wsdl);
+    wkr.onmessage = function(e) {
+        var json = $.parseJSON(e.data);
+        func = json[funcId].split(' ')[1].trim().split('(')[0]; //get the function name
+        // encode URI Components
+        var message = 'wsdl=' + encodeURIComponent(wsdl) + '&code=' + encodeURIComponent(func + '(' + par + ')');
+        soapWorker.postMessage(message);
+        soapWorker.onmessage = function(e) {
+            var data = e.data;
+            appendLog('Received data: ' + data + ' from ' + wsdl);
+            __result_buffer__ = data;
+            // if this is the last feed and is a SOAP service
+            if(serviceCounter == serviceBuffer.length - 1) {
+                currentServce = serviceBuffer[serviceCounter];
+                if(currentServce.getType() == TYPE_SOAP) {
+                    $('#execute_output').html(_output + '<div style="max-height:300px;max-width:100%;text-align:justify;" class="scrollable_div">' + __result_buffer__ + '</div>');
+                }
+                appendLog('Showing result in execute_output');
+                invisibleElement('activity_indicator');
+                visibleElement('executionFullScreenToggleButton');
+                serviceWorker.terminate();
+                appendLog('Web Worker "serviceWorker" terminated.');
+                checkWorker.terminate();
+                appendLog('Web Worker "checkWorker" terminated.');
+                soapWorker.terminate();
+                appendLog('Web Worker "soapWorker" terminated.');
+                return;
+            }
+            // <END> if this is the last feed and is a REST service </END>
+            serviceCounter++;
+            currentServce = serviceBuffer[serviceCounter];
+            if(currentServce.getType() == TYPE_REST) {
+                var url = serviceBuffer[serviceCounter].getRestUrl().replace(/&/g, '%26');
+                tempBuffer = __result_buffer__.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
+                checkWorker.postMessage(url + tempBuffer);
+            }
+            else if(currentServce.getType() == TYPE_WORKER) {
+                __result_buffer__ = executeSysWoker(__result_buffer__);
+                if(executeFromSysWoker(serviceWorker, checkWorker) === false) {
+                    return;
+                }
+            }
+            else if(currentServce.getType() == TYPE_WIDGET) {
+                executeWidget(__result_buffer__);
+                appendLog('Showing result in execute_output');
+                invisibleElement('activity_indicator');
+                visibleElement('executionFullScreenToggleButton');
+                serviceWorker.terminate();
+                appendLog('Web Worker "serviceWorker" terminated.');
+                checkWorker.terminate();
+                appendLog('Web Worker "checkWorker" terminated.');
+                return;
+            }
+        };
+        wkr.terminate();
     };
 }
 
@@ -474,6 +547,9 @@ function executeFromSysWoker(serviceWorker, checkWorker) {
     else if(currentServce.getType() == TYPE_REST) {
         tempBuffer = __result_buffer__.replace(/&/g, '%26'); // replace all & in __result_buffer__ in order to make PHP works correctly
         checkWorker.postMessage(currentServce.getRestUrl().replace(/&/g, '%26') + tempBuffer);
+    }
+    else if(currentServce.getType() == TYPE_SOAP) {
+        //TODO here
     }
     else if(currentServce.getType() == TYPE_WIDGET) {
         executeWidget(__result_buffer__);

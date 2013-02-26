@@ -499,6 +499,10 @@ function drawFromFeedList(list) {
             drawAServiceFeed(ser.getName(), TYPE_REST, ser.getRestUrl(), ser.getKeywords());
             _feeds_nodes[index].getService().setRestMethod(ser.getRestMethod());
         }
+        else if(ser.getType() == TYPE_SOAP) {
+            drawAServiceFeed(ser.getName(), TYPE_SOAP, ser.getWSDL(), ser.getKeywords());
+            _feeds_nodes[index].getService().setSoapFunctionId(ser.getSoapFunctionId());
+        }
         else if(ser.getType() == TYPE_WIDGET) {
             drawAWidget(ser.getName());
         }
@@ -833,6 +837,11 @@ function redrawFeed(node, feed) {
     if(type == TYPE_REST) {
         var url = feed.getService().getRestUrl();
         var text = name + '\n\n' + url;
+        node.setText(text);
+    }
+    else if(type == TYPE_SOAP) {
+        var wsdl = feed.getService().getWSDL();
+        var test = name + '\n\n' + wsdl;
         node.setText(text);
     }
     _big_canvas_layer.draw();
