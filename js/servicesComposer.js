@@ -274,7 +274,7 @@ function executeMashup(dataset) {
 
     case TYPE_WORKER:
         __result_buffer__ = executeSysWoker(__result_buffer__);
-        if(executeFromSysWoker(serviceWorker, checkWorker) === false) {
+        if(executeFromSysWoker(serviceWorker, checkWorker, soapWorker) === false) {
             serviceWorker.terminate();
             appendLog('Web Worker "serviceWorker" terminated.');
             checkWorker.terminate();
@@ -334,6 +334,8 @@ function executeMashup(dataset) {
                 appendLog('Web Worker "serviceWorker" terminated.');
                 checkWorker.terminate();
                 appendLog('Web Worker "checkWorker" terminated.');
+                soapWorker.terminate();
+                appendLog('Web Worker "soapWorker" terminated.');
                 return;
             }
             // <END> if this is the last feed and is a REST service </END>
