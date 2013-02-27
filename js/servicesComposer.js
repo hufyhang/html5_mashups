@@ -160,6 +160,15 @@ function Service(name, type) {
     appendServicesList(this);
 }
 
+function terminateWebWorkers(checkWorker, serviceWorker, soapWorker) {
+    serviceWorker.terminate();
+    appendLog('Web Worker "serviceWorker" terminated.');
+    checkWorker.terminate();
+    appendLog('Web Worker "checkWorker" terminated.');
+    soapWorker.terminate();
+    appendLog('Web Worker "soapWorker" terminated.');
+}
+
 function valueOrDefault(val, def) {
     if(def === undefined) def = '';
     return val == undefined ? def : val;
@@ -279,12 +288,7 @@ function executeMashup(dataset) {
         __result_buffer__ = executeSysWoker(__result_buffer__);
         var result = executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker);
         if(result === false) {
-            serviceWorker.terminate();
-            appendLog('Web Worker "serviceWorker" terminated.');
-            checkWorker.terminate();
-            appendLog('Web Worker "checkWorker" terminated.');
-            soapWorker.terminate();
-            appendLog('Web Worker "soapWorker" terminated.');
+            terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
             return;
         }
         else {
@@ -297,12 +301,7 @@ function executeMashup(dataset) {
         appendLog('Showing result in execute_output');
         invisibleElement('activity_indicator');
         visibleElement('executionFullScreenToggleButton');
-        serviceWorker.terminate();
-        appendLog('Web Worker "serviceWorker" terminated.');
-        checkWorker.terminate();
-        appendLog('Web Worker "checkWorker" terminated.');
-        soapWorker.terminate();
-        appendLog('Web Worker "soapWorker" terminated.');
+        terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
         return;
         break;
 
@@ -321,12 +320,7 @@ function executeMashup(dataset) {
             appendLog('"' + currentServce.getName() + '" is down. #' + code);
             invisibleElement('activity_indicator');
             highlightErrorNode(serviceCounter);
-            serviceWorker.terminate();
-            appendLog('Web Worker "serviceWorker" terminated.');
-            checkWorker.terminate();
-            appendLog('Web Worker "checkWorker" terminated.');
-            soapWorker.terminate();
-            appendLog('Web Worker "soapWorker" terminated.');
+            terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
             return;
         }
 
@@ -342,12 +336,7 @@ function executeMashup(dataset) {
                 appendLog('Showing result in execute_output');
                 invisibleElement('activity_indicator');
                 visibleElement('executionFullScreenToggleButton');
-                serviceWorker.terminate();
-                appendLog('Web Worker "serviceWorker" terminated.');
-                checkWorker.terminate();
-                appendLog('Web Worker "checkWorker" terminated.');
-                soapWorker.terminate();
-                appendLog('Web Worker "soapWorker" terminated.');
+                terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
                 return;
             }
             // <END> if this is the last feed and is a REST service </END>
@@ -387,12 +376,7 @@ function executeMashup(dataset) {
             appendLog('Showing result in execute_output');
             invisibleElement('activity_indicator');
             visibleElement('executionFullScreenToggleButton');
-            serviceWorker.terminate();
-            appendLog('Web Worker "serviceWorker" terminated.');
-            checkWorker.terminate();
-            appendLog('Web Worker "checkWorker" terminated.');
-            soapWorker.terminate();
-            appendLog('Web Worker "soapWorker" terminated.');
+            terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
             return;
         }
         // <END>else if it is TYPE_WIDGET</END>
@@ -425,12 +409,7 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
                 appendLog('"' + currentServce.getName() + '" is down. #' + e.data);
                 invisibleElement('activity_indicator');
                 highlightErrorNode(serviceCounter);
-                serviceWorker.terminate();
-                appendLog('Web Worker "serviceWorker" terminated.');
-                checkWorker.terminate();
-                appendLog('Web Worker "checkWorker" terminated.');
-                soapWorker.terminate();
-                appendLog('Web Worker "soapWorker" terminated.');
+                terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
                 return;
             }
             __result_buffer__ = data;
@@ -443,12 +422,7 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
                 appendLog('Showing result in execute_output');
                 invisibleElement('activity_indicator');
                 visibleElement('executionFullScreenToggleButton');
-                serviceWorker.terminate();
-                appendLog('Web Worker "serviceWorker" terminated.');
-                checkWorker.terminate();
-                appendLog('Web Worker "checkWorker" terminated.');
-                soapWorker.terminate();
-                appendLog('Web Worker "soapWorker" terminated.');
+                terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
                 return;
             }
             // <END> if this is the last feed and is a REST service </END>
@@ -475,12 +449,7 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
                 appendLog('Showing result in execute_output');
                 invisibleElement('activity_indicator');
                 visibleElement('executionFullScreenToggleButton');
-                serviceWorker.terminate();
-                appendLog('Web Worker "serviceWorker" terminated.');
-                checkWorker.terminate();
-                appendLog('Web Worker "checkWorker" terminated.');
-                soapWorker.terminate();
-                appendLog('Web Worker "soapWorker" terminated.');
+                terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
                 return;
             }
         };
@@ -581,12 +550,7 @@ function executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soap
         appendLog('Showing result in execute_output');
         invisibleElement('activity_indicator');
         // visibleElement('executionFullScreenToggleButton');
-        serviceWorker.terminate();
-        appendLog('Web Worker "serviceWorker" terminated.');
-        checkWorker.terminate();
-        appendLog('Web Worker "checkWorker" terminated.');
-        soapWorker.terminate();
-        appendLog('Web Worker "soapWorker" terminated.');
+        terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
         result = false;
     }
     else if(currentServce.getType() == TYPE_REST) {
@@ -602,12 +566,7 @@ function executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soap
         appendLog('Showing result in execute_output');
         invisibleElement('activity_indicator');
         visibleElement('executionFullScreenToggleButton');
-        serviceWorker.terminate();
-        appendLog('Web Worker "serviceWorker" terminated.');
-        checkWorker.terminate();
-        appendLog('Web Worker "checkWorker" terminated.');
-        soapWorker.terminate();
-        appendLog('Web Worker "soapWorker" terminated.');
+        terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
         result = false;
     }
     else if(currentServce.getType() == TYPE_WORKER) {
