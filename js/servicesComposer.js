@@ -283,6 +283,8 @@ function executeMashup(dataset) {
             appendLog('Web Worker "serviceWorker" terminated.');
             checkWorker.terminate();
             appendLog('Web Worker "checkWorker" terminated.');
+            soapWorker.terminate();
+            appendLog('Web Worker "soapWorker" terminated.');
             return;
         }
         else {
@@ -299,6 +301,8 @@ function executeMashup(dataset) {
         appendLog('Web Worker "serviceWorker" terminated.');
         checkWorker.terminate();
         appendLog('Web Worker "checkWorker" terminated.');
+        soapWorker.terminate();
+        appendLog('Web Worker "soapWorker" terminated.');
         return;
         break;
 
@@ -387,6 +391,8 @@ function executeMashup(dataset) {
             appendLog('Web Worker "serviceWorker" terminated.');
             checkWorker.terminate();
             appendLog('Web Worker "checkWorker" terminated.');
+            soapWorker.terminate();
+            appendLog('Web Worker "soapWorker" terminated.');
             return;
         }
         // <END>else if it is TYPE_WIDGET</END>
@@ -473,6 +479,8 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
                 appendLog('Web Worker "serviceWorker" terminated.');
                 checkWorker.terminate();
                 appendLog('Web Worker "checkWorker" terminated.');
+                soapWorker.terminate();
+                appendLog('Web Worker "soapWorker" terminated.');
                 return;
             }
         };
@@ -577,6 +585,8 @@ function executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soap
         appendLog('Web Worker "serviceWorker" terminated.');
         checkWorker.terminate();
         appendLog('Web Worker "checkWorker" terminated.');
+        soapWorker.terminate();
+        appendLog('Web Worker "soapWorker" terminated.');
         result = false;
     }
     else if(currentServce.getType() == TYPE_REST) {
@@ -596,6 +606,8 @@ function executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soap
         appendLog('Web Worker "serviceWorker" terminated.');
         checkWorker.terminate();
         appendLog('Web Worker "checkWorker" terminated.');
+        soapWorker.terminate();
+        appendLog('Web Worker "soapWorker" terminated.');
         result = false;
     }
     else if(currentServce.getType() == TYPE_WORKER) {
