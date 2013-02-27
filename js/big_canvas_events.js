@@ -55,6 +55,9 @@ function registerTouchEvents(stage) {
                     case TYPE_REST:
                         propertiesPanelShowRestFeed(_feeds_nodes[index].getService());
                         break;
+                    case TYPE_SOAP:
+                        propertiesPanelShowSoapFeed(_feeds_nodes[index].getService());
+                        break;
                     case TYPE_WORKER:
                         propertiesPanelShowSysWorker(_feeds_nodes[index].getService());
                         break;
