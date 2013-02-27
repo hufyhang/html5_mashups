@@ -25,6 +25,7 @@ var currentServce = undefined;
 var serviceCounter;
 var geolocation = {json:'', text: ''};
 var __result_buffer__ = '';
+var __rest_result_buffer__ = '';
 var _output = '';
 
 function Service(name, type) {
@@ -243,6 +244,7 @@ function executeMashup(dataset) {
     currentServce = undefined;
     serviceCounter = 1;  // skip the start node
     __result_buffer__ = dataset;
+    __rest_result_buffer__ = '';
     if(typeof(Worker) === 'undefined') {
         showMessageDialog('Oops! Surprisingly, your Web browser does not support Web Worker. Working procedure terminated.');
         appendLog('Web browser does not support Web Worker. Working procedure terminated.');
@@ -265,6 +267,7 @@ function executeMashup(dataset) {
     case TYPE_REST:
         var url = serviceBuffer[serviceCounter].getRestUrl().replace(/&/g, '%26');
         tempBuffer = __result_buffer__.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
+        __rest_result_buffer__ = tempBuffer;
         checkWorker.postMessage(url + tempBuffer);
         break;
 
@@ -274,12 +277,16 @@ function executeMashup(dataset) {
 
     case TYPE_WORKER:
         __result_buffer__ = executeSysWoker(__result_buffer__);
-        if(executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker) === false) {
+        var result = executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker);
+        if(result === false) {
             serviceWorker.terminate();
             appendLog('Web Worker "serviceWorker" terminated.');
             checkWorker.terminate();
             appendLog('Web Worker "checkWorker" terminated.');
             return;
+        }
+        else {
+            __result_buffer__ = result;
         }
         break;
 
@@ -301,6 +308,7 @@ function executeMashup(dataset) {
 
     // checkWorker onmessage event
     checkWorker.onmessage = function(e) {
+        __result_buffer__ = decodeURIComponent(__rest_result_buffer__);
         var bf = __result_buffer__.replace('"', '\\"');
         bf = bf.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
         var code = e.data;
@@ -355,13 +363,18 @@ function executeMashup(dataset) {
         if(currentServce.getType() == TYPE_REST) {
             var url = currentServce.getRestUrl().replace(/&/g, '%26');
             tempBuffer = __result_buffer__.replace(/&/g, '%26'); // replace all & in __result_buffer__ in order to make PHP works correctly
+            __rest_result_buffer__ = tempBuffer;
             checkWorker.postMessage(url + tempBuffer);
         }
         //else if it is TYPE_WORKER
         else if(currentServce.getType() == TYPE_WORKER) {
             __result_buffer__ = executeSysWoker(__result_buffer__);
-            if(executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker) === false) {
+            var result = executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker);
+            if(result === false) {
                 return;
+            }
+            else {
+                __result_buffer__ = result;
             }
         }
         // else if it is TYPE_WIDGET
@@ -438,12 +451,17 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
             if(currentServce.getType() == TYPE_REST) {
                 var url = serviceBuffer[serviceCounter].getRestUrl().replace(/&/g, '%26');
                 tempBuffer = __result_buffer__.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
+                __rest_result_buffer__ = tempBuffer;
                 checkWorker.postMessage(url + tempBuffer);
             }
             else if(currentServce.getType() == TYPE_WORKER) {
                 __result_buffer__ = executeSysWoker(__result_buffer__);
-                if(executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker) === false) {
+                var result = executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker);
+                if(result === false) {
                     return;
+                }
+                else {
+                    __result_buffer__ = result;
                 }
             }
             else if(currentServce.getType() == TYPE_WIDGET) {
@@ -547,7 +565,7 @@ function executeWidget(__result_buffer__) {
 }
 
 function executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker) {
-    var result = true;
+    var result = __result_buffer__;
     serviceCounter++;
     currentServce = serviceBuffer[serviceCounter];
     if(currentServce == "undefined" || currentServce == undefined) {
@@ -563,6 +581,7 @@ function executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soap
     }
     else if(currentServce.getType() == TYPE_REST) {
         tempBuffer = __result_buffer__.replace(/&/g, '%26'); // replace all & in __result_buffer__ in order to make PHP works correctly
+        __rest_result_buffer__ = tempBuffer;
         checkWorker.postMessage(currentServce.getRestUrl().replace(/&/g, '%26') + tempBuffer);
     }
     else if(currentServce.getType() == TYPE_SOAP) {
@@ -581,8 +600,9 @@ function executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soap
     }
     else if(currentServce.getType() == TYPE_WORKER) {
             __result_buffer__ = executeSysWoker(__result_buffer__);
-            if(executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker) === false) {
-                result = false;
+            var rst = executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soapWorker);
+            if(rst === false) {
+                result = rst;
             }
     }
     return result;
