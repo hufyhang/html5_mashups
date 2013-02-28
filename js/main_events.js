@@ -558,6 +558,8 @@ function propertiesPanelShowSysWorker(service) {
             $('#SysworkerPropertiesAddTextAfter, #SysworkerPropertiesAddTextBefore').change(function() {
                 var before = $('#SysworkerPropertiesAddTextBefore').val();
                 var after = $('#SysworkerPropertiesAddTextAfter').val();
+                before = encodeURIComponent(before);
+                after = encodeURIComponent(after);
                 service.getAddTextObject().setBeforeText(before);
                 service.getAddTextObject().setAfterText(after);
             });
