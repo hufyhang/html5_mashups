@@ -467,9 +467,8 @@ function executeSysWoker(__result_buffer__) {
     case WORKER_ADD_TEXT:
         var before = currentServce.getAddTextObject().getBeforeText();
         var after = currentServce.getAddTextObject().getAfterText();
-        before = decodeURIComponent(before);
-        after = decodeURIComponent(after);
         __result_buffer__ = before + __result_buffer__ + after;
+        __result_buffer__ = __result_buffer__.replace(/\'/g, "&apos;");
         appendLog('Added text {BEFORE:"' + before + '", AFTER: "' + after + '"} ==> ' + __result_buffer__);
         break;
     case WORKER_TRIM_WHITESPACE:

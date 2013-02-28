@@ -1064,8 +1064,6 @@ function updateTrimWhitespaceFeed(value) {
 }
 
 function updateAddTextFeed(before, after) {
-    before = encodeURIComponent(before);
-    after = encodeURIComponent(after);
     if(SysWorkerFeed != undefined) {
         var addTextObj = SysWorkerFeed.getService().getAddTextObject();
         addTextObj.setBeforeText(before);
