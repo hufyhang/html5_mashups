@@ -478,8 +478,8 @@ function executeSysWoker(__result_buffer__) {
         break;
     case WORKER_GEO_JSON:
         if(geolocation !== false) {
-            __result_buffer__ = geolocation['json'];
-            appendLog('Retrieved Geolocation: ' + __result_buffer__);
+            __result_buffer__ += geolocation['json'];
+            appendLog('Retrieved Geolocation: ' + geolocation['json']);
         }
         else {
             showMessageDialog('Oops! Surprisingly, your Web browser does not support HTML5 Geolocation API. Geolocation worker is skipped in your workflow.');
@@ -488,8 +488,8 @@ function executeSysWoker(__result_buffer__) {
         break;
     case WORKER_GEO_TEXT:
         if(geolocation !== false) {
-            __result_buffer__ = geolocation['text'];
-            appendLog('Retrieved Geolocation: ' + __result_buffer__);
+            __result_buffer__ += geolocation['text'];
+            appendLog('Retrieved Geolocation: ' + geolocation['text']);
         }
         else {
             showMessageDialog('Oops! Surprisingly, your Web browser does not support HTML5 Geolocation API. Geolocation worker is skipped in your workflow.');
