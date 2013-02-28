@@ -470,7 +470,7 @@ function readAProject(md5) {
                 var row = results.rows.item(index);
                 json = row['json'];
             }
-            loadFromJSON(json);            
+            loadFromJSON(json.replace(/&apos;/g, "'"));            
         }, null);
     });
 
@@ -497,7 +497,8 @@ function removeAProject(md5) {
 }
 
 function saveAProject(inputName, inputJson, inputKeywords) {
-    var json = inputJson;
+    var json = inputJson.replace(/\'/g, "&apos;");
+    alert(json);
     _database.transaction(function(tx) {
         var md5 = MD5(new Date() + inputName);
         tx.executeSql('INSERT INTO projects (md5, name, json, keyword) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\', \'' + inputKeywords + '\')');
