@@ -498,7 +498,6 @@ function removeAProject(md5) {
 
 function saveAProject(inputName, inputJson, inputKeywords) {
     var json = inputJson.replace(/\'/g, "&apos;");
-    alert(json);
     _database.transaction(function(tx) {
         var md5 = MD5(new Date() + inputName);
         tx.executeSql('INSERT INTO projects (md5, name, json, keyword) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\', \'' + inputKeywords + '\')');
