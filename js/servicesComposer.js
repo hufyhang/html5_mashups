@@ -400,6 +400,7 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
         func = json[funcId].split(' ')[1].trim().split('(')[0]; //get the function name
         // encode URI Components
         var message = 'wsdl=' + encodeURIComponent(wsdl) + '&code=' + encodeURIComponent(func + '(' + par + ')');
+        appendLog('Access SOAP servcie with: ' + message);
         soapWorker.postMessage(message);
         soapWorker.onmessage = function(e) {
             var data = e.data;
