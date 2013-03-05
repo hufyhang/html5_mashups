@@ -405,7 +405,7 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
         soapWorker.onmessage = function(e) {
             var data = e.data;
             appendLog('Received data: ' + data + ' from ' + wsdl);
-            if(data == 'ERROR') {
+            if(data == 'ERROR\n') {
                 showServiceErrorDialog('Oops! Service "' + currentServce.getName() + '" is down. Please try later or use an alternative service feed.', serviceCounter, currentServce.getKeywords()); 
                 appendLog('"' + currentServce.getName() + '" is down. #' + e.data);
                 invisibleElement('activity_indicator');
