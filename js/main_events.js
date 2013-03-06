@@ -227,6 +227,9 @@ function showBackupServiceDialog(targetIndex, keyword) {
                 if(type == TYPE_REST) {
                     onclick = 'replaceRestFeed(' + targetIndex + ', \'' + name + '\', \'' + url + '\', \'' + keywords + '\');invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');';
                 }
+                else if(type == TYPE_SOAP) {
+                    onclick = 'replaceSOAPFeed(' + targetIndex + ', \'' + name + '\', \'' + url + '\', \'' + keywords + '\');invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');';
+                }
                 items += '<tr><td nowrap="nowrap" width="100%"><div class="feed_panel_item" onclick="' + onclick + '"><span class="feed_panel_item_type"><strong>' + type + "</strong></span>" + name + '</div></td></tr>';
             }
             if(items.length == 0) {

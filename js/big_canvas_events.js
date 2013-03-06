@@ -296,8 +296,30 @@ function replaceRestFeed(targetIndex, inputName, inputUrl, inputKeywords) {
         feed = feed.getNextFeed();
         ++counter;
     }
+    feed.getService().setType(TYPE_REST);
     feed.getService().setName(inputName);
     feed.getService().setRestUrl(inputUrl);
+    feed.getService().setKeywords(inputKeywords);
+    var targetNode = feed.getNode();
+    feed = new RestFeed(inputName, inputUrl, inputKeywords);
+
+    feed.setNextFeed(_feeds_nodes[feed.getId() - 2].getNextFeed());
+
+    redrawFeed(targetNode, feed);
+    appendLog('Replaced unavailable service No.' + targetIndex + ' with {NAME:"' + inputName + '", URL:"' + inputUrl + '", KEYWORDS:"' +inputKeywords + '"}');
+}
+
+function replaceSOAPFeed(targetIndex, inputName, inputUrl, inputKeywords) {
+    var feed;
+    var counter = 0;
+    feed = _feeds_nodes[0];
+    while(counter != targetIndex) {
+        feed = feed.getNextFeed();
+        ++counter;
+    }
+    feed.getService().setType(TYPE_SOAP);
+    feed.getService().setName(inputName);
+    feed.getService().setWSDL(inputUrl);
     feed.getService().setKeywords(inputKeywords);
     var targetNode = feed.getNode();
     feed = new RestFeed(inputName, inputUrl, inputKeywords);
