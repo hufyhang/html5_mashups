@@ -9,6 +9,7 @@ var _big_buffer = '';
 
 var fixedWidth, fixedHeight;
 var touchedObj = undefined;
+var touchedNode = undefined;
 
 var SysWorkerFeed = undefined; // the global variable for keeping the current SYSWORKER being connected
 
@@ -22,6 +23,8 @@ function initialiseBigCanvas() {
 
 function registerTouchEvents(stage) {
     stage.on('touchstart', function(evt) {
+        touchedObj = undefined;
+        touchedNode = undefined;
         var x = stage.getTouchPosition().x;
         var y = stage.getTouchPosition().y;
         // iterate _feeds_nodes to capture the tapped removeDot
@@ -41,6 +44,7 @@ function registerTouchEvents(stage) {
             if((x - TOUCH_OFFSET <= connector.getX() && connector.getX() <= x + TOUCH_OFFSET) && 
                 (y - TOUCH_OFFSET <= connector.getY() && connector.getY() <= y + TOUCH_OFFSET)) {
                 touchedObj = connector;
+                touchedNode = _feeds_nodes[index];
                 org_x = touchedObj.getX();
                 org_y = touchedObj.getY();
                 return;
@@ -88,6 +92,7 @@ function registerTouchEvents(stage) {
         var y = stage.getTouchPosition().y;
         touchedObj.getConnectingLine().show();
         touchedObj.getConnectingLine().setPoints([org_x, org_y, x, y]);
+        _big_canvas_layer.draw();
     });
 
     stage.on('touchend', function(evt) {
@@ -99,7 +104,6 @@ function registerTouchEvents(stage) {
         }
         else {
             parentFeed = touchedObj.getParentFeed();
-            touchedObj = undefined;
         }
 
         // reset next feed and beConnectedLine
@@ -111,27 +115,14 @@ function registerTouchEvents(stage) {
         var mouseX = stage.getTouchPosition().x;
         var mouseY = stage.getTouchPosition().y;
         var result = false;
+        var nodeObj;
         for(var index = 0; index != _feeds_nodes.length; ++index) {
-            var nodeObj = _feeds_nodes[index];
+            nodeObj = _feeds_nodes[index];
             if(ifContains(mouseX, mouseY, nodeObj.getNode())) {
                 if(nodeObj.getService().getType() == TYPE_SYS_START) {
                     showMessageDialog('Oops! The "Start" node should not be connected by any other.');
                     break;
                 }
-                var cline = nodeObj.getBeConnectedLine();
-                if(cline != 'undefined') {
-                    nodeObj.getBeConnectedLine().hide();
-                }
-                _feeds_nodes[index].setBeConnectedLine('undefined');
-
-                tObj.getConnectingLine().setPoints([org_x, org_y, 
-                                    nodeObj.getNode().getX() + nodeObj.getNode().getWidth()/2, 
-                                    nodeObj.getNode().getY() + nodeObj.getNode().getHeight()/2]);
-                                    // nodeObj.getNode().getX() + nodeObj.getNode().getBoxWidth()/2, 
-                                    // nodeObj.getNode().getY() + nodeObj.getNode().getBoxHeight()/2]);
-                _feeds_nodes[index].setBeConnectedLine(tObj.getConnectingLine());
-
-                parentFeed.setNextFeed(nodeObj);
 
                 // check if need to pop up fetchJSONFeed dialog
                 if(nodeObj.getService().getType() == TYPE_WORKER && nodeObj.getService().getName() == WORKER_FETCH_LAST_BY_KEY) {
@@ -145,12 +136,15 @@ function registerTouchEvents(stage) {
                 break;
             }
         }
-        if(result == false) {
-            tObj.getConnectingLine().hide();
+        if(result === false) {
+            touchedObj.getConnectingLine().hide();
             parentFeed.clearNextFeed();
         }
-        tObj.setPosition(org_x, org_y);
-        tObj.moveToTop();
+        else {
+            touchedNode.getConnector().connectTo(nodeObj);
+        }
+        touchedObj.setPosition(org_x, org_y);
+        touchedObj.moveToTop();
     });
 }
 
@@ -813,11 +807,11 @@ function drawStartNode() {
             x:  _big_canvas_stage.getWidth() / 2,
             y: 10,
             stroke: '#555',
-            strokeWidth: 2,
+            strokeWidth: 1.5,
             // fill: '#aaa',
             fill: 'white',
             text: 'Start',
-            fontSize: 20,
+            fontSize: 15,
             fontFamily: 'Calibri',
             // textFill: 'white',
             width: 80,
@@ -1104,7 +1098,7 @@ function ServiceFeed(name, url, inputKeywords, type) {
     });
     feed.on('mouseout', function() {
         this.setStroke('black');
-        this.setFill('#ddf');
+        box.setFill('#ddf');
         box.setStroke('black');
         _big_canvas_layer.draw();
     });
@@ -1252,7 +1246,7 @@ function highlightErrorNode(inputIndex) {
         ++counter;
     }
 
-    feed.getNode().setFill('yellow');
+    feed.getBox().setFill('yellow');
     _big_canvas_layer.draw();
 }
 
