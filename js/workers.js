@@ -9,8 +9,10 @@ const WORKER_REMOVE_SPECIAL = 'Remove Special Characters';
 function drawAWorker(type) {
     var feed = new SysWorker(type);
     _feeds_nodes.push(feed);
+    _big_canvas_layer.add(feed.getBox());
     _big_canvas_layer.add(feed.getNode());
     _big_canvas_layer.add(feed.getConnector().getConnector());
+    _big_canvas_layer.add(feed.getRemoveDot().getBox());
     _big_canvas_layer.add(feed.getRemoveDot().getRemoveDot());
     _big_canvas_stage.draw();
 }
@@ -100,21 +102,30 @@ function SysWorker(type) {
             strokeWidth: 1,
             fill: '#ddf',
             text: type,
-            fontSize: 10,
+            fontSize: 12,
             fontFamily: 'Calibri',
             textFill: 'black',
             width: 350,
             padding: 10,
-            align: 'center',
-            // fontStyle: 'italic',
-            shadow: {
-                color: 'black',
-                blur: 1,
-                offset: [5, 5],
-                opacity: 0.2
-            },
+            align: 'center'
+    });
+
+    var box = new Kinetic.Rect({
+            draggable: true,
+            x: feed.getX(),
+            y: feed.getY(),
+            stroke: 'black',
+            fill: '#ddf',
+            width: feed.getWidth(),
+            height: feed.getHeight(),
+            shadowColor: 'black',
+            shadowOffset: [5, 5],
             cornerRadius: 5
     });
+
+    this.getBox = function() {
+        return box;
+    };
 
     feedConnector = new Connector(this);
     removeDot = new RemoveDot(this);
@@ -123,31 +134,62 @@ function SysWorker(type) {
         return removeDot;
     };
 
+    box.on('mouseover', function() {
+        this.setStroke('red');
+        feed.setStroke('red');
+        _big_canvas_layer.draw();
+    });
+    box.on('mouseout', function() {
+        this.setStroke('black');
+        feed.setStroke('black');
+        feed.setFill('#ddf');
+        _big_canvas_layer.draw();
+    });
     feed.on('mouseover', function() {
         this.setStroke('red');
+        box.setStroke('red');
         _big_canvas_layer.draw();
     });
     feed.on('mouseout', function() {
         this.setStroke('black');
+        box.setStroke('black');
         this.setFill('#ddf');
         _big_canvas_layer.draw();
     });
 
+    box.on('click', function() {
+        propertiesPanelShowSysWorker(service);
+    });
     feed.on('click', function() {
         propertiesPanelShowSysWorker(service);
     });
 
-    feed.on("dragstart", function() {
+    box.on("dragstart", function() {
         org_connecting_line_points = feedConnector.getConnectingLine().getPoints();
+        box.moveToTop();
         feed.moveToTop();
         feedConnector.getConnector().moveToTop();
+        removeDot.getBox().moveToTop();
+        removeDot.getRemoveDot().moveToTop();
+        _big_canvas_layer.draw();
+    });
+    feed.on("dragstart", function() {
+        org_connecting_line_points = feedConnector.getConnectingLine().getPoints();
+        box.moveToTop();
+        feed.moveToTop();
+        feedConnector.getConnector().moveToTop();
+        removeDot.getBox().moveToTop();
         removeDot.getRemoveDot().moveToTop();
         _big_canvas_layer.draw();
     });
 
-    feed.on("dragmove", function() {
+    box.on("dragmove", function() {
+        feed.setX(box.getX());
+        feed.setY(box.getY());
         moveConnector(feedConnector.getConnector(), feed);
         moveRemoveDot(removeDot.getRemoveDot(), feed);
+        removeDot.getBox().setX(removeDot.getRemoveDot().getX());
+        removeDot.getBox().setY(removeDot.getRemoveDot().getY());
 
         if(org_connecting_line_points.length > 1) {
             var org_point = org_connecting_line_points[1];
@@ -156,8 +198,29 @@ function SysWorker(type) {
         }
 
         if(beConnectedLine !== 'undefined') {
-            beConnectedLine.setPoints(beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y,
-                                        this.getX() + this.getBoxWidth()/2, this.getY() + this.getBoxHeight()/2); 
+            beConnectedLine.setPoints([beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y,
+            this.getX() + this.getWidth()/2, this.getY() + this.getHeight()/2]); 
+        }
+
+        _big_canvas_layer.draw();
+    });
+    feed.on("dragmove", function() {
+        box.setX(feed.getX());
+        box.setY(feed.getY());
+        moveConnector(feedConnector.getConnector(), feed);
+        moveRemoveDot(removeDot.getRemoveDot(), feed);
+        removeDot.getBox().setX(removeDot.getRemoveDot().getX());
+        removeDot.getBox().setY(removeDot.getRemoveDot().getY());
+
+        if(org_connecting_line_points.length > 1) {
+            var org_point = org_connecting_line_points[1];
+            feedConnector.getConnectingLine().setPoints([feedConnector.getConnector().getX(), 
+                        feedConnector.getConnector().getY(), org_point.x, org_point.y]);
+        }
+
+        if(beConnectedLine !== 'undefined') {
+            beConnectedLine.setPoints([beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y,
+            this.getX() + this.getWidth()/2, this.getY() + this.getHeight()/2]); 
         }
 
         _big_canvas_layer.draw();

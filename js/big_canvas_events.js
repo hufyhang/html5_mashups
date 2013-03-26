@@ -2,6 +2,7 @@ const _LOCAL_STORAGE = 'html5_mashup_kineticjs_stage';
 const TOUCH_OFFSET = 5;
 var _big_canvas_stage, _big_canvas_layer;
 var _feeds_nodes = [];
+var _groups = [];
 
 var _big_counter = 0;
 var _big_buffer = '';
@@ -124,8 +125,10 @@ function registerTouchEvents(stage) {
                 _feeds_nodes[index].setBeConnectedLine('undefined');
 
                 tObj.getConnectingLine().setPoints([org_x, org_y, 
-                                    nodeObj.getNode().getX() + nodeObj.getNode().getBoxWidth()/2, 
-                                    nodeObj.getNode().getY() + nodeObj.getNode().getBoxHeight()/2]);
+                                    nodeObj.getNode().getX() + nodeObj.getNode().getWidth()/2, 
+                                    nodeObj.getNode().getY() + nodeObj.getNode().getHeight()/2]);
+                                    // nodeObj.getNode().getX() + nodeObj.getNode().getBoxWidth()/2, 
+                                    // nodeObj.getNode().getY() + nodeObj.getNode().getBoxHeight()/2]);
                 _feeds_nodes[index].setBeConnectedLine(tObj.getConnectingLine());
 
                 parentFeed.setNextFeed(nodeObj);
@@ -178,6 +181,7 @@ function newProject() {
     _big_buffer = '';
     for(var index = 0; index != _feeds_nodes.length; ++index) {
         _feeds_nodes[index].getNode().hide();
+        _feeds_nodes[index].getBox().hide();
         if(_feeds_nodes[index].getService().getType() != TYPE_WIDGET) { // widgets have no connectors
             _feeds_nodes[index].getConnector().getConnector().hide();
         }
@@ -187,6 +191,7 @@ function newProject() {
                 line.hide();
             }
             _feeds_nodes[index].getRemoveDot().getRemoveDot().hide();
+            _feeds_nodes[index].getRemoveDot().getBox().hide();
         }
     }
     _feeds_nodes = [];
@@ -337,7 +342,8 @@ function moveRemoveDot(removeDot, parent_node) {
 
 function moveConnector(connector, parent_node) {
     connector.setPosition(parent_node.getX() + parent_node.getWidth() - parent_node.getWidth()/2, 
-                            parent_node.getY() + parent_node.getBoxHeight());
+                            // parent_node.getY() + parent_node.getBoxHeight());
+                            parent_node.getY() + parent_node.getHeight());
     _big_canvas_stage.draw();
 }
 
@@ -360,10 +366,10 @@ function RemoveDot(parent_feed) {
         return removeDot.getTextHeight();
     };
 
+    var group = new Kinetic.Group({draggable: true});
     var removeDot = new Kinetic.Text({
         x: node_x,
         y: node_y,
-        radius: 8,
         width: 55,
         height: 17,
         padding: 2,
@@ -377,22 +383,58 @@ function RemoveDot(parent_feed) {
         textFill: 'white',
         draggable: false
     });
+    var box = new Kinetic.Rect({
+            x: removeDot.getX(),
+            y: removeDot.getY(),
+            width: removeDot.getWidth(),
+            height: removeDot.getHeight(),
+            stroke: 'black',
+            fill: '#883737',
+            strokeWidth: 1,
+            cornerRadius: 2
+    });
+    group.add(removeDot);
+    group.add(box);
+    _groups.push(group);
+
+    box.on('mouseover', function() {
+        removeDot.setFontStyle('italic');
+        box.setFill('red');
+        _big_canvas_layer.draw();
+    });
+    box.on('mouseout', function() {
+        removeDot.setFontStyle('normal');
+        box.setFill('#883737');
+        _big_canvas_layer.draw();
+    });
     removeDot.on('mouseover', function() {
         removeDot.setFontStyle('italic');
-        removeDot.setFill('red');
+        box.setFill('red');
         _big_canvas_layer.draw();
     });
     removeDot.on('mouseout', function() {
         removeDot.setFontStyle('normal');
-        removeDot.setFill('#883737');
+        box.setFill('#883737');
         _big_canvas_layer.draw();
+    });
+
+    box.on('click', function() {
+        removeFeedFromCanvas(parent_feed);
     });
     removeDot.on('click', function() {
         removeFeedFromCanvas(parent_feed);
     });
 
+    this.getGroup = function() {
+        return group;
+    };
+
     this.getRemoveDot = function() {
         return removeDot;
+    };
+
+    this.getBox = function() {
+        return box;
     };
 }
 
@@ -401,11 +443,13 @@ function removeFeedFromCanvas(feed) {
     // return;
 
     feed.getNode().hide();
+    feed.getBox().hide();
     var cline = feed.getBeConnectedLine();
     if(cline != 'undefined' && cline != undefined) {
         feed.getBeConnectedLine().hide();
     }
     feed.getRemoveDot().getRemoveDot().hide();
+    feed.getRemoveDot().getBox().hide();
     if(feed.getService().getType() != TYPE_WIDGET) {
         feed.getConnector().getConnector().hide();
     }
@@ -553,7 +597,8 @@ function Connector(parent_feed) {
     var parent_node = parent_feed.getNode();
     var org_x, org_y;
     var node_x = parent_node.getX() + parent_node.getWidth() - parent_node.getWidth()/2;
-    var node_y = parent_node.getY() + parent_node.getBoxHeight(); 
+    // var node_y = parent_node.getY() + parent_node.getBoxHeight(); 
+    var node_y = parent_node.getY() + parent_node.getHeight(); 
     var connectingLine;
     var parentFeed = parent_feed;
 
@@ -638,8 +683,10 @@ function Connector(parent_feed) {
                 _feeds_nodes[index].setBeConnectedLine('undefined');
 
                 connectingLine.setPoints([org_x, org_y, 
-                                    nodeObj.getNode().getX() + nodeObj.getNode().getBoxWidth()/2, 
-                                    nodeObj.getNode().getY() + nodeObj.getNode().getBoxHeight()/2]);
+                                    // nodeObj.getNode().getX() + nodeObj.getNode().getBoxWidth()/2, 
+                                    // nodeObj.getNode().getY() + nodeObj.getNode().getBoxHeight()/2]);
+                                    nodeObj.getNode().getX() + nodeObj.getNode().getWidth()/2, 
+                                    nodeObj.getNode().getY() + nodeObj.getNode().getHeight()/2]);
                 _feeds_nodes[index].setBeConnectedLine(connectingLine);
 
                 parentFeed.setNextFeed(nodeObj);
@@ -710,10 +757,24 @@ function Connector(parent_feed) {
 
     this.connectTo = function(nextFeed) {
         connectingLine.setPoints([connector.getX(), connector.getY(),
-                nextFeed.getNode().getX() + nextFeed.getNode().getBoxWidth()/2,
-                nextFeed.getNode().getY() + nextFeed.getNode().getBoxHeight()/2]);
+                nextFeed.getNode().getX() + nextFeed.getNode().getWidth()/2,
+                nextFeed.getNode().getY() + nextFeed.getNode().getHeight()/2]);
+                // nextFeed.getNode().getX() + nextFeed.getNode().getBoxWidth()/2,
+                // nextFeed.getNode().getY() + nextFeed.getNode().getBoxHeight()/2]);
         nextFeed.setBeConnectedLine(connectingLine);
         parentFeed.setNextFeed(nextFeed);
+
+        // parentFeed.getBox().moveToTop();
+        // parentFeed.getNode().moveToTop();
+        // if(parentFeed.getType != TYPE_SYS_START) {
+        //     parentFeed.getRemoveDot().getBox().moveToTop();
+        //     parentRemove.getRemoveDot().getRemoveDot().moveToTop();
+        // }
+        // nextFeed.getBox().moveToTop();
+        // nextFeed.getNode().moveToTop();
+        // nextFeed.getRemoveDot().getBox().moveToTop();
+        // nextFeed.getRemoveDot().getRemoveDot().moveToTop();
+
         _big_canvas_layer.draw();
         _big_canvas_stage.draw();
     };
@@ -741,29 +802,55 @@ function drawStartNode() {
         return start;
     };
 
+    this.getBox = function() {
+        return box;
+    };
+
+    var group = new Kinetic.Group({draggable: true});
+    _groups.push(group);
     var start = new Kinetic.Text({
             draggable: true,
             x:  _big_canvas_stage.getWidth() / 2,
             y: 10,
             stroke: '#555',
             strokeWidth: 2,
-            fill: '#aaa',
+            // fill: '#aaa',
+            fill: 'white',
             text: 'Start',
-            fontSize: 15,
+            fontSize: 20,
             fontFamily: 'Calibri',
-            textFill: 'white',
+            // textFill: 'white',
             width: 80,
             padding: 10,
-            align: 'center',
+            align: 'center'
             // fontStyle: 'italic',
-            shadow: {
-                color: 'black',
-                blur: 1,
-                offset: [5, 5],
-                opacity: 0.2
-            },
+            // shadow: {
+            //     color: 'black',
+            //     blur: 1,
+            //     offset: [5, 5],
+            //     opacity: 0.2
+            // },
+            // cornerRadius: 15
+    });
+
+    var box = new Kinetic.Rect({
+            draggable: true,
+            x:  start.getX(),
+            y: start.getY(),
+            stroke: '#555',
+            strokeWidth: 2,
+            fill: '#ddd',
+            width: 80,
+            height: start.getHeight(),
+            shadowColor: 'black',
+            // shadowBlur: 1,
+            shadowOffset: [5, 5],
+            // shadowOpacity: 0.2,
             cornerRadius: 15
     });
+    group.add(start);
+    group.add(box);
+
     var startConnector = new Connector(this);
     var org_connecting_line_points;
 
@@ -772,22 +859,49 @@ function drawStartNode() {
     };
 
     start.on('mouseover', function() {
-        this.setStroke('red');
+        box.setStroke('red');
         _big_canvas_layer.draw();
     });
     start.on('mouseout', function() {
+        box.setStroke('#ddd');
+        _big_canvas_layer.draw();
+    });
+    box.on('mouseover', function() {
+        this.setStroke('red');
+        _big_canvas_layer.draw();
+    });
+    box.on('mouseout', function() {
         this.setStroke('#ddd');
         _big_canvas_layer.draw();
     });
 
-    start.on("dragstart", function() {
+    start.on('dragstart', function() {
+        org_connecting_line_points = startConnector.getConnectingLine().getPoints();
+        start.moveToTop();
+        startConnector.getConnector().moveToTop();
+        _big_canvas_layer.draw();
+    });
+    box.on("dragstart", function() {
         org_connecting_line_points = startConnector.getConnectingLine().getPoints();
         start.moveToTop();
         startConnector.getConnector().moveToTop();
         _big_canvas_layer.draw();
     });
 
-    start.on("dragmove", function(){
+    start.on('dragmove', function() {
+        box.setX(start.getX());
+        box.setY(start.getY());
+        moveConnector(startConnector.getConnector(), start);
+        if(org_connecting_line_points.length > 1) {
+            var org_point = org_connecting_line_points[1];
+            startConnector.getConnectingLine().setPoints([startConnector.getConnector().getX(), 
+                        startConnector.getConnector().getY(), org_point.x, org_point.y]);
+        }
+        _big_canvas_layer.draw();
+    });
+    box.on("dragmove", function(){
+        start.setX(box.getX());
+        start.setY(box.getY());
         moveConnector(startConnector.getConnector(), start);
         if(org_connecting_line_points.length > 1) {
             var org_point = org_connecting_line_points[1];
@@ -803,50 +917,7 @@ function drawStartNode() {
 
     _feeds_nodes.push(this);
 
-    // var end = new Kinetic.Text({
-    //         draggable: true,
-    //         x: _big_canvas_stage.getWidth() / 2,
-    //         y: _big_canvas_stage.getHeight() - 60,
-    //         stroke: '#555',
-    //         strokeWidth: 2,
-    //         fill: '#aaa',
-    //         text: 'End',
-    //         fontSize: 15,
-    //         fontFamily: 'Calibri',
-    //         textFill: 'white',
-    //         width: 80,
-    //         padding: 10,
-    //         align: 'center',
-    //         // fontStyle: 'italic',
-    //         shadow: {
-    //             color: 'black',
-    //             blur: 1,
-    //             offset: [5, 5],
-    //             opacity: 0.2
-    //         },
-    //         cornerRadius: 15
-    // });
-
-    // // var endConnector = new Connector(end);
-
-    // end.on('mouseover', function() {
-    //     this.setStroke('red');
-    //     _big_canvas_layer.draw();
-    // });
-    // end.on('mouseout', function() {
-    //     this.setStroke('#ddd');
-    //     _big_canvas_layer.draw();
-    // });
-
-    // end.on("dragstart", function() {
-    //     end.moveToTop();
-    //     _big_canvas_layer.draw();
-    // });
-
-    // // end.on("dragmove", function() {
-    // //     moveConnector(endConnector, end);
-    // // });
-
+    _big_canvas_layer.add(box);
     _big_canvas_layer.add(start);
     // _big_canvas_layer.add(end);
 
@@ -894,8 +965,10 @@ function drawAServiceFeed(name, type, url, keywords) {
     } 
     _feeds_nodes.push(feed);
 
+    _big_canvas_layer.add(feed.getBox());
     _big_canvas_layer.add(feed.getNode());
     _big_canvas_layer.add(feed.getConnector().getConnector());
+    _big_canvas_layer.add(feed.getRemoveDot().getBox());
     _big_canvas_layer.add(feed.getRemoveDot().getRemoveDot());
     _big_canvas_stage.draw();
 }
@@ -970,6 +1043,11 @@ function ServiceFeed(name, url, inputKeywords, type) {
         return feedConnector;
     };
 
+    this.getBox = function() {
+        return box;
+    };
+
+    var group  = new Kinetic.Group({draggable: true});
     var feed = new Kinetic.Text({
             draggable: true,
             x: 0,
@@ -978,21 +1056,28 @@ function ServiceFeed(name, url, inputKeywords, type) {
             strokeWidth: 1,
             fill: '#ddf',
             text: name + '\n\n' + url,
-            fontSize: 10,
+            fontSize: 12,
             fontFamily: 'Calibri',
-            textFill: 'black',
             width: 350,
             padding: 10,
-            align: 'center',
+            align: 'center'
             // fontStyle: 'italic',
-            shadow: {
-                color: 'black',
-                blur: 1,
-                offset: [5, 5],
-                opacity: 0.2
-            },
+    });
+    var box = new Kinetic.Rect({
+            draggable: true,
+            x: feed.getX(),
+            y: feed.getY(),
+            stroke: 'black',
+            width: feed.getWidth(),
+            height: feed.getHeight(),
+            fill: '#ddf',
+            shadowColor: 'black',
+            shadowOffset: [5, 5],
             cornerRadius: 5
     });
+    group.add(feed);
+    group.add(box);
+    _groups.push(group);
 
     feedConnector = new Connector(this);
     removeDot = new RemoveDot(this);
@@ -1001,16 +1086,37 @@ function ServiceFeed(name, url, inputKeywords, type) {
         return feedConnector;
     };
 
+    box.on('mouseover', function() {
+        feed.setStroke('red');
+        box.setStroke('red');
+        _big_canvas_layer.draw();
+    });
+    box.on('mouseout', function() {
+        feed.setStroke('black');
+        feed.setFill('#ddf');
+        box.setStroke('black');
+        _big_canvas_layer.draw();
+    });
     feed.on('mouseover', function() {
         this.setStroke('red');
+        box.setStroke('red');
         _big_canvas_layer.draw();
     });
     feed.on('mouseout', function() {
         this.setStroke('black');
         this.setFill('#ddf');
+        box.setStroke('black');
         _big_canvas_layer.draw();
     });
 
+    box.on('click', function() {
+        if(type === TYPE_REST) {
+            propertiesPanelShowRestFeed(service);
+        }
+        else if(type === TYPE_SOAP) {
+            propertiesPanelShowSoapFeed(service);
+        }
+    });
     feed.on('click', function() {
         if(type === TYPE_REST) {
             propertiesPanelShowRestFeed(service);
@@ -1020,17 +1126,32 @@ function ServiceFeed(name, url, inputKeywords, type) {
         }
     });
 
-    feed.on("dragstart", function() {
+    box.on("dragstart", function() {
         org_connecting_line_points = feedConnector.getConnectingLine().getPoints();
+        box.moveToTop();
         feed.moveToTop();
         feedConnector.getConnector().moveToTop();
+        removeDot.getBox().moveToTop();
+        removeDot.getRemoveDot().moveToTop();
+        _big_canvas_layer.draw();
+    });
+    feed.on("dragstart", function() {
+        org_connecting_line_points = feedConnector.getConnectingLine().getPoints();
+        box.moveToTop();
+        feed.moveToTop();
+        feedConnector.getConnector().moveToTop();
+        removeDot.getBox().moveToTop();
         removeDot.getRemoveDot().moveToTop();
         _big_canvas_layer.draw();
     });
 
-    feed.on("dragmove", function() {
+    box.on("dragmove", function() {
+        feed.setX(box.getX());
+        feed.setY(box.getY());
         moveConnector(feedConnector.getConnector(), feed);
         moveRemoveDot(removeDot.getRemoveDot(), feed);
+        removeDot.getBox().setX(removeDot.getRemoveDot().getX());
+        removeDot.getBox().setY(removeDot.getRemoveDot().getY());
 
         if(org_connecting_line_points.length > 1) {
             var org_point = org_connecting_line_points[1];
@@ -1039,9 +1160,30 @@ function ServiceFeed(name, url, inputKeywords, type) {
         }
 
         if(beConnectedLine !== 'undefined') {
-            beConnectedLine.setPoints(beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y,
-                                        this.getX() + this.getBoxWidth()/2, this.getY() + this.getBoxHeight()/2); 
+            beConnectedLine.setPoints([beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y, feed.getX() + feed.getWidth()/2, feed.getY() + feed.getHeight()/2]); 
         }
+        // this.getX() + this.getBoxWidth()/2, this.getY() + this.getBoxHeight()/2); 
+
+        _big_canvas_layer.draw();
+    });
+    feed.on("dragmove", function() {
+        box.setX(feed.getX());
+        box.setY(feed.getY());
+        moveConnector(feedConnector.getConnector(), feed);
+        moveRemoveDot(removeDot.getRemoveDot(), feed);
+        removeDot.getBox().setX(removeDot.getRemoveDot().getX());
+        removeDot.getBox().setY(removeDot.getRemoveDot().getY());
+
+        if(org_connecting_line_points.length > 1) {
+            var org_point = org_connecting_line_points[1];
+            feedConnector.getConnectingLine().setPoints([feedConnector.getConnector().getX(), 
+                        feedConnector.getConnector().getY(), org_point.x, org_point.y]);
+        }
+
+        if(beConnectedLine !== 'undefined') {
+            beConnectedLine.setPoints([beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y, this.getX() + this.getWidth()/2, this.getY() + this.getHeight()/2]); 
+        }
+        // this.getX() + this.getBoxWidth()/2, this.getY() + this.getBoxHeight()/2); 
 
         _big_canvas_layer.draw();
     });
@@ -1051,7 +1193,8 @@ function ifContains(pointX, pointY, node) {
     var x1 = node.getX();
     var x2 = node.getX() + node.getWidth();
     var y1 = node.getY();
-    var y2 = node.getY() + node.getBoxHeight();
+    // var y2 = node.getY() + node.getBoxHeight();
+    var y2 = node.getY() + node.getHeight();
     var result;
     if((x1 < pointX) && (x2 > pointX) && (y1 < pointY) && (y2 > pointY)) {
         result = true;
