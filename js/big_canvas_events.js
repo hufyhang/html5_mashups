@@ -871,12 +871,14 @@ function drawStartNode() {
 
     start.on('dragstart', function() {
         org_connecting_line_points = startConnector.getConnectingLine().getPoints();
+        box.moveToTop();
         start.moveToTop();
         startConnector.getConnector().moveToTop();
         _big_canvas_layer.draw();
     });
     box.on("dragstart", function() {
         org_connecting_line_points = startConnector.getConnectingLine().getPoints();
+        box.moveToTop();
         start.moveToTop();
         startConnector.getConnector().moveToTop();
         _big_canvas_layer.draw();
