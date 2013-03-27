@@ -50,6 +50,7 @@ function publishProject() {
     author = author.replace(/\'/g, '\\\'');
     keywords = keywords.replace(/\'/g, '\\\'');
     description = description.replace(/\'/g, '\\\'');
+    description = description.replace(/\n/g, '<br/>');
     json = json.replace(/\'/g, '\\\'');
 
     $.ajax({
