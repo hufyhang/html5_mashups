@@ -352,6 +352,14 @@ input, button, select, textarea {
     font-family: inherit;
 }
 
+.input_textarea {
+    padding-left: 8px;
+    padding-right: 8px;
+    width: 90%;
+    height: 50px;
+    font-size: 15px;
+}
+
 .input_box {
     resize: none;
     padding-left: 8px;

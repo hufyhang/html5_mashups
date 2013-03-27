@@ -1,5 +1,6 @@
 const LOAD_FEED_MARKET_PHP = 'php/loadFeedMarket.php';
 const LOAD_PROJECT_MARKET_PHP = 'php/loadProjectMarket.php';
+const PUBLISH_PROJECT_PHP = 'php/publishProject.php';
 
 var _feed_market_descs = [];
 var _feed_market_names = [];
@@ -14,6 +15,51 @@ var _project_market_descs = [];
 var _project_market_json = [];
 var _project_market_keywords = [];
 
+
+function publishProject() {
+    var name = encodeURIComponent($('#publishProjectName').val());
+    var author = encodeURIComponent($('#publishProjectAuthor').val());
+    var description = encodeURIComponent($('#publishProjectDescription').val());
+    var keywords = encodeURIComponent($('#publishProjectKeywords').val());
+    if(name == '') {
+        alert('Please enter project name.');
+        return;
+    }
+    if(author == '') {
+        alert('Please enter author name.');
+        return;
+    }
+    if(description == '') {
+        alert('Please enter description.');
+        return;
+    }
+    if(keywords == '') {
+        alert('Please enter keywords.');
+        return;
+    }
+
+    if(_feeds_nodes.length == 1) {
+        alert('Nothing to publish.');
+        return;
+    }
+
+    var json = encodeURIComponent(getFeedsJSON());
+    var md5 = MD5(new Date() + name + author + keywords + json + description);
+
+    name = name.replace(/\'/g, '\\\'');
+    author = author.replace(/\'/g, '\\\'');
+    keywords = keywords.replace(/\'/g, '\\\'');
+    description = description.replace(/\'/g, '\\\'');
+    json = json.replace(/\'/g, '\\\'');
+
+    $.ajax({
+            url: PUBLISH_PROJECT_PHP + '?md5=' + md5 + '&name=' + name + '&author=' + author + '&keywords=' + keywords + '&description=' + description + '&json=' + json,
+            type: REST_METHOD_GET,
+            success: function() {
+                $('#dashboard_output').html('<div>Project "' + decodeURIComponent(name) + '" is published.</div><div>MD5: ' + md5 + '</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');$(\'#dashboard_output\').html(\'\');">Close</div>');
+            }
+    });
+}
 
 function loadProjectMarket() {
     var json = $.ajax({
@@ -30,14 +76,20 @@ function loadProjectMarket() {
     var html = '<div style="padding-left:5px; font-weight:bold;">Project Market</div><table class="frame_table" width="100%"><tr><td width="40%"><div style="height:300px;" class="scrollable_div"><table style="width: 100%;">';
     for(var index = 0; index != count; ++index) {
         var item = jsonObj.projects[index];
-        _project_market_md5s[index] = item.md5;
-        _project_market_names[index] = item.name;
-        _project_market_authors[index] = item.author;
-        _project_market_descs[index] = item.description.replace('\"', '"');
-        _project_market_json[index] = item.json.replace('\"', '"');
-        _project_market_keywords[index] = item.keywords;
+        var md5 = item.md5;
+        var name = item.name;
+        var author = item.author;
+        var description = item.description.replace(/\"/g, '"');
+        var json = item.json.replace(/\"/g, '"');
+        var keywords = item.keywords;
+        _project_market_md5s[index] = md5;
+        _project_market_names[index] = name.replace(/\\\'/g, "'");
+        _project_market_authors[index] = author.replace(/\\\'/g, "'");
+        _project_market_descs[index] = description.replace(/\\\'/g, "'");
+        _project_market_json[index] = json.replace(/\\\'/g, "'");
+        _project_market_keywords[index] = keywords.replace(/\\\'/g, "'");
         html += '<tr><td><div class="feed_panel_item" style="width: 80%;" onclick="showProjectMarketItem(' + index + ');">';
-        html += item.name;
+        html += name.replace(/\\\'/g, "'");
         html += '</div></td></tr>';
     }
 

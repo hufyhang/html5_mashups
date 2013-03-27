@@ -39,7 +39,12 @@ function showLogDialog() {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
     $('#dashboard_output').html('<div>System Log</div><hr/><table style="width: 100%;"><tr><td><div id="logMessageDiv" style="overflow: auto; width: 40em; height: 300px; background:grey; padding-left: 5px; padding-right: 5px;">' + _log + '</div></td></tr><tr><td align="center"><div class="div_push_button" onclick="_log = \'\';$(\'#logMessageDiv\').html(\'\');">Clear</div><div class="div_long_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');$(\'#dashboard_output\').html(\'\');">Close</div></td></tr></table>');
+}
 
+function showPublishDialog() {
+    visibleElement('dashboard');
+    visibleElement('dashboard_div');
+    $('#dashboard_output').html('<div><label>Project Name:</label><br/><input class="input_box" type="TEXT" id="publishProjectName" placeholder="please enter a desire name for publishing your project..." /></div><div><label>Author:</label><br/><input class="input_box" type="TEXT" id="publishProjectAuthor" placeholder="please enter the name of the author..." /></div><div><label>Keywords:</lable><br/><input type="TEXT" class="input_box" id="publishProjectKeywords" placeholder="please enter keywords. e.g: service, rest, map..." /></div><div><label>Description:</lable><br/><textarea id="publishProjectDescription" class="input_textarea" rows="10">My ad-hoc composite service.</textarea></div><div><div class="div_push_button" onclick="publishProject();">Publish</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');$(\'#dashboard_output\').html(\'\');">Close</div></div>');
 }
 
 function visibleElement(elementId) {
@@ -166,6 +171,9 @@ function insertFeedIntoHyperMash(name, url, type, keywords) {
 
 function insertProjectIntoHyperMash(inputMd5, inputName, inputJson, inputKeywords) {
     var json = inputJson;
+    inputName = inputName.replace(/\'/g, '&apos;');
+    json = json.replace(/\'/g, '&apos;');
+    inputKeywords = inputKeywords.replace(/\'/g, '&apos;');
     _database.transaction(function(tx) {
         var md5 = inputMd5;
         tx.executeSql('INSERT INTO projects (md5, name, json, keyword) VALUES (\'' + md5 + '\', \'' + inputName + '\', \'' + json + '\', \'' + inputKeywords + '\')');
@@ -491,12 +499,6 @@ function removeAProject(md5) {
             appendLog('Project with MD5 \"' + md5 + '\" has been removed.');
         }
     });
-
-    // idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_WRITE).objectStore(INDEXEDDB_STORE).delete(id).onsuccess = function(evt) {
-    //     if(_currentPlace == SHOW_PROJECTS) {
-    //         readProjects('options_field_output');
-    //     }
-    // };
 }
 
 function saveAProject(inputName, inputJson, inputKeywords) {
