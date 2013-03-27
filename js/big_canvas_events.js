@@ -2,7 +2,6 @@ const _LOCAL_STORAGE = 'html5_mashup_kineticjs_stage';
 const TOUCH_OFFSET = 5;
 var _big_canvas_stage, _big_canvas_layer;
 var _feeds_nodes = [];
-var _groups = [];
 
 var _big_counter = 0;
 var _big_buffer = '';
@@ -72,16 +71,6 @@ function registerTouchEvents(stage) {
                 return;
             }
         }
-        // // iterate _feeds_nodes to capture the touched removeDot
-        // for(var index = 0; index != _feeds_nodes.length; ++index) {
-        //     var removeDot = _feeds_nodes[index].getRemoveDot();
-        //     var parentFeed = removeDot.getParentFeed();
-        //     if((x - TOUCH_OFFSET <= removeDot.getX() && removeDot.getX() + removeDot.getWidth() <= x + TOUCH_OFFSET) && 
-        //         (y - TOUCH_OFFSET <= removeDot.getY() && removeDot.getY() + removeDot.getHeight() <= y + TOUCH_OFFSET)) {
-        //         removeFeedFromCanvas(parentFeed);
-        //         return;
-        //     }
-        // }
     });
 
     stage.on('touchmove', function(evt) {
@@ -360,7 +349,6 @@ function RemoveDot(parent_feed) {
         return removeDot.getTextHeight();
     };
 
-    var group = new Kinetic.Group({draggable: true});
     var removeDot = new Kinetic.Text({
         x: node_x,
         y: node_y,
@@ -387,29 +375,29 @@ function RemoveDot(parent_feed) {
             strokeWidth: 1,
             cornerRadius: 2
     });
-    group.add(removeDot);
-    group.add(box);
-    _groups.push(group);
+
+    var mouse_over = function() {
+        removeDot.setFontStyle('italic');
+        box.setFill('red');
+        _big_canvas_layer.draw();
+    };
+    var mouse_out = function() {
+        removeDot.setFontStyle('normal');
+        box.setFill('#883737');
+        _big_canvas_layer.draw();
+    };
 
     box.on('mouseover', function() {
-        removeDot.setFontStyle('italic');
-        box.setFill('red');
-        _big_canvas_layer.draw();
+        mouse_over();
     });
     box.on('mouseout', function() {
-        removeDot.setFontStyle('normal');
-        box.setFill('#883737');
-        _big_canvas_layer.draw();
+        mouse_out();
     });
     removeDot.on('mouseover', function() {
-        removeDot.setFontStyle('italic');
-        box.setFill('red');
-        _big_canvas_layer.draw();
+        mouse_over();
     });
     removeDot.on('mouseout', function() {
-        removeDot.setFontStyle('normal');
-        box.setFill('#883737');
-        _big_canvas_layer.draw();
+        mouse_out();
     });
 
     box.on('click', function() {
@@ -418,10 +406,6 @@ function RemoveDot(parent_feed) {
     removeDot.on('click', function() {
         removeFeedFromCanvas(parent_feed);
     });
-
-    this.getGroup = function() {
-        return group;
-    };
 
     this.getRemoveDot = function() {
         return removeDot;
@@ -800,8 +784,6 @@ function drawStartNode() {
         return box;
     };
 
-    var group = new Kinetic.Group({draggable: true});
-    _groups.push(group);
     var start = new Kinetic.Text({
             draggable: true,
             x:  _big_canvas_stage.getWidth() / 2,
@@ -812,7 +794,7 @@ function drawStartNode() {
             fill: 'white',
             text: 'Start',
             fontSize: 15,
-            fontFamily: 'Calibri',
+            fontFamily: 'Arial',
             // textFill: 'white',
             width: 80,
             padding: 10,
@@ -842,8 +824,6 @@ function drawStartNode() {
             // shadowOpacity: 0.2,
             cornerRadius: 15
     });
-    group.add(start);
-    group.add(box);
 
     var startConnector = new Connector(this);
     var org_connecting_line_points;
@@ -852,59 +832,62 @@ function drawStartNode() {
         return startConnector;
     };
 
-    start.on('mouseover', function() {
+    var mouse_over = function() {
         box.setStroke('red');
         _big_canvas_layer.draw();
-    });
-    start.on('mouseout', function() {
+    };
+    var mouse_out = function() {
         box.setStroke('#ddd');
         _big_canvas_layer.draw();
+    };
+
+    start.on('mouseover', function() {
+        mouse_over();
+    });
+    start.on('mouseout', function() {
+        mouse_out();
     });
     box.on('mouseover', function() {
-        this.setStroke('red');
-        _big_canvas_layer.draw();
+        mouse_over();
     });
     box.on('mouseout', function() {
-        this.setStroke('#ddd');
-        _big_canvas_layer.draw();
+        mouse_out();
     });
 
-    start.on('dragstart', function() {
+    var dragstart = function() {
         org_connecting_line_points = startConnector.getConnectingLine().getPoints();
         box.moveToTop();
         start.moveToTop();
         startConnector.getConnector().moveToTop();
         _big_canvas_layer.draw();
+    };
+
+    start.on('dragstart', function() {
+        dragstart();
     });
     box.on("dragstart", function() {
-        org_connecting_line_points = startConnector.getConnectingLine().getPoints();
-        box.moveToTop();
-        start.moveToTop();
-        startConnector.getConnector().moveToTop();
-        _big_canvas_layer.draw();
+        dragstart();
     });
+
+    var dragmove = function() {
+        moveConnector(startConnector.getConnector(), start);
+        if(org_connecting_line_points.length > 1) {
+            var org_point = org_connecting_line_points[1];
+            startConnector.getConnectingLine().setPoints([startConnector.getConnector().getX(), 
+                        startConnector.getConnector().getY(), org_point.x, org_point.y]);
+        }
+        _big_canvas_layer.draw();
+    };
 
     start.on('dragmove', function() {
         box.setX(start.getX());
         box.setY(start.getY());
-        moveConnector(startConnector.getConnector(), start);
-        if(org_connecting_line_points.length > 1) {
-            var org_point = org_connecting_line_points[1];
-            startConnector.getConnectingLine().setPoints([startConnector.getConnector().getX(), 
-                        startConnector.getConnector().getY(), org_point.x, org_point.y]);
-        }
-        _big_canvas_layer.draw();
+        dragmove();
     });
     box.on("dragmove", function(){
         start.setX(box.getX());
         start.setY(box.getY());
-        moveConnector(startConnector.getConnector(), start);
-        if(org_connecting_line_points.length > 1) {
-            var org_point = org_connecting_line_points[1];
-            startConnector.getConnectingLine().setPoints([startConnector.getConnector().getX(), 
-                        startConnector.getConnector().getY(), org_point.x, org_point.y]);
-        }
-        _big_canvas_layer.draw();
+        dragmove();
     });
 
     this.getNode = function() {
@@ -915,10 +898,8 @@ function drawStartNode() {
 
     _big_canvas_layer.add(box);
     _big_canvas_layer.add(start);
-    // _big_canvas_layer.add(end);
 
     _big_canvas_layer.add(startConnector.getConnector());
-    // _big_canvas_layer.add(endConnector);
 
     _big_canvas_stage.draw();
 }
@@ -1043,7 +1024,6 @@ function ServiceFeed(name, url, inputKeywords, type) {
         return box;
     };
 
-    var group  = new Kinetic.Group({draggable: true});
     var feed = new Kinetic.Text({
             draggable: true,
             x: 0,
@@ -1053,7 +1033,7 @@ function ServiceFeed(name, url, inputKeywords, type) {
             fill: '#ddf',
             text: name + '\n\n' + url,
             fontSize: 12,
-            fontFamily: 'Calibri',
+            fontFamily: 'Arial',
             width: 350,
             padding: 10,
             align: 'center'
@@ -1071,9 +1051,6 @@ function ServiceFeed(name, url, inputKeywords, type) {
             shadowOffset: [5, 5],
             cornerRadius: 5
     });
-    group.add(feed);
-    group.add(box);
-    _groups.push(group);
 
     feedConnector = new Connector(this);
     removeDot = new RemoveDot(this);
@@ -1082,73 +1059,64 @@ function ServiceFeed(name, url, inputKeywords, type) {
         return feedConnector;
     };
 
-    box.on('mouseover', function() {
+    var mouse_over = function() {
         feed.setStroke('red');
         box.setStroke('red');
         _big_canvas_layer.draw();
-    });
-    box.on('mouseout', function() {
+    };
+    var mouse_out = function() {
         feed.setStroke('black');
         feed.setFill('#ddf');
         box.setStroke('black');
         _big_canvas_layer.draw();
+    };
+    var mouse_click = function() {
+        if(type === TYPE_REST) {
+            propertiesPanelShowRestFeed(service);
+        }
+        else if(type === TYPE_SOAP) {
+            propertiesPanelShowSoapFeed(service);
+        }
+    };
+
+    box.on('mouseover', function() {
+        mouse_over();
+    });
+    box.on('mouseout', function() {
+        mouse_out();
     });
     feed.on('mouseover', function() {
-        this.setStroke('red');
-        box.setStroke('red');
-        _big_canvas_layer.draw();
+        mouse_over();
     });
     feed.on('mouseout', function() {
-        this.setStroke('black');
-        box.setFill('#ddf');
-        box.setStroke('black');
-        _big_canvas_layer.draw();
+        mouse_out();
     });
 
     box.on('click', function() {
-        if(type === TYPE_REST) {
-            propertiesPanelShowRestFeed(service);
-        }
-        else if(type === TYPE_SOAP) {
-            propertiesPanelShowSoapFeed(service);
-        }
+        mouse_click();
     });
     feed.on('click', function() {
-        if(type === TYPE_REST) {
-            propertiesPanelShowRestFeed(service);
-        }
-        else if(type === TYPE_SOAP) {
-            propertiesPanelShowSoapFeed(service);
-        }
+        mouse_click();
     });
+
+    var dragstart = function() {
+        org_connecting_line_points = feedConnector.getConnectingLine().getPoints();
+        box.moveToTop();
+        feed.moveToTop();
+        feedConnector.getConnector().moveToTop();
+        removeDot.getBox().moveToTop();
+        removeDot.getRemoveDot().moveToTop();
+        _big_canvas_layer.draw();
+    };
 
     box.on("dragstart", function() {
-        org_connecting_line_points = feedConnector.getConnectingLine().getPoints();
-        box.moveToTop();
-        feed.moveToTop();
-        feedConnector.getConnector().moveToTop();
-        removeDot.getBox().moveToTop();
-        removeDot.getRemoveDot().moveToTop();
-        _big_canvas_layer.draw();
+        dragstart();
     });
     feed.on("dragstart", function() {
-        org_connecting_line_points = feedConnector.getConnectingLine().getPoints();
-        box.moveToTop();
-        feed.moveToTop();
-        feedConnector.getConnector().moveToTop();
-        removeDot.getBox().moveToTop();
-        removeDot.getRemoveDot().moveToTop();
-        _big_canvas_layer.draw();
+        dragstart();
     });
 
-    box.on("dragmove", function() {
-        feed.setX(box.getX());
-        feed.setY(box.getY());
-        moveConnector(feedConnector.getConnector(), feed);
-        moveRemoveDot(removeDot.getRemoveDot(), feed);
-        removeDot.getBox().setX(removeDot.getRemoveDot().getX());
-        removeDot.getBox().setY(removeDot.getRemoveDot().getY());
-
+    var dragmove = function() {
         if(org_connecting_line_points.length > 1) {
             var org_point = org_connecting_line_points[1];
             feedConnector.getConnectingLine().setPoints([feedConnector.getConnector().getX(), 
@@ -1158,9 +1126,19 @@ function ServiceFeed(name, url, inputKeywords, type) {
         if(beConnectedLine !== 'undefined') {
             beConnectedLine.setPoints([beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y, feed.getX() + feed.getWidth()/2, feed.getY() + feed.getHeight()/2]); 
         }
-        // this.getX() + this.getBoxWidth()/2, this.getY() + this.getBoxHeight()/2); 
 
         _big_canvas_layer.draw();
+    };
+
+    box.on("dragmove", function() {
+        feed.setX(box.getX());
+        feed.setY(box.getY());
+        moveConnector(feedConnector.getConnector(), feed);
+        moveRemoveDot(removeDot.getRemoveDot(), feed);
+        removeDot.getBox().setX(removeDot.getRemoveDot().getX());
+        removeDot.getBox().setY(removeDot.getRemoveDot().getY());
+
+        dragmove();
     });
     feed.on("dragmove", function() {
         box.setX(feed.getX());
@@ -1170,18 +1148,7 @@ function ServiceFeed(name, url, inputKeywords, type) {
         removeDot.getBox().setX(removeDot.getRemoveDot().getX());
         removeDot.getBox().setY(removeDot.getRemoveDot().getY());
 
-        if(org_connecting_line_points.length > 1) {
-            var org_point = org_connecting_line_points[1];
-            feedConnector.getConnectingLine().setPoints([feedConnector.getConnector().getX(), 
-                        feedConnector.getConnector().getY(), org_point.x, org_point.y]);
-        }
-
-        if(beConnectedLine !== 'undefined') {
-            beConnectedLine.setPoints([beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y, this.getX() + this.getWidth()/2, this.getY() + this.getHeight()/2]); 
-        }
-        // this.getX() + this.getBoxWidth()/2, this.getY() + this.getBoxHeight()/2); 
-
-        _big_canvas_layer.draw();
+        dragmove();
     });
 } 
 

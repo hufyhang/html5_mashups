@@ -103,7 +103,7 @@ function SysWorker(type) {
             fill: '#ddf',
             text: type,
             fontSize: 12,
-            fontFamily: 'Calibri',
+            fontFamily: 'Arial',
             textFill: 'black',
             width: 350,
             padding: 10,
@@ -134,27 +134,28 @@ function SysWorker(type) {
         return removeDot;
     };
 
-    box.on('mouseover', function() {
-        this.setStroke('red');
+    var mouse_over = function() {
+        box.setStroke('red');
         feed.setStroke('red');
         _big_canvas_layer.draw();
+    };
+    var mouse_out = function() {
+        box.setStroke('black');
+        feed.setStroke('black');
+        _big_canvas_layer.draw();
+    };
+
+    box.on('mouseover', function() {
+        mouse_over();
     });
     box.on('mouseout', function() {
-        this.setStroke('black');
-        feed.setStroke('black');
-        feed.setFill('#ddf');
-        _big_canvas_layer.draw();
+        mouse_out();
     });
     feed.on('mouseover', function() {
-        this.setStroke('red');
-        box.setStroke('red');
-        _big_canvas_layer.draw();
+        mouse_over();
     });
     feed.on('mouseout', function() {
-        this.setStroke('black');
-        box.setStroke('black');
-        this.setFill('#ddf');
-        _big_canvas_layer.draw();
+        mouse_out();
     });
 
     box.on('click', function() {
@@ -164,7 +165,7 @@ function SysWorker(type) {
         propertiesPanelShowSysWorker(service);
     });
 
-    box.on("dragstart", function() {
+    var dragstart = function() {
         org_connecting_line_points = feedConnector.getConnectingLine().getPoints();
         box.moveToTop();
         feed.moveToTop();
@@ -172,20 +173,17 @@ function SysWorker(type) {
         removeDot.getBox().moveToTop();
         removeDot.getRemoveDot().moveToTop();
         _big_canvas_layer.draw();
+    };
+
+    box.on("dragstart", function() {
+        dragstart();
     });
     feed.on("dragstart", function() {
-        org_connecting_line_points = feedConnector.getConnectingLine().getPoints();
-        box.moveToTop();
-        feed.moveToTop();
-        feedConnector.getConnector().moveToTop();
-        removeDot.getBox().moveToTop();
-        removeDot.getRemoveDot().moveToTop();
-        _big_canvas_layer.draw();
+        dragstart();
     });
 
-    box.on("dragmove", function() {
-        feed.setX(box.getX());
-        feed.setY(box.getY());
+
+    var dragmove = function() {
         moveConnector(feedConnector.getConnector(), feed);
         moveRemoveDot(removeDot.getRemoveDot(), feed);
         removeDot.getBox().setX(removeDot.getRemoveDot().getX());
@@ -199,31 +197,20 @@ function SysWorker(type) {
 
         if(beConnectedLine !== 'undefined') {
             beConnectedLine.setPoints([beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y,
-            this.getX() + this.getWidth()/2, this.getY() + this.getHeight()/2]); 
+            feed.getX() + feed.getWidth()/2, feed.getY() + feed.getHeight()/2]); 
         }
 
         _big_canvas_layer.draw();
+    };
+    box.on("dragmove", function() {
+        feed.setX(box.getX());
+        feed.setY(box.getY());
+        dragmove();
     });
     feed.on("dragmove", function() {
         box.setX(feed.getX());
         box.setY(feed.getY());
-        moveConnector(feedConnector.getConnector(), feed);
-        moveRemoveDot(removeDot.getRemoveDot(), feed);
-        removeDot.getBox().setX(removeDot.getRemoveDot().getX());
-        removeDot.getBox().setY(removeDot.getRemoveDot().getY());
-
-        if(org_connecting_line_points.length > 1) {
-            var org_point = org_connecting_line_points[1];
-            feedConnector.getConnectingLine().setPoints([feedConnector.getConnector().getX(), 
-                        feedConnector.getConnector().getY(), org_point.x, org_point.y]);
-        }
-
-        if(beConnectedLine !== 'undefined') {
-            beConnectedLine.setPoints([beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y,
-            this.getX() + this.getWidth()/2, this.getY() + this.getHeight()/2]); 
-        }
-
-        _big_canvas_layer.draw();
+        dragmove();
     });
 }
 
