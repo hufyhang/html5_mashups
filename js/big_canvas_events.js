@@ -1066,7 +1066,7 @@ function ServiceFeed(name, url, inputKeywords, type) {
     };
     var mouse_out = function() {
         feed.setStroke('black');
-        feed.setFill('#ddf');
+        box.setFill('#ddf');
         box.setStroke('black');
         _big_canvas_layer.draw();
     };
