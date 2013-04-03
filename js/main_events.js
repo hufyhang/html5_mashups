@@ -77,7 +77,7 @@ function showWidgetsPanel(containerId) {
 
 function showBlocksPanel(containerId) {
     _current_container_id = containerId;
-    $('#'+ containerId).html('<div>Search...</div><hr class="seperator_hr" /><div><label>From:</lable><br/><input type="TEXT" id="searchBlocksFrom" class="input_box" placeholder="Please enter keywords, e.g. location, map..."></div><div><label>To:</label><br/><input type="TEXT" class="input_box" id="searchBlocksTo" placeholder="Please enter Keywords, e.g. map, navigation..."/></div><div id="searchBlocksClear" class="div_push_button" onclick="$(\'#searchBlocksFrom, #searchBlocksTo\').val(\'\');">Clear</div><div id="searchBlocksButton" class="div_push_button">Search</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;" id="searchBlocksTable"></table>');
+    $('#'+ containerId).html('<div><label>From:</lable><br/><input type="TEXT" id="searchBlocksFrom" class="input_box" placeholder="Please enter keywords, e.g. location, map..."></div><div><label>To:</label><br/><input type="TEXT" class="input_box" id="searchBlocksTo" placeholder="Please enter Keywords, e.g. map, navigation..."/></div><div id="searchBlocksClear" class="div_push_button" onclick="$(\'#searchBlocksFrom, #searchBlocksTo\').val(\'\');">Clear</div><div id="searchBlocksButton" class="div_push_button" onclick="searchBlocks($(\'#searchBlocksFrom\').val(), $(\'#searchBlocksTo\').val());">Search</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;" id="searchBlocksTable"></table>');
 }
 
 function showExecuteInputForm() {
@@ -189,6 +189,77 @@ function insertProjectIntoHyperMash(inputMd5, inputName, inputJson, inputKeyword
     // idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_WRITE).objectStore(INDEXEDDB_STORE).add({name: inputName, json: json}).onsuccess = function(evt) {
     //     showNotificationInDashboard(inputName + " has been saved.");
     // };
+}
+
+function searchBlocks(inputFrom, inputTo) {
+    if(inputFrom.length + inputTo.length === 0) {
+        return;
+    }
+    if(inputFrom.length === 0) {
+        alert('Please specify \'From\' keywords.');
+        return;
+    }
+
+    var from = [];
+    var to = [];
+    $.each(inputFrom.split(','), function() {
+        from.push($.trim(this.toUpperCase()));
+    });
+    $.each(inputTo.split(','), function() {
+        to.push($.trim(this.toUpperCase()));
+    });
+
+    _database.transaction(function(tx) {
+        tx.executeSql('SELECT * FROM projects', [], function(tx, results) {
+            var html = '';
+            for(var index = 0; index != results.rows.length; ++index) {
+                var checkFrom = true;
+                var fromOK = false;
+                var toOK = false;
+                var row = results.rows.item(index);
+                var md5 = row['md5'];
+                var name = row['name'];
+                var json = row['json'];
+                var keywords = row['keyword'];
+                json = eval('(' + json + ')');
+                var key, count = 0;
+                for(key in json.feeds) {
+                    //get size of the JSON
+                    count++;
+                }
+
+                // if there is nothing existing, do nothing.
+                if(count === 0) {
+                    return;
+                }
+
+                for(var i = 0; i != count; ++ i) {
+                    var item = json.feeds[i].feed[0];
+                    var kwds = item.keywords.split(',');
+                    for(var n = 0; n != keywords.length; ++n) {
+                        var k = $.trim(kwds[n]);
+                        if(checkFrom) {
+                            if($.inArray(k.toUpperCase(), from) !== -1) {
+                                fromOK = true;
+                                checkFrom = false;
+                            }
+                        }
+                        else {
+                            if($.inArray(k.toUpperCase(), to) !== -1) {
+                                toOK = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if(fromOK === true && toOK === true) {
+                    html += '<tr><td><div class="feed_panel_item">' + name + '</div></td></tr>';
+                }
+            }
+            $('#searchBlocksTable').html(html);
+        }, null);
+    });
 }
 
 function closeAddNewFeed(containerId) {
