@@ -75,6 +75,10 @@ function showWidgetsPanel(containerId) {
     $('#'+ containerId).html('<div>Widgets</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;"><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'' + WIDGET_AUDIO + '\');">HTML5 Audio</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'' + WIDGET_VIDEO + '\');">HTML5 Video</div></td></tr><tr><td nowrap=\'nowrap\' width=\"100%\"><div class="feed_panel_item" onclick="drawAWidget(\'' + WIDGET_IMAGE + '\');">HTML5 Image</div></td></tr></table>');
 }
 
+function showBlocksPanel(containerId) {
+    _current_container_id = containerId;
+    $('#'+ containerId).html('<div>Search...</div><hr class="seperator_hr" /><div><label>From:</lable><br/><input type="TEXT" id="searchBlocksFrom" class="input_box" placeholder="Please enter keywords, e.g. location, map..."></div><div><label>To:</label><br/><input type="TEXT" class="input_box" id="searchBlocksTo" placeholder="Please enter Keywords, e.g. map, navigation..."/></div><div id="searchBlocksClear" class="div_push_button" onclick="$(\'#searchBlocksFrom, #searchBlocksTo\').val(\'\');">Clear</div><div id="searchBlocksButton" class="div_push_button">Search</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;" id="searchBlocksTable"></table>');
+}
 
 function showExecuteInputForm() {
     visibleElement('serviceBoard');

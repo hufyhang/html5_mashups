@@ -181,7 +181,7 @@ body {
 .bottom_sidebar_frame {
     z-index: 100;
     position: absolute;
-    top: 60%;
+    top: 65%;
     left: -90px;
     transition: all 1s;
     -webkit-transition: all 1s;
@@ -233,7 +233,7 @@ body {
 .bottom_sidebar_information {
     z-index:1;
     position: absolute;
-    top: 50%;
+    top: 55%;
     left: -23px;
     color: grey;
 
