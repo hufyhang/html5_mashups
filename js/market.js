@@ -146,6 +146,6 @@ function loadFeedMarket() {
 
 
 function showFeedMarketItem(index) {
-    $('#market_output').html('<div class="scrollable_div" style="height: 250px; width: 430px; white-space:normal; display:block;">' + _feed_market_descs[index] + '</div><center><div class="div_long_push_button" onclick="insertFeedIntoHyperMash(\'' + _feed_market_names[index] + '\', \'' + _feed_market_urls[index] + '\', \'' + _feed_market_types[index] + '\', \'' + _feed_market_keywords[index] + '\');">Add to HyperMash</div></center>');
+    $('#market_output').html('<div><b>Keywords: </b>' + _feed_market_keywords[index] + '</div><br/><div class="scrollable_div" style="height: 250px; width: 430px; white-space:normal; display:block;">' + _feed_market_descs[index] + '</div><center><div class="div_long_push_button" onclick="insertFeedIntoHyperMash(\'' + _feed_market_names[index] + '\', \'' + _feed_market_urls[index] + '\', \'' + _feed_market_types[index] + '\', \'' + _feed_market_keywords[index] + '\');">Add to HyperMash</div></center>');
 }
 
