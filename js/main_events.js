@@ -238,21 +238,34 @@ function searchBlocks(inputFrom, inputTo) {
                 for(var i = 0; i != count; ++ i) {
                     var item = json.feeds[i].feed[0];
                     var kwds = item.keywords.split(',');
-                    for(var n = 0; n != keywords.length; ++n) {
-                        var k = $.trim(kwds[n]);
-                        if(checkFrom) {
-                            if($.inArray(k.toUpperCase(), from) !== -1) {
-                                startId = i;
-                                fromOK = true;
-                                checkFrom = false;
+                    var ks = [];
+                    $.each(kwds, function() {
+                        ks.push($.trim(this.toUpperCase()));
+                    });
+                    if(checkFrom) {
+                        var flag = true;
+                        $.each(from, function() {
+                            if($.inArray(this.toUpperCase(), ks) === -1) {
+                                flag = false;
                             }
+                        });
+                        if(flag === true) {
+                            startId = i;
+                            fromOK = true;
+                            checkFrom = false;
                         }
-                        else {
-                            if($.inArray(k.toUpperCase(), to) !== -1) {
-                                toOK = true;
-                                endId = i;
-                                break;
+                    }
+                    else {
+                        flag = true;
+                        $.each(to, function() {
+                            if($.inArray(this.toUpperCase(), ks) === -1) {
+                                flag = false;
                             }
+                        });
+                        if(flag === true) {
+                            endId = i;
+                            toOK = true;
+                            break;
                         }
                     }
                 }
