@@ -303,7 +303,7 @@ function loadFromBlock(md5, startId, endId) {
             var output = '{"feeds":[';
             for(var i = startId; i <= endId; ++i) {
                 var item = json.feeds[i].feed[0];
-                output += '{"feed":[{"next":"' + item.next + '", "id":"' + item.id + '", "name":"' + item.name + '","type":"' + item.type + '","restUrl":"' + item.restUrl + '", "restMethod":"' + item.restMethod + '","keywords":"' + item.keywords + '", "addBefore":"' + item.addBefore + '", "addAfter":"' + item.addAfter + '","trimWhiteSpace":"' + item.trimWhiteSpace + '", "fetchJSONkey":"' + item.fetchJSONkey + '"}]},';
+                output += '{"feed":[{"next":"' + item.next + '", "id":"' + item.id + '", "name":"' + item.name + '","type":"' + item.type + '", "wsdl":"' + item.wsdl + '", "soapFuncId":"' + item.soapFuncId + '","restUrl":"' + item.restUrl + '", "restMethod":"' + item.restMethod + '","keywords":"' + item.keywords + '", "addBefore":"' + item.addBefore + '", "addAfter":"' + item.addAfter + '","trimWhiteSpace":"' + item.trimWhiteSpace + '", "fetchJSONkey":"' + item.fetchJSONkey + '"}]},';
             }
             output = output.substring(0, output.length - 1);
             output += ']}';
