@@ -210,8 +210,10 @@ function searchBlocks(inputFrom, inputTo) {
     });
 
     _database.transaction(function(tx) {
+        appendLog('Searching reusable blocks (' + inputFrom + ') ==> (' + inputTo + ')');
         tx.executeSql('SELECT * FROM projects', [], function(tx, results) {
             var html = '';
+            var startId, endId;
             for(var index = 0; index != results.rows.length; ++index) {
                 var checkFrom = true;
                 var fromOK = false;
@@ -240,6 +242,7 @@ function searchBlocks(inputFrom, inputTo) {
                         var k = $.trim(kwds[n]);
                         if(checkFrom) {
                             if($.inArray(k.toUpperCase(), from) !== -1) {
+                                startId = i;
                                 fromOK = true;
                                 checkFrom = false;
                             }
@@ -247,6 +250,7 @@ function searchBlocks(inputFrom, inputTo) {
                         else {
                             if($.inArray(k.toUpperCase(), to) !== -1) {
                                 toOK = true;
+                                endId = i;
                                 break;
                             }
                         }
@@ -254,11 +258,46 @@ function searchBlocks(inputFrom, inputTo) {
                 }
 
                 if(fromOK === true && toOK === true) {
-                    html += '<tr><td><div class="feed_panel_item">' + name + '</div></td></tr>';
+                    appendLog('Found reusable block in "' + name + '" with MD5: ' + md5);
+                    html += '<tr><td><div class="feed_panel_item" onclick="loadFromBlock(\'' + md5 + '\', ' + startId + ', ' + endId + ');">' + name + '</div></td></tr>';
                 }
             }
             $('#searchBlocksTable').html(html);
         }, null);
+    });
+}
+
+function loadFromBlock(md5, startId, endId) {
+    _database.transaction(function(tx) {
+        tx.executeSql('SELECT json FROM projects WHERE md5="' + md5 + '"', [], function(tx, results) {
+            if(results.rows.length < 1) {
+                return;
+            }
+
+            var row = results.rows.item(0);
+            var json = row['json'];
+            json = eval('(' + json + ')');
+            var key, count = 0;
+            for(key in json.feeds) {
+                //get size of the JSON
+                count++;
+            }
+
+            // if there is nothing existing, do nothing.
+            if(count === 0) {
+                return;
+            }
+            var output = '{"feeds":[';
+            for(var i = startId; i <= endId; ++i) {
+                var item = json.feeds[i].feed[0];
+                output += '{"feed":[{"next":"' + item.next + '", "id":"' + item.id + '", "name":"' + item.name + '","type":"' + item.type + '","restUrl":"' + item.restUrl + '", "restMethod":"' + item.restMethod + '","keywords":"' + item.keywords + '", "addBefore":"' + item.addBefore + '", "addAfter":"' + item.addAfter + '","trimWhiteSpace":"' + item.trimWhiteSpace + '", "fetchJSONkey":"' + item.fetchJSONkey + '"}]},';
+            }
+            output = output.substring(0, output.length - 1);
+            output += ']}';
+
+            appendLog('Import block: ' + output);
+            loadFromJSON(output);
+        });
     });
 }
 

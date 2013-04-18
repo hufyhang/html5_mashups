@@ -203,6 +203,11 @@ function getFeedsJSON() {
 }
 
 function loadFromJSON(jsonInput) {
+    var offset = undefined;
+    if(_feeds_nodes.length == 1) {
+        offset = 0;
+    }
+
     appendLog('Load from JSON: ' + jsonInput);
     // clear canvas
 
@@ -257,17 +262,21 @@ function loadFromJSON(jsonInput) {
         list[index] = new Array(next, id, name, type, restUrl, restMethod, wsdl, soapFuncId);
     }
 
+    if(offset === undefined) {
+        offset = _feeds_nodes.length - list.length;
+    }
     // create connecting lines and set configurations
-    for(var index = 0; index != list.length; ++index) {
-        _feeds_nodes[index].getConnector().connectTo(_feeds_nodes[index + 1]);
+    var index;
+    for(index = 0; index != list.length; ++index) {
+        _feeds_nodes[index + offset].getConnector().connectTo(_feeds_nodes[index + 1 + offset]);
         var type = list[index][3];
         if(type == TYPE_REST) {
             var method = list[index][5];
-            _feeds_nodes[index + 1].getService().setRestMethod(method);
+            _feeds_nodes[index + 1 + offset].getService().setRestMethod(method);
         }
         else if(type == TYPE_SOAP) {
             var funcId = list[index][7];
-            _feeds_nodes[index + 1].getService().setSoapFunctionId(funcId);
+            _feeds_nodes[index + 1 + offset].getService().setSoapFunctionId(funcId);
         }
     }
 }
@@ -948,6 +957,8 @@ function drawAServiceFeed(name, type, url, keywords) {
     _big_canvas_layer.add(feed.getRemoveDot().getBox());
     _big_canvas_layer.add(feed.getRemoveDot().getRemoveDot());
     _big_canvas_stage.draw();
+
+    return feed;
 }
 
 function SOAPFeed(name, wsdl, keywords) {

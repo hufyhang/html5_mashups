@@ -15,6 +15,7 @@ function drawAWorker(type) {
     _big_canvas_layer.add(feed.getRemoveDot().getBox());
     _big_canvas_layer.add(feed.getRemoveDot().getRemoveDot());
     _big_canvas_stage.draw();
+    return feed;
 }
 
 function WorkerTrimWhitespace() {

@@ -5,6 +5,7 @@ WIDGET_IMAGE = 'HTML5 Image';
 function drawAWidget(type) {
     var feed = new Widget(type);
     _feeds_nodes.push(feed);
+    return feed;
 }
 
 function Widget(type) {
