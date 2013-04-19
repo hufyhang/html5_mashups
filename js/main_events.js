@@ -78,6 +78,14 @@ function showWidgetsPanel(containerId) {
 function showBlocksPanel(containerId) {
     _current_container_id = containerId;
     $('#'+ containerId).html('<div><label>From:</lable><br/><input type="TEXT" id="searchBlocksFrom" class="input_box" placeholder="Please enter keywords, e.g. location, map..."></div><div><label>To:</label><br/><input type="TEXT" class="input_box" id="searchBlocksTo" placeholder="Please enter Keywords, e.g. map, navigation..."/></div><div id="searchBlocksClear" class="div_push_button" onclick="$(\'#searchBlocksFrom, #searchBlocksTo\').val(\'\');">Clear</div><div id="searchBlocksButton" class="div_push_button" onclick="searchBlocks($(\'#searchBlocksFrom\').val(), $(\'#searchBlocksTo\').val());">Search</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;" id="searchBlocksTable"></table>');
+
+    $('#searchBlocksFrom, #searchBlocksTo').keypress(function(evt) {
+        if(evt.keyCode == 13) { // if enter hit
+            evt.preventDefault();
+            $('#searchBlocksButton').click();
+            return false;
+        }
+    });
 }
 
 function showExecuteInputForm() {
