@@ -365,7 +365,7 @@ function RemoveDot(parent_feed) {
         height: 17,
         padding: 2,
         fill: '#883737',
-        stroke: 'black',
+        stroke: 'white',
         strokeWidth: 1,
         text: 'REMOVE',
         fontSize: 10,
