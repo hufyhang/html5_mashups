@@ -930,12 +930,12 @@ function redrawFeed(node, feed) {
     var type = feed.getService().getType();
     if(type == TYPE_REST) {
         var url = feed.getService().getRestUrl();
-        var text = name + '\n\n' + url;
+        var text = name + '\n(' + feed.getService().getKeywords() + ')\n' + url;
         node.setText(text);
     }
     else if(type == TYPE_SOAP) {
         var wsdl = feed.getService().getWSDL();
-        var test = name + '\n\n' + wsdl;
+        var text = name + '\n(' + feed.getService().getKeywords() + ')\n' + wsdl;
         node.setText(text);
     }
     _big_canvas_layer.draw();
@@ -1042,7 +1042,7 @@ function ServiceFeed(name, url, inputKeywords, type) {
             stroke: 'black',
             strokeWidth: 1,
             fill: '#ddf',
-            text: name + '\n\n' + url,
+            text: name + '\n(' + inputKeywords + ')\n' + url,
             fontSize: 12,
             fontFamily: 'Arial',
             width: 350,
