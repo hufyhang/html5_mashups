@@ -1,4 +1,7 @@
 <?php
+ini_set('user_agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1');
+// $USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.112 Safari/534.30';
+
 $arg = str_replace(' ', '%20', $_GET['url']);
 $arg = str_replace('\\\\', '\\', $arg);
 // $arg = str_replace('\\\'', '\'', $arg);
@@ -12,17 +15,26 @@ if(substr($arg, 0, 2) == '\"' && substr($arg, -2) == '\"') {
 }
 $url = substr($arg, $index_a, $index_b);
 $curl = curl_init();
+// curl_setopt($ch, CURLOPT_URL, $url);
+// curl_setopt($ch, CURLOPT_USERAGENT, $USER_AGENT);
+// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+// curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+// // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); 
+// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
 curl_setopt_array( $curl, array(
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_URL => $url) );
 // curl_setopt ($curl, CURLOPT_CAINFO, dirname(__FILE__)."/cacert.pem");
 curl_setopt($curl, CURLOPT_VERBOSE, true);
+// curl_setopt($curl, CURLOPT_USERAGENT, $USER_AGENT);
 curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
 curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2); 
 $res = curl_exec( $curl );
 $response_code = curl_getinfo( $curl, CURLINFO_HTTP_CODE );
+// echo curl_error($curl) . '<br/>';
 // print "<pre>\n";
 // print_r(curl_getinfo($curl));
 // echo "\n\ncURL error number:" .curl_errno($curl); // print error info
