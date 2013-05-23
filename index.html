@@ -56,45 +56,10 @@
             visibleElement('dashboard');
         })
         $('.bottom_sidebar_frame').bind('touchend', function() {
-        $(this).removeClass('hover');
-        invisibleElement('dashboard');
+            $(this).removeClass('hover');
+            invisibleElement('dashboard');
         });
-
     });
-
-    function parseXML(xml) {
-        var data = $(xml).find("Result");
-        alert($(data).find("latitude").text());
-        // $(xml).find("Result").each(function() {
-        //     var msg = $(this).find("latitude").text() + ":" + $(this).find("longitude").text();
-        //     alert(msg);
-        // }
-        // );
-    }
-
-    function testRest() {
-        var url = 'http://where.yahooapis.com/geocode?q=Grafton+street+Manchester+UK';
-
-        var req = new XMLHttpRequest();
-        req.onload = function() {
-            parseXML(req.responseText);
-        }
-        req.open("GET", url, true);
-        req.send(null);
-
-        // $.getJSON(url, function(data) {
-        //     alert(data.responseText);
-        // });
-
-        $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                success: function(res) {
-                    alert(res.responseText);
-                }
-        });
-    }
 </script>
     <!-- Holly bells for Christmas 2012 -->
     <!-- <img src="img/bells.png" alt="Merry Christmas and Happy New Year!!!" title="Merry Christmas and Happy New Year!!!" style="position:absolute;left:0px;top:0px;z-index:2;" width="5%" height="7%" /> -->
