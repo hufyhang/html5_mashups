@@ -113,7 +113,7 @@ function fullscreenFirstElementChild(inputElementId) {
         el.mozRequestFullScreen;
     }
     else {
-        el.requestFullscreen();
+        el.requestFullScreen();
     }
 }
 
