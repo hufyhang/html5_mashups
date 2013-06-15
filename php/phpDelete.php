@@ -9,11 +9,12 @@ $arg = str_replace('\\\\', '\\', $arg);
 $index_a = 1;
 $index_b = -1;
 $arg = substr($arg, $index_a, $index_b);
-if(substr($arg, 0, 2) == '\"' && substr($arg, -2) == '\"') {
-    $index_a = 2;
-    $index_b = -2;
-}
-$url = substr($arg, $index_a, $index_b);
+// if(substr($arg, 0, 2) == '\"' && substr($arg, -2) == '\"') {
+//     $index_a = 2;
+//     $index_b = -2;
+// }
+// $url = substr($arg, $index_a, $index_b);
+$url = $arg;
 echo url_delete_contents($url);
 
 function url_delete_contents ($url) {
