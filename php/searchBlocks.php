@@ -6,10 +6,10 @@ $db = 'feifeiha_hypermash_market';
 $table = 'projects';
 
 $startKey = strtoupper($_GET['start']);
-echo 'Start: ' . $startKey . '<br/>';
+$startKey = preg_replace('/\s+/', '', $startKey);
 $sks = explode(',', $startKey);
 $endKey = strtoupper($_GET['end']);
-echo 'End: ' . $endKey . '<br/>';
+$endKey = preg_replace('/\s+/', '', $endKey);
 $eks = explode(',', $endKey);
 
 $start = false;
@@ -33,36 +33,42 @@ while($row = mysql_fetch_array($mysql_data)) {
     $json = $row['json'];
     $data = json_decode($json);
     foreach($data->feeds as $feeds) {
+        // $keepAdding = false;
         foreach($feeds->feed as $feed) {
-            $keys = strtoupper($feed->keywords);
-            $keys = explode(',', $keys);
-            $isAdded = false;
+            if(true == $start && true == $end) {
+                break;
+            }
 
-            foreach($keys as $key) {
-                if($isAdded) {
+            $keys = strtoupper($feed->keywords);
+            $keys = preg_replace('/\s+/', '', $keys);
+            $keys = explode(',', $keys);
+
+            if($start == true && $end == true) {
+                break;
+            }
+
+            // if hit startKey
+            if($start == false && count(array_intersect($keys, $sks)) == count($sks)) {
+                $start = true;
+                $buffer = appendFeed($buffer, $feed);
+            }
+            else if($start == true) {
+                // if hit endKey
+                if(count(array_intersect($keys, $eks)) == count($eks)) {
+                    $end = true;
+                    $buffer = appendFeed($buffer, $feed);
                     break;
                 }
-                // if hit startKey
-                if($start == false && in_array(trim($key), $sks)) {
-                    $start = true;
+                else {
                     $buffer = appendFeed($buffer, $feed);
-                    $isAdded = true;
-                }
-                else if($start == true) {
-                    // if hit endKey
-                    if($end == false && in_array(trim($key), $eks)) {
-                        $end = true;
-                        $buffer = appendFeed($buffer, $feed);
-                        $isAdded = true;
-                    }
-                    else {
-                        $buffer = appendFeed($buffer, $feed);
-                        $isAdded = true;
-                    }
                 }
             }
-            $buffer = rtrim($buffer, ',');
         }
+        $buffer = rtrim($buffer, ',');
+    }
+    // if endKey not hit, then clean up buffer.
+    if(count($eks) != 0 && $end == false) {
+        $buffer = '';
     }
     $buffer = '{"feeds":[' . $buffer . ']}';
     if(strlen($buffer) != 0 && $buffer != '{"feeds":[]}') {
@@ -79,7 +85,7 @@ echo $result;
 mysql_close($con);
 
 function appendFeed($buffer, $feed) {
-    $buffer = $buffer . '{"feed":[{"next":"' . $feed->next . '", "id":"' . $feed->id . '", "name":"' . $feed->name . '", "type":"' . $feed->type . '", "wsdl": "' . $feed->wsdl . '", "soapFuncId":"' . $feed->soapFuncId . '", "restUrl":"' . $feed->restUrl . '", "restMethod":"' . $feed->restMethod . '", "keywords":"' . $feed->keywords . '", "addBefore":"' . $feed->addBefore . '", "addAfter":"' . $feed->addAfter . '", "trimWhiteSpace":"' . $feed->trimWhiteSpace . '", "fetchJSONKey":"' . $feed->fetchJSONKey . '"}]},';
+    $buffer = $buffer . '{"feed":[{"next":"' . $feed->next . '", "id":"' . $feed->id . '", "name":"' . $feed->name . '", "type":"' . $feed->type . '", "wsdl": "' . $feed->wsdl . '", "soapFuncId":"' . $feed->soapFuncId . '", "restUrl":"' . $feed->restUrl . '", "restMethod":"' . $feed->restMethod . '", "keywords":"' . $feed->keywords . '", "addBefore":"' . $feed->addBefore . '", "addAfter":"' . $feed->addAfter . '", "trimWhiteSpace":"' . $feed->trimWhiteSpace . '", "fetchJSONKey":"' . $feed->fetchJSONkey . '"}]},';
     return $buffer;
 }
 ?>
