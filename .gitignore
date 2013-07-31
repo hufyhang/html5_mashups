@@ -4,3 +4,6 @@ chrome_extension.pem
 #ignore the useless (not sure if will be used in future) files
 iframeforAjax.html
 css/reset.css
+*.old
+#ingore the composite javascript document
+js/script.js
