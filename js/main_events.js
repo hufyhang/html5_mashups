@@ -7,6 +7,8 @@ const INDEXEDDB_DATABASE = 'html5_mashup_platform_web_database';
 const INDEXEDDB_VERSION = '1.0';
 const INDEXEDDB_STORE = 'projects';
 
+const SEARCH_CLOUD_BLOCKS = 'php/searchBlocks.php';
+
 const SHOW_PROJECTS = 'showProject';
 
 const FEED_TYPE_REST = 'rest';
@@ -20,6 +22,8 @@ var feeds_name_list = '';
 
 var _current_container_id;
 var _currentPlace = undefined;
+
+var json_buffer = [];
 
 function initialise() {
     _log = '';
@@ -77,7 +81,7 @@ function showWidgetsPanel(containerId) {
 
 function showBlocksPanel(containerId) {
     _current_container_id = containerId;
-    $('#'+ containerId).html('<div><label>From:</lable><br/><input type="TEXT" id="searchBlocksFrom" class="input_box" placeholder="Please enter keywords, e.g. location, map..."></div><div><label>To:</label><br/><input type="TEXT" class="input_box" id="searchBlocksTo" placeholder="Please enter Keywords, e.g. map, navigation..."/></div><div id="searchBlocksClear" class="div_push_button" onclick="$(\'#searchBlocksFrom, #searchBlocksTo\').val(\'\');">Clear</div><div id="searchBlocksButton" class="div_push_button" onclick="searchBlocks($(\'#searchBlocksFrom\').val(), $(\'#searchBlocksTo\').val());">Search</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;" id="searchBlocksTable"></table>');
+    $('#'+ containerId).html('<div><label>From:</lable><br/><input type="TEXT" id="searchBlocksFrom" class="input_box" placeholder="Please enter keywords, e.g. location, map..."></div><div><label>To:</label><br/><input type="TEXT" class="input_box" id="searchBlocksTo" placeholder="Please enter Keywords, e.g. map, navigation..."/></div><div id="searchBlocksClear" class="div_push_button" onclick="$(\'#searchBlocksFrom, #searchBlocksTo\').val(\'\');">Clear</div><div id="searchBlocksButton" class="div_push_button" onclick="searchBlocks($(\'#searchBlocksFrom\').val(), $(\'#searchBlocksTo\').val());">Local</div><div id="searchCloudButton" class="div_push_button" onclick="searchCloudBlocks($(\'#searchBlocksFrom\').val(), $(\'#searchBlocksTo\').val());">Cloud</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;" id="searchBlocksTable"></table>');
 
     $('#searchBlocksFrom, #searchBlocksTo').keypress(function(evt) {
         if(evt.keyCode == 13) { // if enter hit
@@ -199,6 +203,45 @@ function insertProjectIntoHyperMash(inputMd5, inputName, inputJson, inputKeyword
     // };
 }
 
+function searchCloudBlocks(inputFrom, inputTo) {
+    if(inputFrom.length + inputTo.length === 0) {
+        return;
+    }
+    if(inputFrom.length === 0) {
+        alert('Please specify \'From\' keywords.');
+        return;
+    }
+
+    $('#searchBlocksTable').html('');
+    var html = '';
+    json_buffer = [];
+
+    appendLog('[Cloud] Searching reusable blocks (' + inputFrom + ') ==> (' + inputTo + ')');
+    var json = $.ajax({
+            url: SEARCH_CLOUD_BLOCKS + '?start=' + inputFrom + '&end=' + inputTo,
+            type: REST_METHOD_GET,
+            async: false
+    }).responseText;
+    var jsonObj = (eval('(' + json + ')'));
+    var key, count = 0;
+    for(key in jsonObj.results) {
+        count++;
+    }
+
+    for(var index = 0; index != count; ++index) {
+        var item = jsonObj.results[index];
+        var md5 = item.md5;
+        var name = item.name;
+        var json = item.json.replace(/\"/g, '"');
+        appendLog('[Cloud] Found reusable block in "' + name + '" with MD5: ' + md5);
+        json_buffer.push(json);
+        html += '<tr><td><div class="feed_panel_item" onclick="loadFromJSON(json_buffer[' + index + ']);">' + name + '</div></td></tr>';
+    }
+
+    var original = $('#searchBlocksTable').html();
+    $('#searchBlocksTable').html(original + html);
+}
+
 function searchBlocks(inputFrom, inputTo) {
     if(inputFrom.length + inputTo.length === 0) {
         return;
@@ -208,6 +251,8 @@ function searchBlocks(inputFrom, inputTo) {
         return;
     }
 
+    $('#searchBlocksTable').html('');
+    
     var from = [];
     var to = [];
     $.each(inputFrom.split(','), function() {
@@ -283,7 +328,8 @@ function searchBlocks(inputFrom, inputTo) {
                     html += '<tr><td><div class="feed_panel_item" onclick="loadFromBlock(\'' + md5 + '\', ' + startId + ', ' + endId + ');">' + name + '</div></td></tr>';
                 }
             }
-            $('#searchBlocksTable').html(html);
+            var original = $('#searchBlocksTable').html();
+            $('#searchBlocksTable').html(original + html);
         }, null);
     });
 }

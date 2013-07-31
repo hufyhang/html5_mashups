@@ -64,8 +64,8 @@ while($row = mysql_fetch_array($mysql_data)) {
                 }
             }
         }
-        $buffer = rtrim($buffer, ',');
     }
+    $buffer = rtrim($buffer, ',');
     // if endKey not hit, then clean up buffer.
     if(count($eks) != 0 && $end == false) {
         $buffer = '';
@@ -85,7 +85,7 @@ echo $result;
 mysql_close($con);
 
 function appendFeed($buffer, $feed) {
-    $buffer = $buffer . '{"feed":[{"next":"' . $feed->next . '", "id":"' . $feed->id . '", "name":"' . $feed->name . '", "type":"' . $feed->type . '", "wsdl": "' . $feed->wsdl . '", "soapFuncId":"' . $feed->soapFuncId . '", "restUrl":"' . $feed->restUrl . '", "restMethod":"' . $feed->restMethod . '", "keywords":"' . $feed->keywords . '", "addBefore":"' . $feed->addBefore . '", "addAfter":"' . $feed->addAfter . '", "trimWhiteSpace":"' . $feed->trimWhiteSpace . '", "fetchJSONKey":"' . $feed->fetchJSONkey . '"}]},';
+    $buffer = $buffer . '{"feed":[{"next":"' . $feed->next . '", "id":"' . $feed->id . '", "name":"' . $feed->name . '", "type":"' . $feed->type . '", "wsdl": "' . $feed->wsdl . '", "soapFuncId":"' . $feed->soapFuncId . '", "restUrl":"' . $feed->restUrl . '", "restMethod":"' . $feed->restMethod . '", "keywords":"' . $feed->keywords . '", "addBefore":"' . $feed->addBefore . '", "addAfter":"' . $feed->addAfter . '", "trimWhiteSpace":"' . $feed->trimWhiteSpace . '", "fetchJSONkey":"' . $feed->fetchJSONkey . '"}]},';
     return $buffer;
 }
 ?>
