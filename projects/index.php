@@ -28,19 +28,19 @@ $author = $row['author'];
 $description = $row['description'];
 $json = $row['json'];
 mysql_close($con);
-
-echo '<!DOCTYPE HTML>';
-echo '<html>';
-echo '<head>';
-echo '<meta charset="utf-8" />';
-// echo '<link rel="shortcut icon" href="../img/favicon.ico" />';
-// echo '<link rel="stylesheet" href="../css/master.css" />';
+?>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8" />
+<?php
 echo '<title>' . $md5 . ' -- ' . $name . '</title>';
-echo '<script src="../js/jquery.js"></script>';
-echo '<script src="../js/script.js"></script>';
-echo '<script src="../js/usdlizer.js"></script>';
-echo '<script>';
-
+?>
+<script src="../js/jquery.js"></script>
+<script src="../js/script.js"></script>
+<script src="../js/usdlizer.js"></script>
+<script>
+<?php
 if(strtoupper($output) === 'USDL' || strtoupper($output) === 'USD') {
     echo 'function load() {';
     echo 'var json = \'' . $json . '\';';
@@ -54,14 +54,13 @@ else if(strtoupper($output) === 'RAW') {
     echo 'return json;';
     echo '}';
 }
-
-echo '</script>';
-echo '</head>';
-echo '<body>';
-echo '<script>';
-echo 'document.write(load());';
-echo '</script>';
-echo '</body>';
-echo '</html>';
 ?>
+</script>
+</head>
+<body>
+<script>
+document.write(load());
+</script>
+</body>
+</html>
 
