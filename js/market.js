@@ -102,7 +102,7 @@ function loadProjectMarket() {
 }
 
 function showProjectMarketItem(index) {
-    $('#market_output').html('<div class="scrollable_div" style="height: 250px; width: 430px; white-space:normal; display:block;">Author: <b>' + _project_market_authors[index]  + '</b><br/><hr/><br/>' + _project_market_descs[index] + '</div><center><div class="div_long_push_button" onclick="doInsertProject(' + index + ');">Add to HyperMash</div></center>');
+    $('#market_output').html('<div class="scrollable_div" style="height: 250px; width: 430px; white-space:normal; display:block;">UID: ' + _project_market_md5s[index] + '<br/>' + 'Author: <b>' + _project_market_authors[index]  + '</b><br/><hr/><br/>' + _project_market_descs[index] + '</div><center><div class="div_long_push_button" onclick="doInsertProject(' + index + ');">Add to HyperMash</div></center>');
 }
 
 function doInsertProject(index) {
