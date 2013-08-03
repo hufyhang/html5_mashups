@@ -1,5 +1,6 @@
+%title Semantic USDL Specs
 = Introduction =
-Semantic USDL (SU) is created to semantically describe composite services. It initially is a part of HyperMash project led by Feifei Hang in University of Manchester. Since it is based on Unified Service Description Language (USDL), which capture high-level concepts to describe Web services, it is also capable for describing composite services, which contain RESTful or/and SOAP-based services, created via any platforms/approaches other than HyperMash.
+Semantic USDL (SU) is created to semantically describe composite services. It initially is a part of HyperMash project produced by Feifei Hang in University of Manchester. Since it is based on Unified Service Description Language (USDL), which capture high-level concepts to describe Web services, it is also capable for describing composite services, which contain RESTful or/and SOAP-based services, created via any platforms/approaches other than HyperMash.
 
 = Specifications =
 The below properties of [[http://dublincore.org/documents/dces/|Dublin Core]] are used to describe the basic information of composite services.
