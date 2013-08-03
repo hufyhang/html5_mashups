@@ -7,3 +7,5 @@ css/reset.css
 *.old
 #ingore the composite javascript document
 js/script.js
+
+/semantic-usdl_html/
