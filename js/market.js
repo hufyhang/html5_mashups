@@ -2,6 +2,9 @@ const LOAD_FEED_MARKET_PHP = 'php/loadFeedMarket.php';
 const LOAD_PROJECT_MARKET_PHP = 'php/loadProjectMarket.php';
 const PUBLISH_PROJECT_PHP = 'php/publishProject.php';
 
+const USDL_URL = 'projects/index.php?';
+const SUSDL_URL = 'projects/rdf.php?';
+
 var _feed_market_descs = [];
 var _feed_market_names = [];
 var _feed_market_urls = [];
@@ -102,7 +105,11 @@ function loadProjectMarket() {
 }
 
 function showProjectMarketItem(index) {
-    $('#market_output').html('<div class="scrollable_div" style="height: 250px; width: 430px; white-space:normal; display:block;">UID: ' + _project_market_md5s[index] + '<br/>' + 'Author: <b>' + _project_market_authors[index]  + '</b><br/><hr/><br/>' + _project_market_descs[index] + '</div><center><div class="div_long_push_button" onclick="doInsertProject(' + index + ');">Add to HyperMash</div></center>');
+    $('#market_output').html('<div class="scrollable_div" style="height: 250px; width: 430px; white-space:normal; display:block;">UID: ' + _project_market_md5s[index] + '<br/>' 
+            + 'Name: ' + _project_market_names[index]  + '<br/>'
+            + 'Author: <b>' + _project_market_authors[index]  + '</b><br/>'
+            + '<a href="' + USDL_URL + 'uid=' + _project_market_md5s[index] + '&output=usdl" target="_blank">USDL</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="' + SUSDL_URL + 'uid=' + _project_market_md5s[index] + '" target="_blank">Semantic-USDL</a><br/>'
+            + '<hr/><br/>' + _project_market_descs[index] + '</div><center><div class="div_long_push_button" onclick="doInsertProject(' + index + ');">Add to HyperMash</div></center>');
 }
 
 function doInsertProject(index) {
