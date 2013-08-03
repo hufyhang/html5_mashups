@@ -36,7 +36,6 @@ $json = $row['json'];
 mysql_close($con);
 ?>
 
-<?xml version="1.0" encoding="ISO-8859-1"?>
 <rdf:RDF
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
