@@ -51,6 +51,6 @@ Usdlizer.prototype.getUsdl = function() {
 
     // wrap up
     buffer += ']}';
-    
+
     return buffer;
 };

@@ -43,6 +43,7 @@ echo '<title>' . $md5 . ' -- ' . $name . '</title>';
 <?php
 if(strtoupper($output) === 'USDL' || strtoupper($output) === 'USD') {
     echo 'function load() {';
+    $json = str_replace('\'', '\\\'', $json);
     echo 'var json = \'' . $json . '\';';
     echo 'var usdlizer = new Usdlizer(json);';
     echo 'return usdlizer.getUsdl();';
