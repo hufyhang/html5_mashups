@@ -42,7 +42,7 @@ mysql_close($con);
     xmlns:su="http://feifeihang.info/hypermash/semantic-usdl#">
 
 <?php
-echo '<rdf:Description rdf:about="' . $PROJECTS_PHP . 'uid=' . $uid . '&output=usdl' . '">
+echo '<rdf:Description rdf:about="' . $PROJECTS_PHP . 'uid=' .  $uid . '&amp;output=usdl'. '">
     ';
 echo '<dc:title>' . $name . '</dc:title>
     ';
@@ -75,6 +75,7 @@ foreach($json->feeds as $feeds) {
             $url = $feed->wsdl;
             $typeFlag = $SOAP;
         }
+        $url = str_replace('&', '&amp;', $url);
         echo '<rdf:Description rdf:about="' . $url . '">
             ';
         echo '<su:name>' . $feed->name . '</su:name>
