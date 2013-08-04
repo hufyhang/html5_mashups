@@ -15,14 +15,13 @@
 <script>
     var welcomeInfo = 'Welcome to HyperMash - the service composition platform for us.<br/><br/>Due to the fact HyperMash is still under development, unexpected outputs or errors may be occurred at use time, yet we are working extremely hard to keep that possibility as low as possible. However, we apologize that we will not be responsible for any of the problems and unstables happened at use time as HyperMash is still at its very early stage (just like a testing version).<br/><br/>If you are unhappy with this you can close HyperMash by leaving this Web page. Otherwise, please click the below button to accept the agreement.';
 
-    var browserWarning = 'Welcome to HyperMash - the service composition plaform for us.<br/><br/>It seems the browser you are using is powered by nether Webkit nor Blink. To ensure your experience of HyperMash, we strongly suggest you to use either <a href="https://www.google.com/intl/en/chrome/browser/" target="_blank">Google Chrome</a> or <a href="http://www.apple.com/uk/safari/" target="_blank">Apple Safari</a> to utilize HyperMash.';
+    var browserWarning = 'Welcome to HyperMash - the service composition plaform for us.<br/><br/>It seems the browser you are using is powered by nether Webkit nor Blink. To ensure your experience of HyperMash, we strongly suggest you to use <a href="https://www.google.com/intl/en/chrome/browser/" target="_blank">Google Chrome</a> to visit HyperMash.';
 
     $(document).ready(function() {
         footerInformation();
 
-        // check if is running on either Chrome or Safari
+        // check if is running on Chrome
         var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-        var is_safari = navigator.userAgent.toLowerCase().indexOf('safari') > -1;
         if(is_chrome == false && is_safari == false) {
             visibleElement('dashboard');
             visibleElement('dashboard_div');
