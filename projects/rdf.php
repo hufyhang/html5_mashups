@@ -1,19 +1,19 @@
 <?php
+$uid = $_GET['uid'];
+
 header('Content-type: application/rdf+xml');
-header('Content-Disposition: attachment; filename="proj.rdf"');
+header('Content-Disposition: attachment; filename="' . $uid . '.rdf"');
 
 $REST = 0;
 $SOAP = 1;
 $PROJECTS_PHP = 'http://feifeihang.info/hypermash/projects/index.php?';
-$KEYWORD_PHP = 'http://feifeihang.info/hypermash/projects/keywords.php?';
+$KEYWORD_PHP = 'http://feifeihang.info/hypermash/projects/keyword.php?';
 
 $host = '31.22.4.32';
 $usrname = 'feifeiha_public';
 $password = 'p0OnMM722iqZ';
 $db = 'feifeiha_hypermash_market';
 $table = 'projects';
-
-$uid = $_GET['uid'];
 
 $md5 = '';
 $name = '';
