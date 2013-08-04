@@ -51,12 +51,13 @@ echo '<dc:description>' . urlencode($description) . '</dc:description>
     ';
 echo '<dc:identifier>' . $md5 . '</dc:identifier>
     ';
+echo '</rdf:Description>
+    ';
 ?>
-</rdf:Description>
-
 
 <?php
 $json = json_decode($json);
+$contains = array();
 foreach($json->feeds as $feeds) {
     foreach($feeds->feed as $feed) {
         // skip Workers and Widgets
@@ -75,6 +76,7 @@ foreach($json->feeds as $feeds) {
             $typeFlag = $SOAP;
         }
         $url = str_replace('&', '&amp;', $url);
+        array_push($contains, $url);
         echo '<rdf:Description rdf:about="' . $url . '">
             ';
         echo '<su:name>' . $feed->name . '</su:name>
@@ -106,10 +108,19 @@ foreach($json->feeds as $feeds) {
             break;
         }
         echo '</rdf:Description>
+
             ';
     }
 }
-?>
 
+echo '<rdf:Description rdf:about="' . $PROJECTS_PHP . 'uid=' .  $uid . '&amp;output=usdl'. '">
+    ';
+foreach($contains as $contain) {
+    echo '<su:contains rdf:resource="' . $contain . '"/>
+        ';
+}
+echo '</rdf:Description>
+    ';
+?>
 </rdf:RDF>
 
