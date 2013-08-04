@@ -5,6 +5,7 @@ header('Content-Disposition: attachment; filename="proj.rdf"');
 $REST = 0;
 $SOAP = 1;
 $PROJECTS_PHP = 'http://feifeihang.info/hypermash/projects/index.php?';
+$KEYWORD_PHP = 'http://feifeihang.info/hypermash/projects/keywords.php?';
 
 $host = '31.22.4.32';
 $usrname = 'feifeiha_public';
@@ -35,12 +36,10 @@ $description = $row['description'];
 $json = $row['json'];
 mysql_close($con);
 ?>
-
 <rdf:RDF
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:su="http://feifeihang.info/hypermash/semantic-usdl#">
-
 <?php
 echo '<rdf:Description rdf:about="' . $PROJECTS_PHP . 'uid=' .  $uid . '&amp;output=usdl'. '">
     ';
@@ -52,11 +51,11 @@ echo '<dc:description>' . urlencode($description) . '</dc:description>
     ';
 echo '<dc:identifier>' . $md5 . '</dc:identifier>
     ';
-echo '</rdf:Description>
+?>
+</rdf:Description>
 
 
-    ';
-
+<?php
 $json = json_decode($json);
 foreach($json->feeds as $feeds) {
     foreach($feeds->feed as $feed) {
@@ -80,20 +79,24 @@ foreach($json->feeds as $feeds) {
             ';
         echo '<su:name>' . $feed->name . '</su:name>
             ';
-        echo '<su:keywords>' . $feed->keywords . '</su:keywords>
-            ';
+        $keys = explode(',', $feed->keywords);
+        foreach($keys as $k) {
+            echo '<su:keyword rdf:resource="' . $KEYWORD_PHP . 'key=' . trim($k, ' ') . '"/>
+                ';
+        }
+
         echo '<su:type>' . $feed->type . '</su:type>
             ';
         switch($typeFlag) {
         case $REST:
-            echo '<su:url>' . $url . '</su:url>
+            echo '<su:url rdf:resource="' . $url . '"/>
                 ';
             echo '<su:http-verb>' . $feed->restMethod . '</su:http-verb>
                 ';
             break;
 
         case $SOAP:
-            echo '<su:wsdl>' . $url . '</su:wsdl>
+            echo '<su:wsdl rdf:resource="' . $url . '"/>
                 ';
             $client = new SoapClient($url);
             $func = $client->__getFunctions();
