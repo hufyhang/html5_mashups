@@ -84,6 +84,5 @@ for($index = 0; $index != count($jsons); ++$index) {
     }
 }
 ?>
-
 </rdf:RDF>
 
