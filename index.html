@@ -82,6 +82,7 @@
                     <div class="head_links_button" onclick="readProjects('options_field_output')">Open...</div>
                     <div class="head_links_button" onclick="showSaveProjectDialog();">Save...</div>
                     <!-- <div class="head_links_button" onclick="testWebPy()">element</div> -->
+                    <div class="head_links_button" onclick="makeSemanticSuggestions();">Semantic</div>
                     <div class="head_links_button" onclick="checkGeolocation();showExecuteInputForm()">Run</div>
                 </td>
             </tr></table>
@@ -144,7 +145,6 @@
 
     <!-- bottom sidebar -->
     <table class="bottom_sidebar_frame" border="0" cellpadding="2px;">
-        <tr><td><div class="sidebar_button"" onclick="TogetherJS(this); return false;">Together!</div></td>
         <tr><td><div class="sidebar_button" onclick="showPublishDialog();">Publish</div></td>
             <tr><td><div class="sidebar_button" onclick="showLogDialog();">Log</div></td>
         </tr>
@@ -190,10 +190,9 @@
     <!-- scripts here -->
     <script>
         function footerInformation() {
-            $('#footer').html('&copy; 2012 Feifei Hang, Univeristy of Manchester. (Last modified: ' + document.lastModified + ')');
+            $('#footer').html('&copy; 2012-2013 Feifei Hang, Univeristy of Manchester. (Last modified: ' + document.lastModified + ')');
         }
     </script>
     <script src="js/script.js"></script>
-    <script src="https://togetherjs.com/togetherjs-min.js"></script>
 </body>
 </html>

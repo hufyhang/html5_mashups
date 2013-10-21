@@ -8,11 +8,14 @@ const INDEXEDDB_VERSION = '1.0';
 const INDEXEDDB_STORE = 'projects';
 
 const SEARCH_CLOUD_BLOCKS = 'php/searchBlocks.php';
+const SEARCH_SEMANTIC_SUGGESTIONS = 'php/searchNextPossible.php';
 
 const SHOW_PROJECTS = 'showProject';
 
 const FEED_TYPE_REST = 'rest';
 const FEED_TYPE_SOAP = 'soap';
+
+var _semantic_flag = true;
 
 var _database, idb;
 var _log;
@@ -27,11 +30,25 @@ var json_buffer = [];
 
 function initialise() {
     _log = '';
+    _semantic_flag = true;
     appendLog('Session start.');
 
     readyDatabase();
     updateFeedsHTML();
     readProjects('options_field_output');
+}
+
+function toggleSemantic() {
+    if(_semantic_flag) {
+        _semantic_flag = false;
+    } else {
+        _semantic_flag = true;
+    }
+}
+
+function makeSemanticSuggestions() {
+    var ser = _services_list[_services_list.length - 1];
+    ser.semanticSuggestion();
 }
 
 function appendLog(msg) {
@@ -523,14 +540,52 @@ function showMessageDialog(msg) {
     // show message
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>';
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');$(\'#dashboard_output\').html(\'\');">OK</div></td></tr></table>';
 }
 
 function showNotificationInDashboard(msg) {
     // show message
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="if(_currentPlace == SHOW_PROJECTS){readProjects(\'options_field_output\');} else{showFeedsPanel(_current_container_id);}invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">OK</div></td></tr></table>';
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><tr><td>' + msg +'</td></tr><tr><td><div class="div_push_button" onclick="if(_currentPlace == SHOW_PROJECTS){readProjects(\'options_field_output\');} else{showFeedsPanel(_current_container_id);}invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');$(\'#dashboard_output\').html(\'\');">OK</div></td></tr></table>';
+}
+
+function showSemanticSuggestion(_inputUrl) {
+    appendLog('[Semantic] Searching semantic suggestions for "' + _inputUrl + '"');
+    var json = $.ajax({
+            url: SEARCH_SEMANTIC_SUGGESTIONS,
+            type: REST_METHOD_POST,
+            data: {url: _inputUrl},
+            async: false
+    }).responseText;
+
+    if(json == "NOTHING-TO-SUGGEST\n") { // if nothing to suggest, return
+        showNotificationInDashboard('Oops! No semantic suggestions to make.');
+        return;
+    }
+
+    json_buffer = [];
+    var html = '';
+    var jsonObj = (eval('(' + json + ')'));
+    var key, count = 0;
+    for(key in jsonObj.results) {
+        count++;
+    }
+
+    for(var index = 0; index != count; ++index) {
+        var item = jsonObj.results[index];
+        var md5 = item.md5;
+        var name = item.name;
+        var json = item.json.replace(/\"/g, '"');
+        appendLog('[Semantic] Found possible process in "' + name + '" with MD5: ' + md5);
+        json_buffer.push(json);
+        html += '<tr><td><div class="feed_panel_item" onclick="$(\'#semantic-dialog-ok-btn\').click();loadFromJSON(json_buffer[' + index + ']);">' + name + '</div></td></tr>';
+    }
+
+    // show message
+    visibleElement('dashboard');
+    visibleElement('dashboard_div');
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><div class="scrollable_div"><table class="frame_table">' + html +'</table></div><tr><td><div id="semantic-dialog-ok-btn" class="div_push_button" onclick="document.getElementById(\'dashboard_output\').innerHTML = \'\';invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">Close</div></td></tr></table>';
 }
 
 function removeFeedFromFeedList(name) {

@@ -158,6 +158,22 @@ function Service(name, type) {
     };
 
     appendServicesList(this);
+
+    this.semanticSuggestion = function() {
+        var semanticUrl = '';
+        if(this.getType() == TYPE_REST) {
+            semanticUrl = this.getRestUrl();
+        }
+        else if(this.getType() == TYPE_SOAP) {
+            semanticUrl = this.getWSDL();
+        }
+
+        if(semanticUrl !== '') {
+            showSemanticSuggestion(semanticUrl);
+        } else {
+            showNotificationInDashboard('Oops! No semantic suggestions to make.');
+        }
+    }
 }
 
 function terminateWebWorkers(checkWorker, serviceWorker, soapWorker) {
