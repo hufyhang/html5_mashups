@@ -75,6 +75,9 @@ while($row = mysql_fetch_array($mysql_data)) {
     $buffer = '{"feeds":[' . $buffer . ']}';
     if(strlen($buffer) != 0 && $buffer != '{"feeds":[]}') {
         $buffer = addslashes($buffer);
+        if($name == '') {
+            $name = 'From: ' . $row['name'];
+        }
         $result = $result . '{"md5":"' . $md5 . '", "name":"' . $name . '", "json":"' . $buffer . '"},';
     }
 }
