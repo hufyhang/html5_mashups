@@ -10,10 +10,15 @@ const INDEXEDDB_STORE = 'projects';
 const SEARCH_CLOUD_BLOCKS = 'php/searchBlocks.php';
 const SEARCH_SEMANTIC_SUGGESTIONS = 'php/searchNextPossible.php';
 
+const HOSTIP_LOCATION_SERVICE = 'http://api.hostip.info/country.php';
+
 const SHOW_PROJECTS = 'showProject';
 
 const FEED_TYPE_REST = 'rest';
 const FEED_TYPE_SOAP = 'soap';
+
+var _sys_user_agent_loc = '';
+var _sys_user_agent_lang = '';
 
 var _semantic_flag = true;
 
@@ -31,11 +36,27 @@ var json_buffer = [];
 function initialise() {
     _log = '';
     _semantic_flag = true;
+
     appendLog('Session start.');
+    getherUserAgentInfo();
 
     readyDatabase();
     updateFeedsHTML();
     readProjects('options_field_output');
+}
+
+function getherUserAgentInfo() {
+    var language = window.navigator.userLanguage || window.navigator.language;
+    _sys_user_agent_lang = language;
+
+    var loc = $.ajax({
+            url: HOSTIP_LOCATION_SERVICE,
+            type: REST_METHOD_GET,
+            async: false
+    }).responseText;
+    _sys_user_agent_loc = loc;
+
+    appendLog("[User Agent] Language=\"" + _sys_user_agent_lang + "\" Location=\"" + _sys_user_agent_loc + "\"");
 }
 
 function toggleSemantic() {
