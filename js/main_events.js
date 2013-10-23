@@ -598,7 +598,7 @@ function showSemanticSuggestion(_inputUrl) {
         var md5 = item.md5;
         var name = item.name;
         var json = item.json.replace(/\"/g, '"');
-        appendLog('[Semantic] Found possible process in "' + name + '" with MD5: ' + md5);
+        appendLog('[Semantic] Found possible process "' + name + '" in MD5: ' + md5);
         json_buffer.push(json);
         html += '<tr><td><div class="feed_panel_item" onclick="$(\'#semantic-dialog-ok-btn\').click();loadFromJSON(json_buffer[' + index + ']);">' + name + '</div></td></tr>';
     }
