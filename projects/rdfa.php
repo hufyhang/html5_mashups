@@ -1,5 +1,10 @@
 <?php
 $uid = $_GET['uid'];
+$lang = 'EN';
+
+if(isset($_GET['lang'])) {
+    $lang = strtoupper($_GET['lang']);
+}
 
 header('Content-type: text/html');
 
@@ -51,20 +56,33 @@ echo "<title>$name</title>";
 </head>
 <body>
 <?php
-
 echo '<div typeof="su:composite" resource="' . $PROJECTS_PHP . 'uid=' .  $uid . '&amp;output=usdl'. '">
     ';
-echo 'The composite service <span class="composite-name" property="dc:title">' . $name . '</span>
-    ';
-echo ' (UID: <span class="composite-uid" property="dc:identifier">' . $md5 . '</span>)
-    ';
-echo ' is created by <span class="composite-author" property="dc:creator">' . $author . '</span>.<br/>
-    ';
-echo 'According to the author(s), this composite service: <br/><blockquote property="dc:description">' . $description . '</blockquote>
-    ';
+if($lang == 'EN' || $lang == 'EN-GB') {
+    echo 'The composite service <span class="composite-name" property="dc:title">' . $name . '</span>
+        ';
+    echo ' (UID: <span class="composite-uid" property="dc:identifier">' . $md5 . '</span>)
+        ';
+    echo ' is created by <span class="composite-author" property="dc:creator">' . $author . '</span>.<br/>
+        ';
+    echo 'According to the author(s), this composite service: <br/><blockquote property="dc:description">' . $description . '</blockquote>
+        ';
+    echo '<p>This composite service consists of the following primitive services:</p>';
+}
+else if($lang == 'ZH' || $lang == 'ZH-CN') {
+    echo '本聚合服务 <span class="composite-name" property="dc:title">' . $name . '</span>
+        ';
+    echo ' (UID: <span class="composite-uid" property="dc:identifier">' . $md5 . '</span>)
+        ';
+    echo ' 由 <span class="composite-author" property="dc:creator">' . $author . '</span> 创建。<br/>
+        ';
+    echo '根据作者描述, 本聚合服务: <br/><blockquote property="dc:description">' . $description . '</blockquote>
+        ';
+    echo '<p>本聚合服务包含如下网络服务：</p>';
+}
+
 ?>
 
-<p>This composite service consists of the following primitive services:</p>
 <ol>
 <?php
 $json = json_decode($json);
@@ -90,29 +108,57 @@ foreach($json->feeds as $feeds) {
         array_push($contains, $url);
         echo "<li property='su:contains' href='#$url'>$feed->name</li>";
 
+        $keys_string = 'keyword(s)';
+        if($lang == 'ZH' || $lang == 'CN-ZH') {
+            $keys_string = '关键词';
+        }
+
         $buffer = $buffer . "<div resource='#$url' typeof='su:primitive'>";
-        $buffer = $buffer . '<span class="primitive-name" property="su:name">' . $feed->name . '</span> ( keyword(s): 
-            ';
+        $buffer = $buffer . '<span class="primitive-name" property="su:name">' . $feed->name . '</span> ( '. $keys_string .': ';
         $keys = explode(',', $feed->keywords);
         foreach($keys as $k) {
             $buffer = $buffer . '<span class="keywords" property="su:keyword" resource="' . $KEYWORD_PHP . 'key=' . trim($k, ' ') . '">' .trim($k, ' '). '</span> ';
         }
 
-        $buffer = $buffer . ') is ';
+        if($lang == 'EN' || $lang == 'EN-GB') {
+            $buffer = $buffer . ') is ';
+        }
+        else if($lang == 'ZH' || $lang == 'ZH-CN') {
+            $buffer = $buffer . ') 是';
+        }
+
         switch($typeFlag) {
         case $REST:
-            $buffer = $buffer . 'an <span property="su:type" class="type">RESTful</span> service. ';
-            $buffer = $buffer . 'Its accessing URL is <span property="su:url" class="url">' . $url . '</span>. ';
-            $buffer = $buffer . 'It will be invoked through HTTP verb <span property="su:http-verb" class="verb">' . strtoupper($feed->restMethod) . '</span>.';
+            if($lang == 'EN' || $lang == 'EN-GB') {
+                $buffer = $buffer . 'an <span property="su:type" class="type">RESTful</span> service. ';
+                $buffer = $buffer . 'Its accessing URL is <span property="su:url" class="url">' . $url . '</span>. ';
+                $buffer = $buffer . 'It will be invoked through HTTP verb <span property="su:http-verb" class="verb">' . strtoupper($feed->restMethod) . '</span>.';
+            }
+            else if($lang == 'ZH' || $lang == 'ZH-CN') {
+                $buffer = $buffer . '一个 <span property="su:type" class="type">RESTful</span> 服务. ';
+                $buffer = $buffer . '其访问地址为 <span property="su:url" class="url">' . $url . '</span>. ';
+                $buffer = $buffer . '在本聚合服务中，其将被通过HTTP verb <span property="su:http-verb" class="verb"> ' . strtoupper($feed->restMethod) . ' 进行访问。</span>.';
+            }
             break;
 
         case $SOAP:
-            $buffer = $buffer . 'a <span property="su:type" class="type">SOAP-based</span> service. ';
-            $buffer = $buffer . 'Its WSDL refers to <span property="su:wsdl" class="wsdl">' . $url . '</span>. ';
-            $client = new SoapClient($url);
-            $func = $client->__getFunctions();
-            $id = intval($feed->soapFuncId);
-            $buffer = $buffer . 'The function <span property="su:soap-function" class="soap-function">' . $func[$id] . '</span> is going to be used.';
+            if($lang == 'EN' || $lang == 'EN-GB') {
+                $buffer = $buffer . 'a <span property="su:type" class="type">SOAP-based</span> service. ';
+                $buffer = $buffer . 'Its WSDL refers to <span property="su:wsdl" class="wsdl">' . $url . '</span>. ';
+                $client = new SoapClient($url);
+                $func = $client->__getFunctions();
+                $id = intval($feed->soapFuncId);
+                $buffer = $buffer . 'The function <span property="su:soap-function" class="soap-function">' . $func[$id] . '</span> is going to be used.';
+            }
+            else if($lang == 'ZH' || $lang == 'ZH-CN') {
+                $buffer = $buffer . '一个 <span property="su:type" class="type">SOAP-based</span> 服务. ';
+                $buffer = $buffer . '其WSDL文档地址为 <span property="su:wsdl" class="wsdl">' . $url . '</span>. ';
+                $client = new SoapClient($url);
+                $func = $client->__getFunctions();
+                $id = intval($feed->soapFuncId);
+                $buffer = $buffer . '其SOAP函数/方法 <span property="su:soap-function" class="soap-function">' . $func[$id] . '</span> 将被使用。';
+
+            }
             break;
         }
 
