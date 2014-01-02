@@ -137,7 +137,7 @@ foreach($json->feeds as $feeds) {
             else if($lang == 'ZH' || $lang == 'ZH-CN') {
                 $buffer = $buffer . '一个 <span property="su:type" class="type">RESTful</span> 服务. ';
                 $buffer = $buffer . '其访问地址为 <span property="su:url" class="url">' . $url . '</span>. ';
-                $buffer = $buffer . '在本聚合服务中，其将被通过HTTP verb <span property="su:http-verb" class="verb"> ' . strtoupper($feed->restMethod) . ' 进行访问。</span>.';
+                $buffer = $buffer . '在本聚合服务中，其将被通过HTTP verb <span property="su:http-verb" class="verb"> ' . strtoupper($feed->restMethod) . '</span> 进行访问。';
             }
             break;
 
