@@ -45,9 +45,26 @@ function initialise() {
     readProjects('options_field_output');
 }
 
+var setUALanguage = function(lang) {
+    _sys_user_agent_lang = lang;
+};
+
 function getherUserAgentInfo() {
     var language = window.navigator.userLanguage || window.navigator.language;
     _sys_user_agent_lang = language;
+
+    $.ajax({ 
+        url: "http://ajaxhttpheaders.appspot.com", 
+        dataType: 'jsonp', 
+        success: function(headers) {
+            var languages = headers['Accept-Language'].split(',');
+            setUALanguage(languages[0]);
+            appendLog("[User Agent] Language=\"" + _sys_user_agent_lang + "\" Location=\"" + _sys_user_agent_loc + "\"");
+        },
+        fail: function() {
+            appendLog("[User Agent] Language=\"" + _sys_user_agent_lang + "\" Location=\"" + _sys_user_agent_loc + "\"");
+        }
+    });
 
     var loc = $.ajax({
             url: HOSTIP_LOCATION_SERVICE,
@@ -56,7 +73,6 @@ function getherUserAgentInfo() {
     }).responseText;
     _sys_user_agent_loc = loc;
 
-    appendLog("[User Agent] Language=\"" + _sys_user_agent_lang + "\" Location=\"" + _sys_user_agent_loc + "\"");
 }
 
 function toggleSemantic() {
