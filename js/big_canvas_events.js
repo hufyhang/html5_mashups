@@ -30,7 +30,7 @@ function registerTouchEvents(stage) {
         for(var index = 1; index != _feeds_nodes.length; ++index) {
             var removeDot = _feeds_nodes[index].getRemoveDot().getRemoveDot();
             var parentFeed = _feeds_nodes[index];
-            if((x - TOUCH_OFFSET >= removeDot.getX() && removeDot.getX() + removeDot.getWidth() >= x + TOUCH_OFFSET) && 
+            if((x - TOUCH_OFFSET >= removeDot.getX() && removeDot.getX() + removeDot.getWidth() >= x + TOUCH_OFFSET) &&
                 (y - TOUCH_OFFSET >= removeDot.getY() && removeDot.getY() + removeDot.getTextHeight() + 3 * TOUCH_OFFSET >= y)) {
                 removeFeedFromCanvas(parentFeed);
                 return;
@@ -40,7 +40,7 @@ function registerTouchEvents(stage) {
         // iterate _feeds_nodes to capture the touched connector
         for(var index = 0; index != _feeds_nodes.length; ++index) {
             var connector = _feeds_nodes[index].getConnector();
-            if((x - TOUCH_OFFSET <= connector.getX() && connector.getX() <= x + TOUCH_OFFSET) && 
+            if((x - TOUCH_OFFSET <= connector.getX() && connector.getX() <= x + TOUCH_OFFSET) &&
                 (y - TOUCH_OFFSET <= connector.getY() && connector.getY() <= y + TOUCH_OFFSET)) {
                 touchedObj = connector;
                 touchedNode = _feeds_nodes[index];
@@ -333,7 +333,7 @@ function moveRemoveDot(removeDot, parent_node) {
 }
 
 function moveConnector(connector, parent_node) {
-    connector.setPosition(parent_node.getX() + parent_node.getWidth() - parent_node.getWidth()/2, 
+    connector.setPosition(parent_node.getX() + parent_node.getWidth() - parent_node.getWidth()/2,
                             // parent_node.getY() + parent_node.getBoxHeight());
                             parent_node.getY() + parent_node.getHeight());
     _big_canvas_stage.draw();
@@ -343,7 +343,7 @@ function RemoveDot(parent_feed) {
     var parent_node = parent_feed.getNode();
     var org_x, org_y;
     var node_x = parent_node.getX() - 5;
-    var node_y = parent_node.getY() - 5; 
+    var node_y = parent_node.getY() - 5;
     var parentFeed = parent_feed;
 
     var getParentFeed = function() {
@@ -584,8 +584,8 @@ function Connector(parent_feed) {
     var parent_node = parent_feed.getNode();
     var org_x, org_y;
     var node_x = parent_node.getX() + parent_node.getWidth() - parent_node.getWidth()/2;
-    // var node_y = parent_node.getY() + parent_node.getBoxHeight(); 
-    var node_y = parent_node.getY() + parent_node.getHeight(); 
+    // var node_y = parent_node.getY() + parent_node.getBoxHeight();
+    var node_y = parent_node.getY() + parent_node.getHeight();
     var connectingLine;
     var parentFeed = parent_feed;
 
@@ -669,10 +669,10 @@ function Connector(parent_feed) {
                 }
                 _feeds_nodes[index].setBeConnectedLine('undefined');
 
-                connectingLine.setPoints([org_x, org_y, 
-                                    // nodeObj.getNode().getX() + nodeObj.getNode().getBoxWidth()/2, 
+                connectingLine.setPoints([org_x, org_y,
+                                    // nodeObj.getNode().getX() + nodeObj.getNode().getBoxWidth()/2,
                                     // nodeObj.getNode().getY() + nodeObj.getNode().getBoxHeight()/2]);
-                                    nodeObj.getNode().getX() + nodeObj.getNode().getWidth()/2, 
+                                    nodeObj.getNode().getX() + nodeObj.getNode().getWidth()/2,
                                     nodeObj.getNode().getY() + nodeObj.getNode().getHeight()/2]);
                 _feeds_nodes[index].setBeConnectedLine(connectingLine);
 
@@ -779,7 +779,7 @@ function drawStartNode() {
         nextFeed = 'undefined';
     };
 
-    var service = new Service(NAME_SYS_START, TYPE_SYS_START); 
+    var service = new Service(NAME_SYS_START, TYPE_SYS_START);
 
     this.getService = function() {
         return service;
@@ -882,7 +882,7 @@ function drawStartNode() {
         moveConnector(startConnector.getConnector(), start);
         if(org_connecting_line_points.length > 1) {
             var org_point = org_connecting_line_points[1];
-            startConnector.getConnectingLine().setPoints([startConnector.getConnector().getX(), 
+            startConnector.getConnectingLine().setPoints([startConnector.getConnector().getX(),
                         startConnector.getConnector().getY(), org_point.x, org_point.y]);
         }
         _big_canvas_layer.draw();
@@ -948,7 +948,7 @@ function drawAServiceFeed(name, type, url, keywords) {
     }
     else if(type === TYPE_SOAP) {
         feed = new SOAPFeed(name, url, keywords);
-    } 
+    }
     _feeds_nodes.push(feed);
 
     _big_canvas_layer.add(feed.getBox());
@@ -1130,12 +1130,12 @@ function ServiceFeed(name, url, inputKeywords, type) {
     var dragmove = function() {
         if(org_connecting_line_points.length > 1) {
             var org_point = org_connecting_line_points[1];
-            feedConnector.getConnectingLine().setPoints([feedConnector.getConnector().getX(), 
+            feedConnector.getConnectingLine().setPoints([feedConnector.getConnector().getX(),
                         feedConnector.getConnector().getY(), org_point.x, org_point.y]);
         }
 
         if(beConnectedLine !== 'undefined') {
-            beConnectedLine.setPoints([beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y, feed.getX() + feed.getWidth()/2, feed.getY() + feed.getHeight()/2]); 
+            beConnectedLine.setPoints([beConnectedLine.getPoints()[0].x, beConnectedLine.getPoints()[0].y, feed.getX() + feed.getWidth()/2, feed.getY() + feed.getHeight()/2]);
         }
 
         _big_canvas_layer.draw();
@@ -1161,7 +1161,7 @@ function ServiceFeed(name, url, inputKeywords, type) {
 
         dragmove();
     });
-} 
+}
 
 function ifContains(pointX, pointY, node) {
     var x1 = node.getX();

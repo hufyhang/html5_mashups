@@ -1,10 +1,10 @@
-const LOAD_FEED_MARKET_PHP = 'php/loadFeedMarket.php';
-const LOAD_PROJECT_MARKET_PHP = 'php/loadProjectMarket.php';
-const PUBLISH_PROJECT_PHP = 'php/publishProject.php';
+var LOAD_FEED_MARKET_PHP = 'php/loadFeedMarket.php';
+var LOAD_PROJECT_MARKET_PHP = 'php/loadProjectMarket.php';
+var PUBLISH_PROJECT_PHP = 'php/publishProject.php';
 
-const USDL_URL = 'projects/index.php?';
-const SUSDL_URL = 'projects/rdf.php?';
-const RDFA_URL = 'projects/rdfa.php?';
+var USDL_URL = 'projects/index.php?';
+var SUSDL_URL = 'projects/rdf.php?';
+var RDFA_URL = 'projects/rdfa.php?';
 
 var _feed_market_descs = [];
 var _feed_market_names = [];
@@ -18,6 +18,7 @@ var _project_market_authors = [];
 var _project_market_descs = [];
 var _project_market_json = [];
 var _project_market_keywords = [];
+var _project_market_snapshot = [];
 
 
 function publishProject() {
@@ -25,6 +26,10 @@ function publishProject() {
     var author = encodeURIComponent($('#publishProjectAuthor').val());
     var description = encodeURIComponent($('#publishProjectDescription').val());
     var keywords = encodeURIComponent($('#publishProjectKeywords').val());
+
+    var canvas = document.querySelector('#big_canvas_canvas canvas');
+    var snapshot =  canvas.toDataURL();
+
     if(name == '') {
         alert('Please enter project name.');
         return;
@@ -58,8 +63,18 @@ function publishProject() {
     json = json.replace(/\'/g, '\\\'');
 
     $.ajax({
-            url: PUBLISH_PROJECT_PHP + '?md5=' + md5 + '&name=' + name + '&author=' + author + '&keywords=' + keywords + '&description=' + description + '&json=' + json,
-            type: REST_METHOD_GET,
+        url: PUBLISH_PROJECT_PHP,
+        data: {
+          md5: md5,
+          name: name,
+          author: author,
+          keywords: keywords,
+          description: description,
+          json: json,
+          snapshot: snapshot
+        },
+            // url: PUBLISH_PROJECT_PHP + '?md5=' + md5 + '&name=' + name + '&author=' + author + '&keywords=' + keywords + '&description=' + description + '&json=' + json + '&snapshot=' + snapshot,
+            type: REST_METHOD_POST,
             success: function() {
                 $('#dashboard_output').html('<div>Project "' + decodeURIComponent(name) + '" is published.</div><div>MD5: ' + md5 + '</div><div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');$(\'#dashboard_output\').html(\'\');">Close</div>');
             }
@@ -87,12 +102,14 @@ function loadProjectMarket() {
         var description = item.description.replace(/\"/g, '"');
         var json = item.json.replace(/\"/g, '"');
         var keywords = item.keywords;
+        var snapshot = item.snapshot;
         _project_market_md5s[index] = md5;
         _project_market_names[index] = name.replace(/\\\'/g, "'");
         _project_market_authors[index] = author.replace(/\\\'/g, "'");
         _project_market_descs[index] = description.replace(/\\\'/g, "'");
         _project_market_json[index] = json.replace(/\\\'/g, "'");
         _project_market_keywords[index] = keywords.replace(/\\\'/g, "'");
+        _project_market_snapshot[index] = snapshot;
         html += '<tr><td><div class="feed_panel_item" style="width: 80%;" onclick="showProjectMarketItem(' + index + ');">';
         html += name.replace(/\\\'/g, "'");
         html += '</div></td></tr>';
@@ -106,15 +123,32 @@ function loadProjectMarket() {
 }
 
 function showProjectMarketItem(index) {
-    $('#market_output').html('<div class="scrollable_div" style="height: 250px; width: 430px; white-space:normal; display:block;">UID: ' + _project_market_md5s[index] + '<br/>' 
+    $('#market_output').html('<div class="scrollable_div" style="height: 250px; width: 430px; white-space:normal; display:block;">UID: ' + _project_market_md5s[index] + '<br/>'
             + 'Name: ' + _project_market_names[index]  + '<br/>'
             + 'Author: <b>' + _project_market_authors[index]  + '</b><br/>'
-            + '<a href="' + USDL_URL + 'uid=' + _project_market_md5s[index] + '&output=usdl" target="_blank">UiSDL</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="' + SUSDL_URL + 'uid=' + _project_market_md5s[index] + '" target="_blank">Semantic-UiSDL</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="' + RDFA_URL + 'uid=' + _project_market_md5s[index] + '&lang=' + _sys_user_agent_lang + '" target="_blank">RDFa</a><br/>'
-            + '<hr/><br/>' + _project_market_descs[index] + '</div><center><div class="div_long_push_button" onclick="doInsertProject(' + index + ');">Add to HyperMash</div></center>');
+            + '<a href="' + USDL_URL + 'uid=' + _project_market_md5s[index] + '&output=usdl" target="_blank">UiSDL</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="' + SUSDL_URL + 'uid=' + _project_market_md5s[index] + '" target="_blank">Semantic-UiSDL</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="' + RDFA_URL + 'uid=' + _project_market_md5s[index] + '&lang=' + _sys_user_agent_lang + '" target="_blank">Context-Aware</a><br/>'
+            + '<hr/><br/>' + _project_market_descs[index] + '</div><div><a href="' + _project_market_snapshot[index] + '" target="_blank">Snapshot</a></div><center><div class="div_long_push_button" onclick="doInsertProject(' + index + ');">Add to HyperMash</div></center>');
 }
 
 function doInsertProject(index) {
     insertProjectIntoHyperMash(_project_market_md5s[index], _project_market_names[index], _project_market_json[index], _project_market_keywords[index]);
+}
+
+function releaseBuffers() {
+  'use strict';
+  _feed_market_descs = [];
+  _feed_market_names = [];
+  _feed_market_urls = [];
+  _feed_market_types = [];
+  _feed_market_keywords = [];
+
+  _project_market_md5s = [];
+  _project_market_names = [];
+  _project_market_authors = [];
+  _project_market_descs = [];
+  _project_market_json = [];
+  _project_market_keywords = [];
+  _project_market_snapshot = [];
 }
 
 function loadFeedMarket() {
@@ -145,7 +179,7 @@ function loadFeedMarket() {
     }
 
 
-    html += '</table></div></td><td width="60%" style="display:table;"><output id="market_output"></output></td></tr><tr><td><div class="div_push_button" onclick="invisibleElement(\'serviceBoard\');invisibleElement(\'serviceBoard_div\');">Close</div></td></tr></table>';
+    html += '</table></div></td><td width="60%" style="display:table;"><output id="market_output"></output></td></tr><tr><td><div class="div_push_button" onclick="invisibleElement(\'serviceBoard\');invisibleElement(\'serviceBoard_div\');releaseBuffers();">Close</div></td></tr></table>';
 
     visibleElement('serviceBoard');
     visibleElement('serviceBoard_div');

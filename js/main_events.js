@@ -53,9 +53,9 @@ function getherUserAgentInfo() {
     var language = window.navigator.userLanguage || window.navigator.language;
     _sys_user_agent_lang = language;
 
-    $.ajax({ 
-        url: "http://ajaxhttpheaders.appspot.com", 
-        dataType: 'jsonp', 
+    $.ajax({
+        url: "http://ajaxhttpheaders.appspot.com",
+        dataType: 'jsonp',
         success: function(headers) {
             var languages = headers['Accept-Language'].split(',');
             setUALanguage(languages[0]);
@@ -97,6 +97,7 @@ function showLogDialog() {
     visibleElement('dashboard');
     visibleElement('dashboard_div');
     $('#dashboard_output').html('<div>System Log</div><hr/><table style="width: 100%;"><tr><td><div id="logMessageDiv" style="overflow: auto; width: 40em; height: 300px; background:grey; padding-left: 5px; padding-right: 5px;">' + _log + '</div></td></tr><tr><td align="center"><div class="div_push_button" onclick="_log = \'\';$(\'#logMessageDiv\').html(\'\');">Clear</div><div class="div_long_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');$(\'#dashboard_output\').html(\'\');">Close</div></td></tr></table>');
+
 }
 
 function showPublishDialog() {
@@ -119,7 +120,7 @@ function resetCurrentPlace() {
 
 function showFeedsPanel(containerId) {
     _current_container_id = containerId;
-    document.getElementById(containerId).innerHTML = '<table class="panel_table"><tr><td><table><tr><td><div>Feeds</div></td><td><div class="div_push_button" onclick="showAddFeedForm(\'dashboard_output\')">Add feed...</div><div class="div_push_button" onclick="loadFeedMarket();">Feed Market</div></td></tr></table></td>' + 
+    document.getElementById(containerId).innerHTML = '<table class="panel_table"><tr><td><table><tr><td><div>Feeds</div></td><td><div class="div_push_button" onclick="showAddFeedForm(\'dashboard_output\')">Add feed...</div><div class="div_push_button" onclick="loadFeedMarket();">Feed Market</div></td></tr></table></td>' +
     '</tr></table><hr class="seperator_hr"/>' + feeds_html;
 }
 
@@ -135,7 +136,7 @@ function showWidgetsPanel(containerId) {
 
 function showBlocksPanel(containerId) {
     _current_container_id = containerId;
-    $('#'+ containerId).html('<div><label>From:</lable><br/><input type="TEXT" id="searchBlocksFrom" class="input_box" placeholder="Please enter keywords, e.g. location, map..."></div><div><label>To:</label><br/><input type="TEXT" class="input_box" id="searchBlocksTo" placeholder="Please enter Keywords, e.g. map, navigation..."/></div><div id="searchBlocksClear" class="div_push_button" onclick="$(\'#searchBlocksFrom, #searchBlocksTo\').val(\'\');">Clear</div><div id="searchBlocksButton" class="div_push_button" onclick="searchBlocks($(\'#searchBlocksFrom\').val(), $(\'#searchBlocksTo\').val());">Local</div><div id="searchCloudButton" class="div_push_button" onclick="searchCloudBlocks($(\'#searchBlocksFrom\').val(), $(\'#searchBlocksTo\').val());">Cloud</div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;" id="searchBlocksTable"></table>');
+    $('#'+ containerId).html('<div><label>From:</lable><br/><input type="TEXT" id="searchBlocksFrom" class="input_box" placeholder="Please enter keywords, e.g. location, map..."></div><div><label>To:</label><br/><input type="TEXT" class="input_box" id="searchBlocksTo" placeholder="Please enter Keywords, e.g. map, navigation..."/></div><div><div id="searchBlocksClear" class="div_push_button" onclick="$(\'#searchBlocksFrom, #searchBlocksTo\').val(\'\');">Clear</div><div id="searchBlocksButton" class="div_push_button" onclick="searchBlocks($(\'#searchBlocksFrom\').val(), $(\'#searchBlocksTo\').val());">Local</div><div id="searchCloudButton" class="div_push_button" onclick="searchCloudBlocks($(\'#searchBlocksFrom\').val(), $(\'#searchBlocksTo\').val());">Cloud</div></div><hr class="seperator_hr" /><table class="panel_table" style="margin-left:20px;width: 93%;" id="searchBlocksTable"></table>');
 
     $('#searchBlocksFrom, #searchBlocksTo').keypress(function(evt) {
         if(evt.keyCode == 13) { // if enter hit
@@ -306,7 +307,7 @@ function searchBlocks(inputFrom, inputTo) {
     }
 
     $('#searchBlocksTable').html('');
-    
+
     var from = [];
     var to = [];
     $.each(inputFrom.split(','), function() {
@@ -451,7 +452,7 @@ function updateFeedsHTML() {
                 appendFeedsNameList(name);
             }
         }, null);
-        feeds_html += '</table>'; 
+        feeds_html += '</table>';
     });
 }
 
@@ -622,7 +623,7 @@ function showSemanticSuggestion(_inputUrl) {
     // show message
     visibleElement('dashboard');
     visibleElement('dashboard_div');
-    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><div class="scrollable_div"><table class="frame_table">' + html +'</table></div><tr><td><div id="semantic-dialog-ok-btn" class="div_push_button" onclick="document.getElementById(\'dashboard_output\').innerHTML = \'\';invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">Close</div></td></tr></table>';
+    document.getElementById('dashboard_output').innerHTML = '<table class="frame_table"><div class="scrollable_div"><table class="frame_table">' + html +'</table></div><tr><td><div><div id="semantic-dialog-ok-btn" class="div_push_button" onclick="document.getElementById(\'dashboard_output\').innerHTML = \'\';invisibleElement(\'dashboard_div\');invisibleElement(\'dashboard\');">Close</div></div></td></tr></table>';
 }
 
 function removeFeedFromFeedList(name) {
@@ -687,7 +688,7 @@ function readyDatabase() {
     //     tx.executeSql('CREATE TABLE IF NOT EXISTS projects (md5 NOT NULL PRIMARY KEY, name, json, keyword)');
     // });
 
-// 
+//
 //     // now, initialise Indexed DB
 //     // In the following line, you should include the prefixes of implementations you want to test.
 //     window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
@@ -700,17 +701,17 @@ function readyDatabase() {
 //        window.alert("Your browser doesn't support a stable version of IndexedDB. Load and Save features will not be available.");
 //        return;
 //     }
-// 
+//
 //     var request = indexedDB.open(INDEXEDDB_DATABASE, INDEXEDDB_VERSION);
 //     request.onsuccess = function(evt) {
 //         idb = request.result;
 //         readProjects('options_field_output');
 //     };
-// 
+//
 //     request.onerror = function(evt) {
 //         console.log("IndexedDB error: " + evt.target.errorCode);
 //     };
-// 
+//
 //     request.onupgradeneeded = function(evt) {
 //         var objectStore = evt.currentTarget.result.createObjectStore(INDEXEDDB_STORE, {keyPath: "id", autoIncrement:true});
 //         objectStore.createIndex("name", "name", {unique: false});
@@ -734,7 +735,7 @@ function readProjects(containerId) {
         }, null);
     });
 
-// 
+//
 //     var objectStore = idb.transaction(INDEXEDDB_STORE, IDBTransaction.READ_ONLY).objectStore(INDEXEDDB_STORE);
 //     objectStore.openCursor().onsuccess = function(evt) {
 //         var cursor = evt.target.result;
@@ -754,7 +755,7 @@ function readAProject(md5) {
                 var row = results.rows.item(index);
                 json = row['json'];
             }
-            loadFromJSON(json.replace(/&apos;/g, "'"));            
+            loadFromJSON(json.replace(/&apos;/g, "'"));
         }, null);
     });
 
@@ -810,7 +811,7 @@ function propertiesPanelShowSysWorker(service) {
     var beforeText = service.getAddTextObject().getBeforeText();
     var afterText = service.getAddTextObject().getAfterText();
     var trimWith = service.getTrimWhitespace().getReplaceWith();
-    
+
 
     switch(name) {
         case WORKER_FETCH_LAST_BY_KEY:
@@ -882,7 +883,7 @@ function propertiesPanelShowSoapFeed(service) {
             options += '<option value="' + cnt + '"' + selected + '>' + this + '</option>';
             ++cnt;
         });
-        
+
         $('#properties_panel_output').html('<table class="properties_panel_table"><tr><td>Name:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + name + '"/></td></tr><tr><td>WSDL:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + wsdl + '"></td></tr><tr><td><form>Function:<br/><div ><select id="SoapFunctionsSelect" name="SoapFunctionsMenu" style="width:90%;">' + options + '</select></div></form></td></tr></table>');
 
     $('#SoapFunctionsSelect').change(function() {
@@ -908,10 +909,10 @@ function propertiesPanelShowRestFeed(service) {
     }
     else if(method == 'put' || method == 'PUT') {
         feed_method_html = '<input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_get" /><label for="properties_panel_rest_feed_method_get">GET</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_post" /><label for="properties_panel_rest_feed_method_post">POST</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_put" checked="true"/><label for="properties_panel_rest_feed_method_put">PUT</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_delete"/><label for="properties_panel_rest_feed_method_delete">DELETE</label>';
-    }  
+    }
     else if(method == 'delete' || method == 'DELETE') {
         feed_method_html = '<input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_get" /><label for="properties_panel_rest_feed_method_get">GET</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_post" /><label for="properties_panel_rest_feed_method_post">POST</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_put" /><label for="properties_panel_rest_feed_method_put">PUT</label><br/><input type="RADIO" name="rest_feed_method" id="properties_panel_rest_feed_method_delete" checked="true"/><label for="properties_panel_rest_feed_method_delete">DELETE</label>';
-    }  
+    }
 
     // document.getElementById('properties_panel_output').innerHTML = '<table class="properties_panel_table"><tr><td>Name:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + name + '"/></td></tr><tr><td>URL:<br/><input type="TEXT" class="input_box" disabled="disabled" value="' + url + '"></td></tr><tr><td><form>Method:<br/><div style="margin-left: 30px;">' + feed_method_html + '</div></form></td></tr><tr><td style="vertical-align: top;"><div class="div_push_button" onclick="applyRestMethodUpdate(' + id + ')">Apply</div></td></tr></table>';
 

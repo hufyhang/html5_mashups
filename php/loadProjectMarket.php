@@ -21,12 +21,13 @@ while($row = mysql_fetch_array($data)) {
     $author = $row['author'];
     $description = $row['description'];
     $json = $row['json'];
+    $snapshot = $row['snapshot'];
     $keywords = $row['keywords'];
     // $description = str_replace('"', '&quot;' $description);
     $description = addslashes($description);
     $json = addslashes($json);
 
-    $result = $result . '{"md5":"' . $md5 . '", "name":"' . $name . '", "author":"' . $author . '", "description":"' . $description . '", "json":"' . $json . '", "keywords":"' . $keywords . '"},';
+    $result = $result . '{"md5":"' . $md5 . '", "name":"' . $name . '", "author":"' . $author . '", "description":"' . $description . '", "json":"' . $json . '", "keywords":"' . $keywords . '", "snapshot":"' . $snapshot . '"},';
 }
 
 // remove the comma at the very last position
