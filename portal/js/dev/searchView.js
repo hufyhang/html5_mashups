@@ -8,7 +8,7 @@ define(['search', 'marketView'], function (Search, Market) {
   searchHtml += '<div><input type="text" class="form-control" id="search-input" ';
   searchHtml += 'placeholder="keywords..."/><div class="btn btn-default" id="search-btn">Search</div></div>';
 
-  var doSearch = function () {
+  var startSearch = function () {
     var keys = $('#search-input').val();
     search.fetch({
       data: {
@@ -27,15 +27,30 @@ define(['search', 'marketView'], function (Search, Market) {
     render: function () {
       view.el.html(searchHtml);
 
-      $('#search-btn').on('click', function () {
-        doSearch();
-      });
+      // $('#search-btn').on('click', function () {
+      //   doSearch();
+      // });
 
-      $('#search-input').keypress(function (evt) {
-        if (evt.which === 13) {
-          doSearch();
-        }
-      });
+      // $('#search-input').keypress(function (evt) {
+      // });
+    },
+    events: {
+      '#search-btn': {
+        on: 'click',
+        fire: 'doSearch'
+      },
+      '#search-input': {
+        on: 'keypress',
+        fire: 'keySearch'
+      }
+    },
+    keySearch: function (evt) {
+      if (evt.which === 13) {
+        startSearch();
+      }
+    },
+    doSearch: function () {
+      startSearch();
     }
   });
 
