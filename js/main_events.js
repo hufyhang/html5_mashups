@@ -43,6 +43,30 @@ function initialise() {
     readyDatabase();
     updateFeedsHTML();
     readProjects('options_field_output');
+
+    checkQueryLoad();
+}
+
+function checkQueryLoad() {
+  'use strict';
+  var id = getQueryVariable('id');
+  if (id) {
+    $.get('http://feifeihang.info/hypermash/php/loadProjectViaId.php?id=' + id,
+          function (data) {
+            loadFromJSON(data);
+          });
+  }
+}
+
+function getQueryVariable(variable)
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
 }
 
 var setUALanguage = function(lang) {
