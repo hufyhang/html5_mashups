@@ -3,4 +3,6 @@ main.js
 ----------------
 market.js
 marketView.js
+search.js
+searchView.js
 main.js

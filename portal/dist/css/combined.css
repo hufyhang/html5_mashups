@@ -340,8 +340,18 @@ hr, .tail {
 .tail {
   margin-bottom: 10px; }
 
-.panels {
+.search-panel {
   padding-top: 55px;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 10px;
+  text-align: center; }
+  .search-panel input {
+    display: table-cell;
+    width: 90%;
+    margin-right: 5px; }
+
+.panels {
   margin-left: 5%;
   margin-right: 5%; }
 

@@ -9,21 +9,25 @@ define(['market'], function (Market) {
     render: function () {
       M.fetch({
         done: function (data) {
-          var json = JSON.parse(data);
-
-          console.log(json);
-          for (var item in json.projects) {
-            if (json.projects.hasOwnProperty(item)) {
-              var tar = json.projects[item];
-              tar.description = tar.description.replace(/\$quot;/g, '"');
-            }
-          }
-
-          view.el.html(_.template(view.template, {data: json.projects}));
+          view.renderData(data);
         }
       });
     }
   });
+
+  view.renderData = function (data) {
+    var json = JSON.parse(data);
+
+    console.log(json);
+    for (var item in json.projects) {
+      if (json.projects.hasOwnProperty(item)) {
+        var tar = json.projects[item];
+        tar.description = tar.description.replace(/\$quot;/g, '"');
+      }
+    }
+
+    view.el.html(_.template(view.template, {data: json.projects}));
+  };
 
   return {
     View: view
