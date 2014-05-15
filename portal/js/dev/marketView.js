@@ -16,9 +16,15 @@ define(['market'], function (Market) {
   });
 
   view.renderData = function (data) {
+    if (data === '{"projects": ]}' || data === '{"projects": ]}\n') {
+      view.el.html('<i>Oops... We found nothing on our server...</i>');
+      return;
+    }
+
     var json = JSON.parse(data);
 
     console.log(json);
+
     for (var item in json.projects) {
       if (json.projects.hasOwnProperty(item)) {
         var tar = json.projects[item];
