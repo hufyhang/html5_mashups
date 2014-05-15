@@ -1,1 +1,1 @@
-require(["marketView"],function(e){var t=Ribs.make(e.View);Ribs.Router.route({home:function(){t.render()}}),Ribs.Router.navigate("home")});
+require(["marketView"],function(e){var t=Ribs.make(e.View);$("#goto-top").on("click",function(){window.scrollTo(0,0)}),Ribs.Router.route({home:function(){t.render()}}),Ribs.Router.navigate("home")});
