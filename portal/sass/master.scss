@@ -1,0 +1,27 @@
+$banner_height: 50px;
+$theme_blue: rgb(59, 89, 152);
+
+.banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: $banner_height;
+    z-index: 10;
+    background-color: $theme_blue;
+    color: white;
+    font-size: 2em;
+    text-align: center;
+    padding-top: 5px;
+}
+
+.panels {
+    padding-top: $banner_height + 10px;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+img {
+    max-height: 70%;
+    max-width: 70%;
+}

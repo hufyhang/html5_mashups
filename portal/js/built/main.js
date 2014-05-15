@@ -1,0 +1,1 @@
+require(["marketView"],function(e){var t=Ribs.make(e.View);Ribs.Router.route({home:function(){t.render()}}),Ribs.Router.navigate("home")});
