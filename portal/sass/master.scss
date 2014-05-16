@@ -1,10 +1,15 @@
 $banner_height: 35px;
 $theme_blue: rgb(59, 89, 152);
 $theme_bg: rgb(237, 240, 245);
+$shadow_color: rgb(196, 196, 196);
 
 body {
     background-color: $theme_bg;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+a {
+    text-decoration: none !important;
 }
 
 .banner {
@@ -19,7 +24,7 @@ body {
     font-size: 13px;
     padding-top: 5px;
     vertical-align: middle;
-    box-shadow: 0px 2px 3px grey;
+    /* box-shadow: 0px 2px 3px grey; */
 
     .banner-left {
         display: table-cell;
@@ -87,7 +92,8 @@ hr, .tail {
     margin-right: 5%;
 
     .panel {
-         margin-bottom: 10px !important;
+        box-shadow: 2px 2px 5px $shadow_color;
+        margin-bottom: 10px !important;
     }
 }
 
