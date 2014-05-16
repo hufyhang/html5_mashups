@@ -28,6 +28,7 @@
               <h3 class="panel-title"><a target="_blank" href="http://feifeihang.info/hypermash/index.html?id=<%= item.md5 %>"><%= item.name %></a></h3>
             </div>
             <div class="panel-body cell-table">
+
               <div class="text-cell">
                 <b>Author:</b> <%= item.author %><br/>
                 <b>Tags:</b> <i><%= item.keywords %></i><br/><br/>
@@ -36,6 +37,7 @@
               <div class="img-cell">
                 <a href="<%= item.snapshot %>" target="_blank"><img alt="snapshot" src="<%= item.snapshot %>"/></a>
               </div>
+
             </div>
           </div>
         <% }); %>
@@ -58,9 +60,7 @@
 
             <div class="cell-div">
               <a href="http://feifeihang.info/hypermash" target="_blank">
-                <!-- <div class="btn btn&#45;default"> -->
                 <i class="fa fa-cogs"></i> HyperMash
-                <!-- </div> -->
               </a>
             </div>
 
