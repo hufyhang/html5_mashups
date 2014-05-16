@@ -31,7 +31,10 @@
 
             <div class="text-cell">
               <b>Author:</b> <%= item.author %><br/>
-              <b>Tags:</b> <i><%= item.keywords %></i><br/><br/>
+              <b>Tags:</b> <i><%= item.keywords %></i><br/>
+              <a href="<%= item.contextDesc %>" target="_blank">
+                <i class="fa fa-file-text"></i> Conext-aware description <b>(experimental)</b>
+              </a></br>
               <%= item.description %>
             </div>
             <div class="img-cell">

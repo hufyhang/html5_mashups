@@ -1,6 +1,7 @@
 
 main.js
 ----------------
+userAgent.js
 market.js
 marketView.js
 search.js

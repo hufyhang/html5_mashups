@@ -1,6 +1,7 @@
 /* global define, Ribs, _ */
-define(['market'], function (Market) {
+define(['userAgent', 'market'], function (UserAgent, Market) {
   'use strict';
+  var agent = UserAgent.meta;
   var M = Ribs.make(Market.Market);
 
   var view = Ribs.View.make({
@@ -25,9 +26,12 @@ define(['market'], function (Market) {
 
     console.log(json);
 
+    var contextUrl = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' +
+                      agent.lang + '&uid=';
     for (var item in json.projects) {
       if (json.projects.hasOwnProperty(item)) {
         var tar = json.projects[item];
+        tar.contextDesc = contextUrl + tar.md5;
         tar.description = tar.description.replace(/\$quot;/g, '"');
       }
     }

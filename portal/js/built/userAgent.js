@@ -1,0 +1,1 @@
+define([],function(){var e=function(){var e=window.navigator.userLanguage||window.navigator.language;return{lang:e}};return{meta:e()}});
