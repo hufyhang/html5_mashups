@@ -18,7 +18,6 @@ require(['marketView', 'searchView'], function (MarketView, SearchView) {
 
   $('#goto-top').on('click', function () {
     window.scrollTo(0, 0);
-    // gotoTop.css('display', 'none');
   });
 
   Ribs.Router.route({

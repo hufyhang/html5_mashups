@@ -1,4 +1,4 @@
-$banner_height: 45px;
+$banner_height: 35px;
 $theme_blue: rgb(59, 89, 152);
 $theme_bg: rgb(237, 240, 245);
 
@@ -9,23 +9,25 @@ body {
 
 .banner {
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: 0;
     width: 100%;
     height: $banner_height;
     z-index: 10;
     background-color: $theme_blue;
     color: white;
-    font-size: 1.5em;
+    font-size: 13px;
     padding-top: 5px;
     vertical-align: middle;
     box-shadow: 0px 2px 3px grey;
 
     .banner-left {
         display: table-cell;
+        font-size: 1.2em !important;
         width: 50%;
         padding-left: 10px;
         text-align: left;
+        vertical-align: middle;
         float: left;
     }
 
@@ -38,17 +40,36 @@ body {
     }
 }
 
+.cell-div {
+     display: table-cell;
+     float: right;
+     text-align: right;
+     margin-right: 5px;
+     cursor: pointer;
+     padding-top: 2px;
+     padding-bottom: 2px;
+     padding-left: 2px;
+     padding-right: 2px;
+     color: white;
+     border: 1px solid white;
+     
+     a {
+         text-decoration: none;
+          color: white;
+     }
+}
+
 hr, .tail {
     color: grey;
     text-align: center;
 }
 
 .tail {
-    margin-bottom: 10px;
+    margin-bottom: 10px + $banner_height;
 }
 
 .search-panel {
-    padding-top: $banner_height + 10px;
+    padding-top: 10px;
     margin-left: 5%;
     margin-right: 5%;
     margin-bottom: 10px;
@@ -64,6 +85,10 @@ hr, .tail {
 .panels {
     margin-left: 5%;
     margin-right: 5%;
+
+    .panel {
+         margin-bottom: 10px !important;
+    }
 }
 
 img {

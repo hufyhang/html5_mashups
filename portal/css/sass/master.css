@@ -4,22 +4,24 @@ body {
 
 .banner {
   position: fixed;
-  top: 0;
+  bottom: 0;
   left: 0;
   width: 100%;
-  height: 45px;
+  height: 35px;
   z-index: 10;
   background-color: #3b5998;
   color: white;
-  font-size: 1.5em;
+  font-size: 13px;
   padding-top: 5px;
   vertical-align: middle;
   box-shadow: 0px 2px 3px grey; }
   .banner .banner-left {
     display: table-cell;
+    font-size: 1.2em !important;
     width: 50%;
     padding-left: 10px;
     text-align: left;
+    vertical-align: middle;
     float: left; }
   .banner .banner-right {
     display: table-cell;
@@ -28,15 +30,31 @@ body {
     float: right;
     padding-right: 15px; }
 
+.cell-div {
+  display: table-cell;
+  float: right;
+  text-align: right;
+  margin-right: 5px;
+  cursor: pointer;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 2px;
+  padding-right: 2px;
+  color: white;
+  border: 1px solid white; }
+  .cell-div a {
+    text-decoration: none;
+    color: white; }
+
 hr, .tail {
   color: grey;
   text-align: center; }
 
 .tail {
-  margin-bottom: 10px; }
+  margin-bottom: 45px; }
 
 .search-panel {
-  padding-top: 55px;
+  padding-top: 10px;
   margin-left: 5%;
   margin-right: 5%;
   margin-bottom: 10px;
@@ -49,6 +67,8 @@ hr, .tail {
 .panels {
   margin-left: 5%;
   margin-right: 5%; }
+  .panels .panel {
+    margin-bottom: 10px !important; }
 
 img {
   max-height: 50%;
