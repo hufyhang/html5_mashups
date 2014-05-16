@@ -26,13 +26,6 @@ define(['search', 'marketView'], function (Search, Market) {
     template: $('#panel-template'),
     render: function () {
       view.el.html(searchHtml);
-
-      // $('#search-btn').on('click', function () {
-      //   doSearch();
-      // });
-
-      // $('#search-input').keypress(function (evt) {
-      // });
     },
     events: {
       '#search-btn': {
