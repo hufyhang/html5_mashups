@@ -64,11 +64,6 @@ $ch.find('#goto-top').css('display', 'none').click(function () {
 });
 
 $ch.router.add({
-  'home': function () {
-    'use strict';
-    $ch.source('search', '');
-    $ch.find('.panels').view(resultView);
-  },
   'search': function () {
     'use strict';
     $ch.find('.panels').view(resultView);
@@ -80,4 +75,3 @@ $ch.router.add({
   }
 });
 
-$ch.router.navigate('home');
