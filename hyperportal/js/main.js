@@ -33,8 +33,8 @@ var resultView = $ch.view({
       var projects = json.projects;
       for (var index = 0, l = projects.length; index !== l; ++index) {
         var param = projects[index];
-        param.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' +
-                      AGENT.lang + '&uid=';
+        param.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' + AGENT.lang + '&uid=';
+        param.description = param.description.replace(/\$quot;/g, '"');
         html += $ch.template(PANEL_TEMPLATE, param);
       }
     }
