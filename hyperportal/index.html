@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>HyperPortal - The Web Portal of HyperMash</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="img/favicon.ico" rel="icon" />
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css" />
+    <link href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/flatly/bootstrap.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" />
+
+    <script type="text/template" id="panel-template">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <a href="http://feifeihang.info/hypermash/index.html?id={{md5}}" target="_blank">
+              {{name}}
+            </a>
+          </h3>
+        </div>
+
+        <div class="panel-body cell-table">
+
+          <div class="text-cell">
+            <b>Author:</b> {{author}}<br/>
+            <b>Tags:</b> <i>{{keywords}}</i><br/>
+            <a href="{{contextDesc}}{{md5}}" target="_blank">
+              <i class="fa fa-file-text"></i> Conext-aware description <b>(experimental)</b>
+            </a></br>
+            {{description}}
+          </div>
+
+          <div class="img-cell">
+            <a href="{{snapshot}}" target="_blank"><img alt="snapshot" src="{{snapshot}}"/></a>
+          </div>
+
+        </div>
+      </div>
+    </script>
+
+    <script type="text/template" id="tail-template">
+      <div class="tail">&copy; 2012-2014 Feifei Hang, The Univeristy of Manchester.</div>
+    </script>
+</head>
+<body>
+  <!-- top search bar -->
+  <div class="search-panel">
+    <div>
+      <input type="text" class="form-control" id="search-input" value=""
+      placeholder="keywords..." ch-source="search" ch-keypress="if(event.which === 13) {doSearch();}"/>
+      <div class="btn btn-default" id="search-btn" ch-click="doSearch()">Search</div>
+    </div>
+  </div>
+
+  <!-- result container -->
+  <div class="panels" ch-view="resultView"></div>
+
+  <!-- footer bar -->
+  <div class="banner">
+    <div class="banner-left">
+      <i class="fa fa-cubes"></i> HyperPortal
+    </div>
+
+    <div class="banner-right">
+      <div class="cell-div" id="goto-top" title="Back to top">
+        &nbsp;&nbsp;<i class="fa fa-angle-double-up"></i>&nbsp;&nbsp;
+      </div>
+
+      <div class="cell-div">
+        <a href="http://feifeihang.info/hypermash" target="_blank">
+          <i class="fa fa-cogs"></i> HyperMash
+        </a>
+      </div>
+    </div>
+
+
+  </div>
+  <script src="js/chop.min.js" ch-main="js/main.js"></script>
+</body>
+</html>
