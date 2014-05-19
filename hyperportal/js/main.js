@@ -8,7 +8,7 @@ var TAIL_TEMPLATE = $ch.find('#tail-template').html();
 
 var doSearch = function () {
   'use strict';
-  $ch.find('.panels').view(resultView);
+  $ch.router.navigate('search');
 };
 
 var resultView = $ch.view({
@@ -61,3 +61,17 @@ $ch.find('#goto-top').css('display', 'none').click(function () {
   'use strict';
   window.scrollTo(0 ,0);
 });
+
+$ch.router.add({
+  'home': function () {
+    'use strict';
+    $ch.source('search', '');
+    $ch.find('.panels').view(resultView);
+  },
+  'search': function () {
+    'use strict';
+    $ch.find('.panels').view(resultView);
+  }
+});
+
+$ch.router.navigate('home');
