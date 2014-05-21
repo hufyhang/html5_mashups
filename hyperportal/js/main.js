@@ -6,22 +6,7 @@ var SEARCH_PHP = 'http://feifeihang.info/hypermash/portal/php/search.php';
 var PANEL_TEMPLATE = $ch.find('#panel-template').html();
 var TAIL_TEMPLATE = $ch.find('#tail-template').html();
 
-var resultModel = $ch.model({});
-
-var resultData = $ch.http({
-  url: SEARCH_PHP,
-  method: 'post',
-  data: {
-    keywords: ''
-  },
-  async: false
-});
-
-if (resultData !== '{"projects": ]}' && resultData !== '{"projects": ]}\n') {
-  resultModel.set(JSON.parse(resultData));
-}
-
-
+var results;
 
 var doSearch = function () {
   'use strict';
@@ -33,15 +18,32 @@ var resultView = $ch.view({
     'use strict';
     var html = '';
 
-    if (resultModel.get().length === 0) {
+    if (results === undefined) {
+      var resultData = $ch.http({
+        url: SEARCH_PHP,
+        method: 'post',
+        data: {
+          keywords: ''
+        },
+        async: false
+      });
+
+      if (resultData !== '{"projects": ]}' && resultData !== '{"projects": ]}\n') {
+        results = JSON.parse(resultData);
+      } else {
+        results = {projects: []};
+      }
+    }
+
+    var expr = '';
+    expr += 'var keys = $ch.source("search") || "";';
+    expr += 'keys = keys.toUpperCase();';
+    expr += '$$.description.toUpperCase().indexOf(keys) > -1';
+    var projects = $ch.filter(results.projects, expr);
+
+    if (projects.length === 0) {
       html = '<i>Oops... We found nothing on our server...</i>';
     } else {
-      // var keys = $ch.source('search') || '';
-      var expr = '';
-      expr += 'var keys = $ch.source("search") || "";';
-      expr += 'keys = keys.toUpperCase();';
-      expr += '$$.description.toUpperCase().indexOf(keys) > -1';
-      var projects = resultModel.filter('projects', expr);
       for (var index = 0, l = projects.length; index !== l; ++index) {
         var param = projects[index];
         param.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' + AGENT.lang + '&uid=';
