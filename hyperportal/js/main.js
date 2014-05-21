@@ -35,11 +35,11 @@ var resultView = $ch.view({
       }
     }
 
-    var expr = '';
-    expr += 'var keys = $ch.source("search") || "";';
-    expr += 'keys = keys.toUpperCase();';
-    expr += '$$.description.toUpperCase().indexOf(keys) > -1';
-    var projects = $ch.filter(results.projects, expr);
+    var projects = $ch.filter(results.projects, function (data) {
+      var keys = $ch.source('search') || '';
+      keys = keys.toUpperCase();
+      return data.description.toUpperCase().indexOf(keys) > -1;
+    });
 
     if (projects.length === 0) {
       html = '<i>Oops... We found nothing on our server...</i>';
