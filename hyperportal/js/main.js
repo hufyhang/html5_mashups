@@ -1,5 +1,5 @@
 /* global $ch */
-$ch.require('userAgent');
+$ch.require(['router', 'userAgent']);
 var AGENT = $ch.module('userAgent').meta;
 
 var SEARCH_PHP = 'http://feifeihang.info/hypermash/portal/php/search.php';
