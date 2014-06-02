@@ -51,8 +51,8 @@
   <div class="search-panel">
     <div>
       <input type="text" class="form-control" id="search-input" value=""
-      placeholder="keywords..." ch-source="search" ch-keypress="if ($ch.event.keyCode === 13) {doSearch();}"/>
-      <div class="btn btn-default" id="search-btn" ch-click="doSearch()">Search</div>
+      placeholder="keywords..." ch-source="search" ch-keypress="if ($$event.keyCode === 13) {$ch.event.emit('search');}"/>
+      <div class="btn btn-default" id="search-btn" ch-click="$ch.event.emit('search')">Search</div>
     </div>
   </div>
 

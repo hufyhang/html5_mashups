@@ -1,17 +1,11 @@
 /* global $ch */
-$ch.require(['router', 'userAgent']);
-var AGENT = $ch.module('userAgent').meta;
+$ch.require(['module/context', 'module/event']);
 
 var SEARCH_PHP = 'http://feifeihang.info/hypermash/portal/php/search.php';
 var PANEL_TEMPLATE = $ch.find('#panel-template').html();
 var TAIL_TEMPLATE = $ch.find('#tail-template').html();
 
 var results;
-
-var doSearch = function () {
-  'use strict';
-  $ch.router.navigate('search');
-};
 
 var resultView = $ch.view({
   html: function () {
@@ -46,7 +40,7 @@ var resultView = $ch.view({
     } else {
       for (var index = 0, l = projects.length; index !== l; ++index) {
         var param = projects[index];
-        param.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' + AGENT.lang + '&uid=';
+        param.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' + $ch.context.language + '&uid=';
         param.description = param.description.replace(/\$quot;/g, '"');
         html += $ch.template(PANEL_TEMPLATE, param);
       }
@@ -75,10 +69,7 @@ $ch.find('#goto-top').css('display', 'none').click(function () {
   window.scrollTo(0 ,0);
 });
 
-$ch.router.add({
-  'search': function () {
-    'use strict';
-    $ch.find('.panels').view(resultView);
-  }
+$ch.event.listen('search', function () {
+  'use strict';
+  $ch.find('.panels').view(resultView);
 });
-
