@@ -1,5 +1,5 @@
 /* global $ch */
-$ch.require(['module/context', 'module/event']);
+$ch.require(['context', 'event']);
 
 var SEARCH_PHP = 'http://feifeihang.info/hypermash/portal/php/search.php';
 var PANEL_TEMPLATE = $ch.find('#panel-template').html();
