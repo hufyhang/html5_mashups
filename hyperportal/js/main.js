@@ -2,52 +2,38 @@
 $ch.require(['context', 'event']);
 
 var SEARCH_PHP = 'http://feifeihang.info/hypermash/portal/php/search.php';
-var PANEL_TEMPLATE = $ch.find('#panel-template').html();
-var TAIL_TEMPLATE = $ch.find('#tail-template').html();
 
-var results;
+var resultFilter = function (item) {
+  'use strict';
+  var keys = $ch.source('search') || '';
+  keys = keys.toUpperCase();
+  return item.description.toUpperCase().indexOf(keys) > -1;
+};
 
-var resultView = $ch.view({
-  html: function () {
+$ch.http({
+  url: SEARCH_PHP,
+  method: 'post',
+  data: {
+    keywords: ''
+  },
+  done: function (res) {
     'use strict';
-    var html = '';
-
-    if (results === undefined) {
-      var resultData = $ch.http({
-        url: SEARCH_PHP,
-        method: 'post',
-        data: {
-          keywords: ''
-        },
-        async: false
-      });
-
+    if (res.status === 200) {
+      var resultData = res.data;
       if (resultData !== '{"projects": ]}' && resultData !== '{"projects": ]}\n') {
-        results = JSON.parse(resultData);
+        var projects = JSON.parse(resultData).projects;
+        $ch.each(projects, function (item) {
+          item.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' +
+          $ch.context.language + '&uid=';
+          item.description = item.description.replace(/\$quot;/g, '"');
+        });
+        $ch.source('results', projects);
       } else {
-        results = {projects: []};
+        $ch.source('results', []);
       }
+
+      $ch.event.emit('search');
     }
-
-    var projects = $ch.filter(results.projects, function (data) {
-      var keys = $ch.source('search') || '';
-      keys = keys.toUpperCase();
-      return data.description.toUpperCase().indexOf(keys) > -1;
-    });
-
-    if (projects.length === 0) {
-      html = '<i>Oops... We found nothing on our server...</i>';
-    } else {
-      for (var index = 0, l = projects.length; index !== l; ++index) {
-        var param = projects[index];
-        param.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' + $ch.context.language + '&uid=';
-        param.description = param.description.replace(/\$quot;/g, '"');
-        html += $ch.template(PANEL_TEMPLATE, param);
-      }
-    }
-
-    html += $ch.template(TAIL_TEMPLATE);
-    return html;
   }
 });
 
@@ -71,5 +57,5 @@ $ch.find('#goto-top').css('display', 'none').click(function () {
 
 $ch.event.listen('search', function () {
   'use strict';
-  $ch.find('.panels').view(resultView);
+  $ch.find('#inline-result').inline();
 });
