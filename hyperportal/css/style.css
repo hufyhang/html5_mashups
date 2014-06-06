@@ -394,3 +394,31 @@ img {
 
 .text-cell, .img-cell {
   display: table-cell; }
+
+  .home-div {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12% 20%;
+    background-color: #edf0f5;
+    z-index: 1;
+  }
+
+  .home-title {
+    width: 100%;
+    text-align: center;
+    font-size: 3em;
+    color: #3b5998;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-family: "Francois One",sans-serif;
+    font-weight: 400;
+    text-shadow: 2px 0 0 white,-2px 0 0 white,0 2px 0 white,0 -2px 0 white,1px 1px white,-1px -1px 0 white,1px -1px 0 white,-1px 1px 0 #fff;
+  }
+
+  .home-btn-div {
+    width: 100%;
+    text-align: center;
+  }

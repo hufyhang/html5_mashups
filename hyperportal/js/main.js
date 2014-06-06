@@ -10,34 +10,8 @@ var resultFilter = function (item) {
   return item.description.toUpperCase().indexOf(keys) > -1;
 };
 
-$ch.http({
-  url: SEARCH_PHP,
-  method: 'post',
-  data: {
-    keywords: ''
-  },
-  done: function (res) {
-    'use strict';
-    if (res.status === 200) {
-      var resultData = res.data;
-      if (resultData !== '{"projects": ]}' && resultData !== '{"projects": ]}\n') {
-        var projects = JSON.parse(resultData).projects;
-        $ch.each(projects, function (item) {
-          item.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' +
-          $ch.context.language + '&uid=';
-          item.description = item.description.replace(/\$quot;/g, '"');
-        });
-        $ch.source('results', projects);
-      } else {
-        $ch.source('results', []);
-      }
-
-      $ch.event.emit('search');
-    }
-  }
-});
-
-$ch.find('#search-input').focus();
+$ch.find('#home-input').focus();
+$ch.find('.panels').hide();
 
 window.onscroll = function () {
   'use strict';
@@ -58,4 +32,37 @@ $ch.find('#goto-top').css('display', 'none').click(function () {
 $ch.event.listen('search', function () {
   'use strict';
   $ch.find('#inline-result').inline();
+});
+
+$ch.event.listen('home', function () {
+  'use strict';
+  $ch.find('.home-div').hide();
+  $ch.find('.panels').show();
+  $ch.find('#search-input').focus();
+
+  $ch.http({
+    url: SEARCH_PHP,
+    method: 'post',
+    data: {
+      keywords: ''
+    },
+    done: function (res) {
+      if (res.status === 200) {
+        var resultData = res.data;
+        if (resultData !== '{"projects": ]}' && resultData !== '{"projects": ]}\n') {
+          var projects = JSON.parse(resultData).projects;
+          $ch.each(projects, function (item) {
+            item.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' +
+            $ch.context.language + '&uid=';
+            item.description = item.description.replace(/\$quot;/g, '"');
+          });
+          $ch.source('results', projects);
+        } else {
+          $ch.source('results', []);
+        }
+
+        $ch.event.emit('search');
+      }
+    }
+  });
 });
