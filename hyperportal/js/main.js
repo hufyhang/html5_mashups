@@ -1,17 +1,18 @@
 /* global $ch */
-$ch.require(['context', 'event']);
+$ch.require(['context', 'event', 'router']);
 
 var SEARCH_PHP = 'http://feifeihang.info/hypermash/portal/php/search.php';
+var isFromHome = false;
 
 var resultFilter = function (item) {
   'use strict';
   var keys = $ch.source('search') || '';
+  keys = keys.trim();
   keys = keys.toUpperCase();
   return item.description.toUpperCase().indexOf(keys) > -1;
 };
 
 $ch.find('#home-input').focus();
-$ch.find('.panels').hide();
 
 window.onscroll = function () {
   'use strict';
@@ -29,16 +30,50 @@ $ch.find('#goto-top').css('display', 'none').click(function () {
   window.scrollTo(0 ,0);
 });
 
+$ch.router.add({
+  'search': function () {
+    'use strict';
+    $ch.source('search', '');
+    if (isFromHome === false) {
+      $ch.event.emit('home');
+    } else {
+      $ch.event.emit('search');
+    }
+  },
+  'search/:q': function (param) {
+    'use strict';
+    if (isFromHome === false) {
+      var keys = param.q.split('+');
+      $ch.source('search', keys.join(' '));
+
+      $ch.event.emit('home');
+    } else {
+      var keywords = param.q.split('+');
+      $ch.source('search', keywords.join(' '));
+
+      $ch.event.emit('search');
+    }
+  }
+});
+
+$ch.event.listen('process', function () {
+  'use strict';
+  var keys = $ch.source('search').split(' ');
+  $ch.router.navigate('search/' + keys.join('+'));
+});
+
 $ch.event.listen('search', function () {
   'use strict';
+  $ch.find('.home-div').hide();
+  $ch.find('.panels').show();
+  $ch.find('#search-input').focus();
+
   $ch.find('#inline-result').inline();
 });
 
 $ch.event.listen('home', function () {
   'use strict';
-  $ch.find('.home-div').hide();
-  $ch.find('.panels').show();
-  $ch.find('#search-input').focus();
+  isFromHome = true;
 
   $ch.http({
     url: SEARCH_PHP,
@@ -61,7 +96,7 @@ $ch.event.listen('home', function () {
           $ch.source('results', []);
         }
 
-        $ch.event.emit('search');
+        $ch.event.emit('process');
       }
     }
   });
