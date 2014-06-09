@@ -1,5 +1,5 @@
 /* global $ch */
-$ch.require(['context', 'event', 'router']);
+$ch.require(['context', 'ui', 'event', 'router']);
 
 var SEARCH_PHP = 'http://feifeihang.info/hypermash/portal/php/search.php';
 var isFromHome = false;
