@@ -304,7 +304,7 @@ textarea {
 }
 
 body {
-  background-color: #edf0f5;
+  background-color: rgb(240, 240, 240);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
 
 a {
@@ -402,7 +402,7 @@ img {
     left: 0;
     right: 0;
     padding: 12% 20%;
-    background-color: #edf0f5;
+    background-color: white;
     z-index: 1;
   }
 
@@ -421,4 +421,12 @@ img {
   .home-btn-div {
     width: 100%;
     text-align: center;
+  }
+
+  .tiles {
+    display: block !important;
+  }
+
+  #home-input {
+    width: 100%;
   }

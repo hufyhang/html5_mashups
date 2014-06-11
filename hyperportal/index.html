@@ -9,7 +9,6 @@
     <link href="img/favicon.ico" rel="icon" />
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css" />
-    <link href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/flatly/bootstrap.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -22,8 +21,8 @@
     </div>
     <br />
     <div class="home-btn-div">
-      <div class="btn btn-default" id="home-search" ch-click="$ch.event.emit('home')">Search</div>
-      <div class="btn btn-info" id="home-all" ch-click="$ch.event.emit('home')">Show all</div>
+      <div class="btn btn-default" id="home-search" ch-click="$ch.event.emit('home')" ch-ui-button>Search</div>
+      <div class="btn btn-info" id="home-all" ch-click="$ch.event.emit('home')" ch-ui-button>Show all</div>
     </div>
   </div>
 
@@ -33,23 +32,21 @@
     <div>
       <input type="text" class="form-control" id="search-input" value=""
       placeholder="keywords..." ch-source="search" ch-keypress="if ($$event.keyCode === 13) {$ch.event.emit('process');}"/>
-      <div class="btn btn-default" id="search-btn" ch-click="$ch.event.emit('process')">Search</div>
+      <div class="btn btn-default" id="search-btn" ch-click="$ch.event.emit('process')" ch-ui-button>Search</div>
     </div>
   </div>
 
   <!-- result container -->
   <div class="panels" id="inline-result" ch-inline="results | filter: resultFilter" ch-init="results = []">
 
-    <div class="panel panel-info">
-      <div class="panel-heading">
-        <h3 class="panel-title">
-          <a href="http://feifeihang.info/hypermash/index.html?id={{md5}}" target="_blank">
-            {{name}}
-          </a>
-        </h3>
+    <div class="tiles" ch-ui-tile>
+      <div ch-ui-tile-header>
+        <a href="http://feifeihang.info/hypermash/index.html?id={{md5}}" target="_blank">
+          {{name}}
+        </a>
       </div>
 
-      <div class="panel-body cell-table">
+      <div>
 
         <div class="text-cell">
           <b>Author:</b> {{author}}<br/>
@@ -65,6 +62,8 @@
         </div>
 
       </div>
+
+      <div ch-ui-tile-footer>UID: {{md5}}</div>
     </div>
 
 
