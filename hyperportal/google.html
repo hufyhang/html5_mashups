@@ -5,15 +5,15 @@
     <title>HyperPortal (All Google-powered Mashups)</title>
 </head>
 <body>
-  <h3>By utilizing Chop.js Service module, this page shows all the mashups powered by Google services in HyperMash.</h3>
+  <h3>By utilizing Chop.js Widget module, this page shows all the mashups powered by Google services in HyperMash.</h3>
 
-  <ch-service id="google-descs" src="http://feifeihang.info/hyperportal" service="descriptions">
+  <ch-widget id="google-descs" src="http://feifeihang.info/hyperportal" widget="descriptions">
     <ch-data key="keywords">google</ch-data>
-  </ch-service>
+  </ch-widget>
 
   <script src="js/chop.min.js"></script>
   <script>
-    $ch.require(['ui', 'service']);
+    $ch.require(['ui', 'widget']);
     $ch.find('#google-descs iframe').css('border', '1px solid black').css('width', '100%').css('height', '500px');
   </script>
 </body>
