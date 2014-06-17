@@ -1,5 +1,5 @@
 /* global $ch */
-$ch.require(['context', 'ui', 'event', 'router']);
+$ch.require(['context', 'ui', 'event', 'router', 'service']);
 
 var SEARCH_PHP = 'http://feifeihang.info/hypermash/portal/php/search.php';
 var isFromHome = false;
@@ -101,3 +101,41 @@ $ch.event.listen('home', function () {
     }
   });
 });
+
+
+
+// add Chop.js service
+$ch.service.add('descriptions', function (data) {
+  'use strict';
+  console.log('Chop.js Service');
+  console.log(data);
+
+  var res = $ch.http({
+    url: SEARCH_PHP,
+    method: 'post',
+    data: {
+      keywords: ''
+    },
+    async: false
+  });
+
+  var resultData = res;
+  if (resultData !== '{"projects": ]}' && resultData !== '{"projects": ]}\n') {
+    var projects = JSON.parse(resultData).projects;
+    $ch.each(projects, function (item) {
+      item.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' +
+      $ch.context.language + '&uid=';
+      item.description = item.description.replace(/\$quot;/g, '"');
+    });
+    $ch.source('results', projects);
+  } else {
+    $ch.source('results', []);
+  }
+
+  $ch.source('search', data.keywords);
+  $ch.find('#inline-result').inline();
+
+  var html = $ch.find('#inline-result').html();
+  return $ch.view({html: html});
+});
+
