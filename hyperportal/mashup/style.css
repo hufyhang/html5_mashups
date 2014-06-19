@@ -1,0 +1,14 @@
+iframe {
+  width: 100%;
+  min-height: 200px;
+  resize: both;
+  border: 1px solid black;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+

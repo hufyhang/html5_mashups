@@ -108,9 +108,6 @@ $ch.event.listen('home', function () {
 $ch.widget.register({
   'descriptions': function (data) {
     'use strict';
-    console.log('Chop.js Widget');
-    console.log(data);
-
     var res = $ch.http({
       url: SEARCH_PHP,
       method: 'post',
@@ -137,6 +134,10 @@ $ch.widget.register({
     $ch.find('#inline-result').inline();
 
     var html = $ch.find('#inline-result').html();
+
+    $ch.widget.tunnel.set('doc-meta', {
+      lang: $ch.context.language
+    });
     return $ch.view({html: html});
   }
 });

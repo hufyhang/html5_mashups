@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>Chop.js Widget Mashup</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <script id="widget-template" type="text/template">
+      <ch-widget id="widget" src="{{src}}" widget="{{widget}}">
+      <ch-data key="{{key}}">{{data}}</ch-data>
+      </ch-widget>
+    </script>        
+  </head>
+
+  <body ch-init="input=''">
+    <header>
+      <input type="text" id="key-input" placeholder="keywords & hit Enter..." ch-source="input" ch-keypress="if ($$event.keyCode === 13) {$ch.event.emit('update')}">
+    </header>
+
+    <div id="container"></div>
+    <div id="result-div"></div>
+
+    <script src="chop.min.js" ch-main="main.js"></script>
+  </body>
+</html>
