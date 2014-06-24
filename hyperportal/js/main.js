@@ -17,7 +17,7 @@ $ch.find('#home-input').focus();
 window.onscroll = function () {
   'use strict';
   var doc = document.documentElement;
-  var top = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
+  var top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
   if (top === 0) {
     $ch.find('#goto-top').css('display', 'none');
   } else {
@@ -27,7 +27,7 @@ window.onscroll = function () {
 
 $ch.find('#goto-top').css('display', 'none').click(function () {
   'use strict';
-  window.scrollTo(0 ,0);
+  window.scrollTo(0, 0);
 });
 
 $ch.router.add({
@@ -88,7 +88,7 @@ $ch.event.listen('home', function () {
           var projects = JSON.parse(resultData).projects;
           $ch.each(projects, function (item) {
             item.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' +
-            $ch.context.language + '&uid=';
+                $ch.context.language + '&uid=';
             item.description = item.description.replace(/\$quot;/g, '"');
           });
           $ch.source('results', projects);
@@ -122,7 +122,7 @@ $ch.widget.register({
       var projects = JSON.parse(resultData).projects;
       $ch.each(projects, function (item) {
         item.contextDesc = 'http://feifeihang.info/hypermash/projects/rdfa.php?lang=' +
-        $ch.context.language + '&uid=';
+            $ch.context.language + '&uid=';
         item.description = item.description.replace(/\$quot;/g, '"');
       });
       $ch.source('results', projects);
@@ -138,7 +138,8 @@ $ch.widget.register({
     $ch.widget.tunnel.set('doc-meta', {
       lang: $ch.context.language
     });
-    return $ch.view({html: html});
+    return $ch.view({
+      html: html
+    });
   }
 });
-
