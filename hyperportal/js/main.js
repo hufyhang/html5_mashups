@@ -115,7 +115,7 @@ $ch.widget.register({
         keywords: ''
       },
       async: false
-    });
+    }).responseText;
 
     var resultData = res;
     if (resultData !== '{"projects": ]}' && resultData !== '{"projects": ]}\n') {
