@@ -128,17 +128,20 @@ function showTestDialog() {
  visibleElement('dashboard');
  visibleElement('dashboard_div');
  var compositeJson = getFeedsJSON();
+ compositeJson = JSON.parse(compositeJson);
  var buffer = [];
  buffer.push('<div>');
- buffer.push(compositeJson);
+ buffer.push('<div id="JSON_Tree">');
+ buffer.push(JSONTree.create(compositeJson));
  buffer.push('</div>');
-
+ buffer.push('</div>');
  buffer.push('<div>');
  buffer.push('<div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');$(\'#dashboard_output\').html(\'\')">');
  buffer.push('Close');
  buffer.push('</div>');
  buffer.push('</div>');
  $('#dashboard_output').html(buffer.join(''));
+
 }
 
 function showPublishDialog() {
