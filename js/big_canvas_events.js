@@ -1,5 +1,5 @@
-const _LOCAL_STORAGE = 'html5_mashup_kineticjs_stage';
-const TOUCH_OFFSET = 5;
+var _LOCAL_STORAGE = 'html5_mashup_kineticjs_stage';
+var TOUCH_OFFSET = 5;
 var _big_canvas_stage, _big_canvas_layer;
 var _feeds_nodes = [];
 

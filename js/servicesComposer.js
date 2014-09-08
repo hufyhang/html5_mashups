@@ -1,22 +1,22 @@
 var _services_list = [];
 var id_counter = 0;
-const NAME_SYS_START = '_sys_start_';
-const TYPE_SYS_START = '_sys_start_';
-const TYPE_REST = 'rest';
-const TYPE_SOAP = 'soap';
-const TYPE_WIDGET = 'widget';
-const TYPE_WORKER = 'worker';
+var NAME_SYS_START = '_sys_start_';
+var TYPE_SYS_START = '_sys_start_';
+var TYPE_REST = 'rest';
+var TYPE_SOAP = 'soap';
+var TYPE_WIDGET = 'widget';
+var TYPE_WORKER = 'worker';
 
-const REST_METHOD_GET = 'get';
-const REST_METHOD_POST = 'post';
-const REST_METHOD_PUT = 'put';
-const REST_METHOD_DELETE = 'delete';
+var REST_METHOD_GET = 'get';
+var REST_METHOD_POST = 'post';
+var REST_METHOD_PUT = 'put';
+var REST_METHOD_DELETE = 'delete';
 
-const PHP_CHECK_ACCESS = 'php/phpCheckAccess.php?url=';
-const PHP_GET = 'php/phpGet.php?url=';
-const PHP_POST = 'php/phpPost.php?url=';
-const PHP_PUT = 'php/phpPut.php?url=';
-const PHP_DELETE = 'php/phpDelete.php?url=';
+var PHP_CHECK_ACCESS = 'php/phpCheckAccess.php?url=';
+var PHP_GET = 'php/phpGet.php?url=';
+var PHP_POST = 'php/phpPost.php?url=';
+var PHP_PUT = 'php/phpPut.php?url=';
+var PHP_DELETE = 'php/phpDelete.php?url=';
 
 var _feeds_nodes = [];
 var serviceBuffer = []; // for iterating feeds
@@ -31,7 +31,7 @@ var _output = '';
 function Service(name, type) {
     var id = id_counter++, name, type, soap_wsdl = '', soap_funcId = 0, rest_url = '', rest_method, keywords = '';
     //extra data members
-    var fetchJSONkey = ''; 
+    var fetchJSONkey = '';
     var addTextObject = undefined;
     var trimWhiteSpace = undefined;
     var nextService = 'undefined';
@@ -128,7 +128,7 @@ function Service(name, type) {
     this.setKeywords = function(inputKeywords) {
         keywords = inputKeywords;
     };
-    
+
 
     this.getJSON = function() {
         var json = '';
@@ -231,7 +231,7 @@ function startComposition(inputFeedNodes, dataset) {
     dataset = dataset.replace(/\'/g, '\\\''); // replace ' with \'
     dataset = dataset.replace(/&/g, '%26'); // replace ' with \'
 
-    startToIterateFeeds(_feeds_nodes[0]); 
+    startToIterateFeeds(_feeds_nodes[0]);
 
     // execute the mashup
     executeMashup(dataset);
@@ -332,7 +332,7 @@ function executeMashup(dataset) {
         bf = bf.replace(/&/g, '%26');  // replace all & in __result_buffer__ in order to make PHP works correctly
         var code = e.data;
         if(code != '200') {
-            showServiceErrorDialog('Oops! Service "' + currentServce.getName() + '" is down. Please try later or use an alternative service feed.', serviceCounter, currentServce.getKeywords()); 
+            showServiceErrorDialog('Oops! Service "' + currentServce.getName() + '" is down. Please try later or use an alternative service feed.', serviceCounter, currentServce.getKeywords());
             appendLog('"' + currentServce.getName() + '" is down. #' + code);
             invisibleElement('activity_indicator');
             highlightErrorNode(serviceCounter);
@@ -422,7 +422,7 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
             var data = e.data;
             appendLog('Received data: ' + data + ' from ' + wsdl);
             if(data == 'ERROR\n') {
-                showServiceErrorDialog('Oops! Service "' + currentServce.getName() + '" is down. Please try later or use an alternative service feed.', serviceCounter, currentServce.getKeywords()); 
+                showServiceErrorDialog('Oops! Service "' + currentServce.getName() + '" is down. Please try later or use an alternative service feed.', serviceCounter, currentServce.getKeywords());
                 appendLog('"' + currentServce.getName() + '" is down. #' + e.data);
                 invisibleElement('activity_indicator');
                 highlightErrorNode(serviceCounter);

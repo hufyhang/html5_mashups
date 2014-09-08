@@ -1,21 +1,21 @@
-const WEB_SQL_DATABASE = 'html5_mashup_platform_web_database';
-const DB_VERSION = 2;
-const DB_TITLE = 'SQL database';
-const DB_BYTES = 2 * 1024 * 1024;
+var WEB_SQL_DATABASE = 'html5_mashup_platform_web_database';
+var DB_VERSION = 2;
+var DB_TITLE = 'SQL database';
+var DB_BYTES = 2 * 1024 * 1024;
 
-const INDEXEDDB_DATABASE = 'html5_mashup_platform_web_database';
-const INDEXEDDB_VERSION = '1.0';
-const INDEXEDDB_STORE = 'projects';
+var INDEXEDDB_DATABASE = 'html5_mashup_platform_web_database';
+var INDEXEDDB_VERSION = '1.0';
+var INDEXEDDB_STORE = 'projects';
 
-const SEARCH_CLOUD_BLOCKS = 'php/searchBlocks.php';
-const SEARCH_SEMANTIC_SUGGESTIONS = 'php/searchNextPossible.php';
+var SEARCH_CLOUD_BLOCKS = 'php/searchBlocks.php';
+var SEARCH_SEMANTIC_SUGGESTIONS = 'php/searchNextPossible.php';
 
-const HOSTIP_LOCATION_SERVICE = 'http://api.hostip.info/country.php';
+var HOSTIP_LOCATION_SERVICE = 'http://api.hostip.info/country.php';
 
-const SHOW_PROJECTS = 'showProject';
+var SHOW_PROJECTS = 'showProject';
 
-const FEED_TYPE_REST = 'rest';
-const FEED_TYPE_SOAP = 'soap';
+var FEED_TYPE_REST = 'rest';
+var FEED_TYPE_SOAP = 'soap';
 
 var _sys_user_agent_loc = '';
 var _sys_user_agent_lang = '';
@@ -122,6 +122,23 @@ function showLogDialog() {
     visibleElement('dashboard_div');
     $('#dashboard_output').html('<div>System Log</div><hr/><table style="width: 100%;"><tr><td><div id="logMessageDiv" style="overflow: auto; width: 40em; height: 300px; background:grey; padding-left: 5px; padding-right: 5px;">' + _log + '</div></td></tr><tr><td align="center"><div class="div_push_button" onclick="_log = \'\';$(\'#logMessageDiv\').html(\'\');">Clear</div><div class="div_long_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');$(\'#dashboard_output\').html(\'\');">Close</div></td></tr></table>');
 
+}
+
+function showTestDialog() {
+ visibleElement('dashboard');
+ visibleElement('dashboard_div');
+ var compositeJson = getFeedsJSON();
+ var buffer = [];
+ buffer.push('<div>');
+ buffer.push(compositeJson);
+ buffer.push('</div>');
+
+ buffer.push('<div>');
+ buffer.push('<div class="div_push_button" onclick="invisibleElement(\'dashboard\');invisibleElement(\'dashboard_div\');$(\'#dashboard_output\').html(\'\')">');
+ buffer.push('Close');
+ buffer.push('</div>');
+ buffer.push('</div>');
+ $('#dashboard_output').html(buffer.join(''));
 }
 
 function showPublishDialog() {
