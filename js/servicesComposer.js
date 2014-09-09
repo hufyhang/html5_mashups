@@ -234,6 +234,7 @@ function startComposition(inputFeedNodes, dataset) {
     startToIterateFeeds(_feeds_nodes[0]);
 
     // execute the mashup
+    _sys_quick_test_data = [];
     executeMashup(dataset);
 }
 
@@ -315,6 +316,7 @@ function executeMashup(dataset) {
     case TYPE_WIDGET:
         executeWidget(__result_buffer__);
         appendLog('Showing result in execute_output');
+        _sys_quick_test_data.push(__result_buffer__);
         invisibleElement('activity_indicator');
         visibleElement('executionFullScreenToggleButton');
         terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
@@ -350,6 +352,8 @@ function executeMashup(dataset) {
                     $("#execute_output").html(_output + '<iframe frameborder="0" width="100%" height="400px" src="' + url + '" seamless="seamless"><p>Surprisingly, your browser does not support iframes.</p></iframe>');
                 }
                 appendLog('Showing result in execute_output');
+                _sys_quick_test_data.push(url);
+
                 invisibleElement('activity_indicator');
                 visibleElement('executionFullScreenToggleButton');
                 terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
@@ -367,6 +371,8 @@ function executeMashup(dataset) {
     serviceWorker.onmessage = function(e) {
         __result_buffer__ = e.data;
         appendLog('Received data: ' + __result_buffer__ );
+        _sys_quick_test_data.push(__result_buffer__);
+
         currentServce = serviceBuffer[serviceCounter];
         // if the current feed is an RESTful service
         if(currentServce.getType() == TYPE_REST) {
@@ -390,6 +396,7 @@ function executeMashup(dataset) {
         else if(currentServce.getType() == TYPE_WIDGET) {
             executeWidget(__result_buffer__);
             appendLog('Showing result in execute_output');
+            _sys_quick_test_data.push(__result_buffer__);
             invisibleElement('activity_indicator');
             visibleElement('executionFullScreenToggleButton');
             terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
@@ -421,6 +428,8 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
         soapWorker.onmessage = function(e) {
             var data = e.data;
             appendLog('Received data: ' + data + ' from ' + wsdl);
+            _sys_quick_test_data.push(data);
+
             if(data == 'ERROR\n') {
                 showServiceErrorDialog('Oops! Service "' + currentServce.getName() + '" is down. Please try later or use an alternative service feed.', serviceCounter, currentServce.getKeywords());
                 appendLog('"' + currentServce.getName() + '" is down. #' + e.data);
@@ -437,6 +446,8 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
                     $('#execute_output').html(_output + '<div style="max-height:300px;max-width:100%;text-align:justify;" class="scrollable_div">' + __result_buffer__ + '</div>');
                 }
                 appendLog('Showing result in execute_output');
+                _sys_quick_test_data.push(__result_buffer__);
+
                 invisibleElement('activity_indicator');
                 visibleElement('executionFullScreenToggleButton');
                 terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
@@ -464,6 +475,7 @@ function executeSoap(__result_buffer__, checkWorker, serviceWorker, soapWorker) 
             else if(currentServce.getType() == TYPE_WIDGET) {
                 executeWidget(__result_buffer__);
                 appendLog('Showing result in execute_output');
+                _sys_quick_test_data.push(__result_buffer__);
                 invisibleElement('activity_indicator');
                 visibleElement('executionFullScreenToggleButton');
                 terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
@@ -531,6 +543,7 @@ function executeSysWoker(__result_buffer__) {
     default:
         break;
     }
+    _sys_quick_test_data.push(__result_buffer__);
     return __result_buffer__;
 }
 
@@ -566,6 +579,8 @@ function executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soap
     if(currentServce == "undefined" || currentServce == undefined) {
         $('#execute_output').html(_output + '<div style="max-height:300px;max-width:100%;text-align:justify;" class="scrollable_div">' + __result_buffer__ + '</div>');
         appendLog('Showing result in execute_output');
+        _sys_quick_test_data.push(__result_buffer__);
+
         invisibleElement('activity_indicator');
         // visibleElement('executionFullScreenToggleButton');
         terminateWebWorkers(checkWorker, serviceWorker, soapWorker);
@@ -582,6 +597,8 @@ function executeFromSysWoker(__result_buffer__, serviceWorker, checkWorker, soap
     else if(currentServce.getType() == TYPE_WIDGET) {
         executeWidget(__result_buffer__);
         appendLog('Showing result in execute_output');
+        _sys_quick_test_data.push(__result_buffer__);
+
         invisibleElement('activity_indicator');
         visibleElement('executionFullScreenToggleButton');
         terminateWebWorkers(checkWorker, serviceWorker, soapWorker);

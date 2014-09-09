@@ -20,6 +20,8 @@ var FEED_TYPE_SOAP = 'soap';
 var _sys_user_agent_loc = '';
 var _sys_user_agent_lang = '';
 
+var _sys_quick_test_data = [];
+
 var _semantic_flag = true;
 
 var _database, idb;
@@ -127,7 +129,7 @@ function showLogDialog() {
 function distillCompositeJson(json) {
     var feeds = json.feeds;
     var result = {};
-    var id = 1;
+    var id = 0;
     for (var index in feeds) {
         var feed = feeds[index].feed[0];
         console.log(feed);
@@ -156,7 +158,13 @@ function distillCompositeJson(json) {
             delete feed.trimWhiteSpace;
             delete feed.fetchJSONkey;
         }
-        result[id++] = feed;
+
+        if (_sys_quick_test_data.length !== 0) {
+            console.log(_sys_quick_test_data);
+            feed["RUNTIME DATA"] = _sys_quick_test_data[id];
+        }
+
+        result[++id] = feed;
     }
     return result;
 }
