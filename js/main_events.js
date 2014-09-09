@@ -124,11 +124,49 @@ function showLogDialog() {
 
 }
 
+function distillCompositeJson(json) {
+    var feeds = json.feeds;
+    var result = {};
+    var id = 1;
+    for (var index in feeds) {
+        var feed = feeds[index].feed[0];
+        console.log(feed);
+        delete feed.next;
+        delete feed.id;
+        if (feed.type.toUpperCase() === 'REST') {
+            delete feed.wsdl;
+            delete feed.soapFuncId;
+            delete feed.addBefore;
+            delete feed.addAfter;
+            delete feed.trimWhiteSpace;
+            delete feed.fetchJSONkey;
+        }
+        else if (feed.type.toUpperCase() === 'WORKER') {
+            delete feed.wsdl;
+            delete feed.soapFuncId;
+            delete feed.restUrl;
+            delete feed.restMethod;
+            delete feed.keywords;
+        }
+        else if (feed.type.toUpperCase() === 'SOAP') {
+            delete feed.restUrl;
+            delete feed.restMethod;
+            delete feed.addBefore;
+            delete feed.addAfter;
+            delete feed.trimWhiteSpace;
+            delete feed.fetchJSONkey;
+        }
+        result[id++] = feed;
+    }
+    return result;
+}
+
 function showTestDialog() {
  visibleElement('dashboard');
  visibleElement('dashboard_div');
  var compositeJson = getFeedsJSON();
  compositeJson = JSON.parse(compositeJson);
+ compositeJson = distillCompositeJson(compositeJson);
  var buffer = [];
  buffer.push('<div>');
  buffer.push('<div id="JSON_Tree">');
