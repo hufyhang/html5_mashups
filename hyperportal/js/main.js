@@ -81,6 +81,7 @@ $ch.event.listen('home', function () {
     data: {
       keywords: ''
     },
+    cache: true,
     done: function (res) {
       if (res.status === 200) {
         var resultData = res.data;
