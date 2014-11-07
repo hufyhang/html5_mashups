@@ -24,7 +24,7 @@ var _project_market_snapshot = [];
 function publishProject() {
     var name = encodeURIComponent($('#publishProjectName').val());
     var author = encodeURIComponent($('#publishProjectAuthor').val());
-    var description = encodeURIComponent($('#publishProjectDescription').val());
+    var description = encodeURIComponent($('#publishProjectDescription').val().replace(/\n/g, '<br/>'));
     var keywords = encodeURIComponent($('#publishProjectKeywords').val());
 
     var canvas = document.querySelector('#big_canvas_canvas canvas');

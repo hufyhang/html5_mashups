@@ -9,3 +9,7 @@ css/reset.css
 js/script.js
 
 /semantic-usdl_html/
+
+.ftppass
+node_modules/
+dist/
