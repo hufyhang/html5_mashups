@@ -27,6 +27,7 @@ while($row = mysql_fetch_array($mysql_data)) {
     $buffer = '';
     $md5 = $row['md5'];
     $name = '';
+    $mashup = $row['name'];
     $json = $row['json'];
     $data = json_decode($json);
     // echo 'Project: ' . $name . '      ';
@@ -78,7 +79,10 @@ while($row = mysql_fetch_array($mysql_data)) {
         if($name == '') {
             $name = 'From: ' . $row['name'];
         }
-        $result = $result . '{"md5":"' . $md5 . '", "name":"' . $name . '", "json":"' . $buffer . '"},';
+        $temp = '{"md5":"' . $md5 . '", "name":"\"' . $name . '\" in \"' . $mashup . '\"", "json":"' . $buffer . '"},';
+        if (strpos($result, $temp) === false) {
+            $result = $result . $temp;
+        }
     }
 }
 

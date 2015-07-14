@@ -11,6 +11,8 @@
     "grunt-contrib-copy": "^0.7.0",
     "grunt-contrib-htmlmin": "^0.3.0",
     "grunt-contrib-cssmin": "^0.10.0",
-    "grunt-ftp-deploy": "^0.1.9"
+    "grunt-ftp-deploy": "^0.1.9",
+    "grunt-ftp": "^2.0.0",
+    "grunt-ftp-push": "^0.3.6"
   }
 }

@@ -70,16 +70,21 @@ module.exports = function (grunt) {
       }
     },
 
-    'ftp-deploy': {
+    ftp_push: {
       build: {
-        auth: {
+        options: {
           host: 'feifeihang.info',
           port: 21,
-          authKey: 'key'
+          authKey: 'key',
+          dest: '/public_html/hypermash/'
         },
-
-        src: 'dist/',
-        dest: '/public_html/hypermash/'
+        files: [{
+          expand: true,
+          cwd: '.',
+          src: [
+            'dist/**'
+          ]
+        }]
       }
     }
 
@@ -92,6 +97,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-ftp-deploy');
   grunt.registerTask('build', ['concat', 'copy', 'uglify', 'htmlmin', 'cssmin']);
-  grunt.registerTask('deploy', ['ftp-deploy:build']);
+  grunt.registerTask('deploy', ['ftp_push:build']);
 
 };

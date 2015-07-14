@@ -43,7 +43,7 @@ $json = $row['json'];
 mysql_close($con);
 ?>
 <!DOCTYPE html>
-<html version="HTML+RDFa 1.1" lang="en" 
+<html version="HTML+RDFa 1.1" lang="en"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -58,7 +58,7 @@ echo "<title>$name</title>";
 <?php
 echo '<div typeof="su:composite" resource="' . $PROJECTS_PHP . 'uid=' .  $uid . '&amp;output=usdl'. '">
     ';
-if($lang == 'EN' || $lang == 'EN-GB') {
+if($lang == 'EN' || $lang == 'EN' || $lang == 'EN-US') {
     echo 'The composite service <span class="composite-name" property="dc:title">' . $name . '</span>
         ';
     echo ' (UID: <span class="composite-uid" property="dc:identifier">' . $md5 . '</span>)
@@ -120,7 +120,7 @@ foreach($json->feeds as $feeds) {
             $buffer = $buffer . '<span class="keywords" property="su:keyword" resource="' . $KEYWORD_PHP . 'key=' . trim($k, ' ') . '">' .trim($k, ' '). '</span> ';
         }
 
-        if($lang == 'EN' || $lang == 'EN-GB') {
+        if($lang == 'EN' || $lang == 'EN' || $lang == 'EN-US') {
             $buffer = $buffer . ') is ';
         }
         else if($lang == 'ZH' || $lang == 'ZH-CN') {
@@ -129,7 +129,7 @@ foreach($json->feeds as $feeds) {
 
         switch($typeFlag) {
         case $REST:
-            if($lang == 'EN' || $lang == 'EN-GB') {
+            if($lang == 'EN' || $lang == 'EN' || $lang == 'EN-US') {
                 $buffer = $buffer . 'an <span property="su:type" class="type">RESTful</span> service. ';
                 $buffer = $buffer . 'Its accessing URL is <span property="su:url" class="url">' . $url . '</span>. ';
                 $buffer = $buffer . 'It will be invoked through HTTP verb <span property="su:http-verb" class="verb">' . strtoupper($feed->restMethod) . '</span>.';
@@ -142,7 +142,7 @@ foreach($json->feeds as $feeds) {
             break;
 
         case $SOAP:
-            if($lang == 'EN' || $lang == 'EN-GB') {
+            if($lang == 'EN' || $lang == 'EN' || $lang == 'EN-US') {
                 $buffer = $buffer . 'a <span property="su:type" class="type">SOAP-based</span> service. ';
                 $buffer = $buffer . 'Its WSDL refers to <span property="su:wsdl" class="wsdl">' . $url . '</span>. ';
                 $client = new SoapClient($url);

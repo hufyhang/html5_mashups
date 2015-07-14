@@ -8,7 +8,7 @@ var resultFilter = function (item) {
   return item.description.toUpperCase().indexOf(keys) > -1;
 };
 
-$ch.require(['context', 'ui', 'event', 'router', 'widget'], function () {
+$ch.require(['context', 'ui', 'event', './router', 'widget'], function () {
   'use strict';
 
   var SEARCH_PHP = 'http://feifeihang.info/hypermash/portal/php/search.php';
@@ -28,31 +28,6 @@ $ch.require(['context', 'ui', 'event', 'router', 'widget'], function () {
 
   $ch.find('#goto-top').css('display', 'none').click(function () {
     window.scrollTo(0, 0);
-  });
-
-  $ch.router.add({
-    'search': function () {
-      $ch.source('search', '');
-      if (isFromHome === false) {
-        $ch.event.emit('home');
-      } else {
-        $ch.event.emit('search');
-      }
-    },
-
-    'search/:q': function (param) {
-      if (isFromHome === false) {
-        var keys = param.q.split('+');
-        $ch.source('search', keys.join(' '));
-
-        $ch.event.emit('home');
-      } else {
-        var keywords = param.q.split('+');
-        $ch.source('search', keywords.join(' '));
-
-        $ch.event.emit('search');
-      }
-    }
   });
 
   $ch.event.listen('process', function () {
@@ -137,6 +112,35 @@ $ch.require(['context', 'ui', 'event', 'router', 'widget'], function () {
       });
     }
   });
+
+  // to be removed when new UI module is ready on CDN
+  // $ch._loadView();
+
+  $ch.router.add({
+    'search': function () {
+      $ch.source('search', '');
+      if (isFromHome === false) {
+        $ch.event.emit('home');
+      } else {
+        $ch.event.emit('search');
+      }
+    },
+
+    'search/:q': function (param) {
+      if (isFromHome === false) {
+        var keys = param.q.split('+');
+        $ch.source('search', keys.join(' '));
+
+        $ch.event.emit('home');
+      } else {
+        var keywords = param.q.split('+');
+        $ch.source('search', keywords.join(' '));
+
+        $ch.event.emit('search');
+      }
+    }
+  });
+
 
 });
 
