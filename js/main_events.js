@@ -92,11 +92,14 @@ function getherUserAgentInfo() {
         }
     });
 
-    var loc = $.ajax({
-            url: HOSTIP_LOCATION_SERVICE,
-            type: REST_METHOD_GET,
-            async: false
-    }).responseText;
+    // var loc = $.ajax({
+    //         url: HOSTIP_LOCATION_SERVICE,
+    //         type: REST_METHOD_GET,
+    //         async: false
+    // }).responseText;
+
+    // Disabled the location detector service due to the service performance issue,
+    var loc = 'GB';
     _sys_user_agent_loc = loc;
 
 }

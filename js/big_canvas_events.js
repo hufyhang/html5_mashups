@@ -84,7 +84,7 @@ function registerTouchEvents(stage) {
         _big_canvas_layer.draw();
     });
 
-    stage.on('touchend', function(evt) {
+    stage.on('touchend touchcancel', function(evt) {
         var parentFeed;
         var tObj = touchedObj;
 
@@ -132,8 +132,11 @@ function registerTouchEvents(stage) {
         else {
             touchedNode.getConnector().connectTo(nodeObj);
         }
-        touchedObj.setPosition(org_x, org_y);
-        touchedObj.moveToTop();
+
+        if (touchedObj.setPosition && touchedObj.moveToTop) {
+            touchedObj.setPosition(org_x, org_y);
+            touchedObj.moveToTop();
+        }
     });
 }
 
@@ -630,24 +633,26 @@ function Connector(parent_feed) {
         this.setStrokeWidth(1);
         _big_canvas_layer.draw();
     });
-    connector.on("dragstart", function() {
+    connector.on("dragstart touchstart", function() {
         org_x = this.getX();
         org_y = this.getY();
     });
-    connector.on("dragmove", function() {
+    connector.on("dragmove touchmove", function() {
         connectingLine.show();
         connectingLine.setPoints([org_x, org_y, _big_canvas_stage.getMousePosition().x, _big_canvas_stage.getMousePosition().y]);
         this.moveToTop();
     });
-    connector.on("dragend", function() {
+    connector.on("dragend touchend touchcancel", function() {
         // reset next feed and beConnectedLine
         if(parentFeed.getNextFeed() != 'undefined' && parentFeed.getNextFeed() != undefined) {
             parentFeed.getNextFeed().setBeConnectedLine('undefined');
         }
         parentFeed.setNextFeed('undefined');
 
-        var mouseX = _big_canvas_stage.getMousePosition().x;
-        var mouseY = _big_canvas_stage.getMousePosition().y;
+        var mouseX = _big_canvas_stage.getMousePosition().x ||
+                     _big_canvas_stage.getTouchPosition().x;
+        var mouseY = _big_canvas_stage.getMousePosition().y ||
+                     _big_canvas_stage.getTouchPosition().y;
 
         // firstly check if the connector is released on its own node
         if(ifContains(mouseX, mouseY, parent_node)) {
